@@ -1,0 +1,26 @@
+{
+  "name": "trentingo",
+  "version": "1.0.0",
+  "description": "Progetto del corso ingengeria del software 2025/26",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "devStart": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samuelgega/trentinGO.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/samuelgega/trentinGO/issues"
+  },
+  "homepage": "https://github.com/samuelgega/trentinGO#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
