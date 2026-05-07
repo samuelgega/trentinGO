@@ -4,8 +4,9 @@
   "description": "Progetto del corso ingengeria del software 2025/26",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "devStart": "nodemon server.js"
+    "start": "node -r dotenv/config server.js",
+    "dev": "nodemon -r dotenv/config server.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,10 @@
   },
   "homepage": "https://github.com/samuelgega/trentinGO#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongodb": "^7.2.0",
+    "mongoose": "^9.6.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
