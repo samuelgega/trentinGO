@@ -1,0 +1,1 @@
+Progetto TrentinGO di ingegneria del software 2025/26
