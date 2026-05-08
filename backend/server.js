@@ -20,6 +20,17 @@ const pdiRoutes = require("./routes/pdiRoutes");
 app.use("/pdi", pdiRoutes);
 
 
+//handler per errori 404
+app.use((req, res) => {
+    res.status(404).json({ error: "Risorsa non trovata" });
+});
+
+//handler per errori generici
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: "Errore interno del server" });
+});
+
 //Porta di accesso al server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
