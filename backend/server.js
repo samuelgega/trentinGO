@@ -15,7 +15,7 @@ app.get("/", (req, res) => {
     res.send("Hello world");
 })
 
-//pagina dei pdi
+//rotta dei pdi
 const pdiRoutes = require("./routes/pdiRoutes");
 app.use("/pdi", pdiRoutes);
 
