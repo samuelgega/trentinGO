@@ -1,7 +1,12 @@
 //importa il modello del PDI
 //const PDI = require("../models/PDI");
 
-//crea PDI
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ * @returns 
+ */
 const creaPDI = async (req, res) => {
 
     try{
@@ -52,4 +57,21 @@ const creaPDI = async (req, res) => {
 };
 
 
-module.exports = creaPDI;
+//visualizza tutti i PDI
+const visualizzaTuttiPDI = async (req, res) => {
+    try{
+        //recupero tutti i PDI dal database
+        const pdiList = await PDI.find({});
+        
+        res.status(200).json({
+            message: "Lista dei PDI",
+            data: pdiList
+        });
+
+    }catch(error){
+        console.error("Errore nel recupero dei PDI:", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+};
+
+module.exports = {creaPDI, visualizzaTuttiPDI};

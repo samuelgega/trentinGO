@@ -1,5 +1,8 @@
 const express = require("express");
 const connectDB = require("./config/db");
+const fs = require("fs");
+const yaml = require("js-yaml");
+const swaggerUi = require("swagger-ui-express");
 
 const app = express();
 
@@ -9,6 +12,9 @@ app.use(express.json());
 //Connessione al DB
 connectDB();
 
+//caricamento documentazione openAPI
+const swaggerDocument = yaml.load(fs.readFileSync("./oas3.yaml", "utf8"));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //pagina iniziale
 app.get("/", (req, res) => {
@@ -17,7 +23,7 @@ app.get("/", (req, res) => {
 
 //rotta dei pdi
 const pdiRoutes = require("./routes/pdiRoutes");
-app.use("/pdi", pdiRoutes);
+app.use("/api/v1/pdi", pdiRoutes);
 
 
 //handler per errori 404

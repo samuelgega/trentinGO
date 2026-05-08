@@ -1,0 +1,113 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: "TrentinGO API"
+  description: Documentazione delle API di TrentinGO.
+
+servers:
+  - url: http://localhost:3000/api/v1
+    description: Localhost
+
+paths:
+
+  /pdi:
+    get:
+      summary: "Ottieni la lista di tutti i PDI"
+      description: Restituisce un array contenente tutti i PDI salvati nel database.
+      tags: 
+        - PDI
+      responses:
+        '200':
+          description: "Lista dei PDI recuperata con successo"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PDI"
+        '500':
+          description: "Errore interno del server"
+
+    post:
+      summary: Crea un nuovo PDI
+      description: Inserisce un nuovo Punto di Interesse nel database.
+      tags: 
+        - PDI
+      requestBody:
+        description: "Il nome e la posizione (latitudine e longitudine) sono obbligatori. Altri campi sono facoltativi."
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PDIInput"
+      responses:
+        '201':
+          description: "PDI creato correttamente"
+          headers:
+            'Location':
+              description: "URL del PDI appena creato"
+              schema:
+                type: string
+        '400':
+          description: "Dati mancanti o non validi (es. nome o coordinate assenti)"
+        '500':
+          description: "Errore durante il salvataggio nel database"
+
+components:
+  schemas:
+    PDIInput:
+      type: object
+      required:
+        - nome
+        - latitudine
+        - longitudine
+      properties:
+        nome:
+          type: string
+          example: "MUSE"
+        descrizione:
+          type: string
+          example: "Museo delle Scienze di Trento"
+        categoria:
+          type: string
+          example: "Cultura"
+        latitudine:
+          type: number
+          format: float
+          example: 46.0633
+        longitudine:
+          type: number
+          format: float
+          example: 11.1118
+        prezzo:
+          type: number
+          example: 10
+        punteggio:
+          type: integer
+          example: 100
+        immagine:
+          type: string
+          example: "muse_trento.jpg"
+
+    PDI:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: "ID generato da MongoDB"
+        type:
+          type: string
+          example: "Feature"
+        geometry:
+          type: object
+          properties:
+            type:
+              type: string
+              example: "Point"
+            coordinates:
+              type: array
+              items:
+                type: number
+              example: [11.1118, 46.0633]
+        properties:
+          $ref: "#/components/schemas/PDIInput"
