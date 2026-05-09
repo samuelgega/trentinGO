@@ -1,48 +1,48 @@
-import React, { Component } from 'react'
-import { withNavigation } from './withNavigation'
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import AdminNav from './AdminNav'
 
-class GestisciPDI extends Component {
-    constructor(props) {
-        super(props)
-        // dati provvisori
-        this.state = {
-            listaPDI: [
-                { id: 1, nome: "Castello del Buonconsiglio", tipo: "Monumento" },
-                { id: 2, nome: "MUSE - Museo delle Scienze", tipo: "Museo" }
-            ]
-        }
+const GestisciPDI = () => {
+    const navigate = useNavigate()
+
+    // dati provvisori
+    const [listaPDI, setListaPDI] = useState([
+        { id: 1, nome: "Castello del Buonconsiglio", tipo: "Monumento" },
+        { id: 2, nome: "MUSE - Museo delle Scienze", tipo: "Museo" }
+    ])
+
+    // handler per tornare alla home 
+    const goToHome = () => {
+        navigate('/admin-home')
     }
 
-    //handler per tornare alla home dell'admin
-    goToHome = () => {
-        this.props.navigate('/admin-home')
+    // handler per andare alla pagina crea PDI
+    const goToCreaPdi = () => {
+        navigate('/crea-pdi')
     }
 
-    //handler per andare alla pagina crea PDI
-    goToCreaPdi = () => {
-        this.props.navigate('/crea-pdi')
-    }
-
-    //TODO: Handlers per gestire i pulsanti delle righe dei pdi (modifica ed elimina), al momento c'è un alert provvisorio
-    gestisciModifica = (pdi) => {
+    // handler per gestire la modifica
+    const gestisciModifica = (pdi) => {
         alert(`Hai cliccato MODIFICA sul PDI: ${pdi.nome} (ID: ${pdi.id})`)
     }
 
-    gestisciElimina = (pdi) => {
+    // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
+    const gestisciElimina = (pdi) => {
         const conferma = window.confirm(`Sei sicuro di voler eliminare ${pdi.nome}?`)
         if (conferma) {
             alert(`PDI ${pdi.id} eliminato!`)
         }
     }
 
-    render() {
-        return (
+    return (
+        <>
+            <AdminNav />
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestione Punti di Interesse (PDI)</h2>
                     <button
                         className="btn btn-secondary"
-                        onClick={this.goToHome}
+                        onClick={goToHome}
                     >
                         &larr; Torna alla Home
                     </button>
@@ -50,7 +50,7 @@ class GestisciPDI extends Component {
 
                 <div className="card shadow-sm p-4 text-center text-muted">
                     <h4>Interfaccia in costruzione</h4>
-                    <p>Qui verrà inserita la tabella o la mappa per gestire i PDI.</p>
+                    <p>Qui verrà inserita la tabella o la mappa per gestire i PDI</p>
 
                     <div className="card shadow-sm">
                         <div className="card-body p-0">
@@ -64,8 +64,8 @@ class GestisciPDI extends Component {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {/* TODO: caricare la lista dei PDI dal db, questa è una soluzione provvisoria */}
-                                        {this.state.listaPDI.map((pdi) => (
+                                        {/* La lista ora è renderizzata direttamente dallo stato */}
+                                        {listaPDI.map((pdi) => (
                                             <tr key={pdi.id}>
                                                 <td className="fw">{pdi.nome}</td>
                                                 <td>
@@ -74,13 +74,13 @@ class GestisciPDI extends Component {
                                                 <td className="text-end">
                                                     <button
                                                         className="btn btn-sm btn-secondary me-2"
-                                                        onClick={() => this.gestisciModifica(pdi)}
+                                                        onClick={() => gestisciModifica(pdi)}
                                                     >
                                                         Modifica
                                                     </button>
                                                     <button
                                                         className="btn btn-sm btn-danger"
-                                                        onClick={() => this.gestisciElimina(pdi)}
+                                                        onClick={() => gestisciElimina(pdi)}
                                                     >
                                                         Elimina
                                                     </button>
@@ -94,12 +94,15 @@ class GestisciPDI extends Component {
                     </div>
 
                     <div className="mt-4">
-                        <button className="btn btn-primary me-2" onClick={this.goToCreaPdi}>Aggiungi Nuovo PDI</button>
+                        <button className="btn btn-primary me-2" onClick={goToCreaPdi}>
+                            Aggiungi Nuovo PDI
+                        </button>
                     </div>
                 </div>
             </div>
-        );
-    }
+        </>
+    )
 }
 
-export default withNavigation(GestisciPDI)
+// Esportazione pulita e diretta, senza wrapper vecchi
+export default GestisciPDI

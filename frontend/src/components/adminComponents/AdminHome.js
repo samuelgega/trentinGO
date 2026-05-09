@@ -1,14 +1,18 @@
-import React, { Component } from 'react'
-import { withNavigation } from './withNavigation'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import AdminNav from './AdminNav'
 
-class AdminHome extends Component {
-    //handler per andare alla pagina gestione pdi
-    goToGestionePDI = () => {
-        this.props.navigate('/gestisci-pdi')
+const AdminHome = () => {
+    const navigate = useNavigate()
+
+    // handler per andare alla pagina gestione pdi
+    const goToGestionePDI = () => {
+        navigate('/gestisci-pdi')
     }
 
-    render() {
-        return (
+    return (
+        <>
+            <AdminNav />
             <div className="container">
                 <h2 className="mb-4">Benvenuto, Amministratore</h2>
 
@@ -23,7 +27,7 @@ class AdminHome extends Component {
                                 </p>
                                 <button
                                     className="btn btn-primary mt-auto"
-                                    onClick={this.goToGestionePDI}
+                                    onClick={goToGestionePDI}
                                 >
                                     Gestisci PDI
                                 </button>
@@ -31,7 +35,22 @@ class AdminHome extends Component {
                         </div>
                     </div>
 
-                    {/* Card: Gestione Utenti */}
+                    {/* Card: Eventi */}
+                    <div className="col-12 col-md-6 col-lg-4">
+                        <div className="card h-100 shadow-sm">
+                            <div className="card-body d-flex flex-column">
+                                <h5 className="card-title">Eventi</h5>
+                                <p className="card-text text-muted mb-4">
+                                    Aggiungi, modifica o elimina eventi presenti nel sistema.
+                                </p>
+                                <button className="btn btn-outline-secondary mt-auto">
+                                    Gestisci eventi
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Gestione utenti */}
                     <div className="col-12 col-md-6 col-lg-4">
                         <div className="card h-100 shadow-sm">
                             <div className="card-body d-flex flex-column">
@@ -46,7 +65,7 @@ class AdminHome extends Component {
                         </div>
                     </div>
 
-                    {/* Card: Statistiche */}
+                    {/* Statistiche */}
                     <div className="col-12 col-md-6 col-lg-4">
                         <div className="card h-100 shadow-sm">
                             <div className="card-body d-flex flex-column">
@@ -61,7 +80,7 @@ class AdminHome extends Component {
                         </div>
                     </div>
 
-                    {/* Card: Impostazioni */}
+                    {/* Impostazioni */}
                     <div className="col-12 col-md-6 col-lg-4">
                         <div className="card h-100 shadow-sm">
                             <div className="card-body d-flex flex-column">
@@ -77,9 +96,8 @@ class AdminHome extends Component {
                     </div>
                 </div>
             </div>
-        );
-    }
+        </>
+    )
 }
 
-// Esporta il componente avvolto nel wrapper per poter navigare
-export default withNavigation(AdminHome);
+export default AdminHome
