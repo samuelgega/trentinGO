@@ -1,0 +1,165 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: "TrentinGO API"
+  description: "API per la gestione di TrentinGO"
+
+servers:
+  - url: http://localhost:3001/api/v1
+    description: Localhost
+
+paths:
+  /pdi:
+    get:
+      summary: "Ottieni la lista di tutti i PDI"
+      tags: 
+        - PDI
+      responses:
+        '200':
+          description: "Lista recuperata"
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: "Lista dei PDI"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PDI"
+        '500':
+          $ref: "#/components/responses/ErrorResponse"
+
+    post:
+      summary: "Crea un nuovo PDI"
+      tags: 
+        - PDI
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PDIUploadInput"
+      responses:
+        '201':
+          description: "PDI creato"
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: "PDI creato con successo"
+                  data:
+                    $ref: "#/components/schemas/PDI"
+        '400':
+          $ref: "#/components/responses/ErrorResponse"
+        '500':
+          $ref: "#/components/responses/ErrorResponse"
+
+components:
+  responses:
+    ErrorResponse:
+      description: "Errore"
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            properties:
+              error:
+                type: string
+                maxLength: 255
+
+  schemas:
+
+    PDIUploadInput:
+      type: object
+      additionalProperties: false
+      required:
+        - nome
+        - latitudine
+        - longitudine
+      properties:
+        nome:
+          type: string
+          maxLength: 100
+          example: "MUSE"
+        descrizione:
+          type: string
+          maxLength: 500
+        categoria:
+          type: string
+          maxLength: 50
+        latitudine:
+          type: number
+          format: float
+          example: 46.0633
+        longitudine:
+          type: number
+          format: float
+          example: 11.1118
+        prezzo:
+          type: number
+          minimum: 0
+        punteggio:
+          type: integer
+          minimum: 0
+        immagines: 
+          type: array
+          items:
+            type: string
+            format: binary 
+          description: "Carica i file delle immagini"
+
+
+    PDI:
+      type: object
+      additionalProperties: false
+      properties:
+        _id:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        type:
+          type: string
+          example: "Feature"
+        geometry:
+          type: object
+          additionalProperties: false
+          required: [type, coordinates]
+          properties:
+            type:
+              type: string
+              example: "Point"
+            coordinates:
+              type: array
+              items:
+                type: number
+              example: [11.1118, 46.0633]
+        properties:
+          type: object
+          additionalProperties: false
+          properties:
+            nome:
+              type: string
+              maxLength: 100
+            descrizione:
+              type: string
+              maxLength: 500
+            categoria:
+              type: string
+              maxLength: 50
+            prezzo:
+              type: number
+            punteggio:
+              type: integer
+            immagine:
+              type: array
+              items:
+                type: string
+                maxLength: 255

@@ -1,2 +1,0 @@
-qui ci vanno le varie collection divise in vari file
-esempio di robol: https://github.com/unitn-software-engineering/EasyLib/blob/master/app/models/book.js
