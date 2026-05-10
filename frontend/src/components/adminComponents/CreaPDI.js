@@ -9,7 +9,7 @@ const TIPI_IMG = ['image/jpeg', 'image/png', 'image/webp']
 
 const statoInizialeForm = {
     nome: '',
-    tipo: '',
+    categoria: '',
     latitudine: '',
     longitudine: '',
     descrizione: '',
@@ -106,14 +106,16 @@ const CreaPDI = () => {
                 }
             })
 
-            if (response.ok) {
+            if (response.status === 200) {
                 showAlert("Operazione completata.", "Il punto di interesse è stato creato con successo", "success")
                 navigate('/gestisci-pdi')
+            } else if (response.status === 500) {
+                showAlert("Operazione non riuscita.", "Errore interno al server", "danger")
             } else {
                 showAlert("Operazione non riuscita.", "Controllare i dati inseriti o riprovare", "danger")
             }
         } catch (error) {
-            showAlert("Errore di connessione.", "Controllare la connessione o riprovare più tardi", "success")//provv
+            showAlert("Errore di connessione.", "Controllare la connessione o riprovare più tardi", "danger")
         }
     }
 
