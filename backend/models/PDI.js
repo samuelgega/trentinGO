@@ -15,7 +15,7 @@ const schemaPDI = new mongoose.Schema({
             unique: true
         },
         descrizione: {
-            type: string,
+            type: String,
             required: false
         },
         categoria: String,
