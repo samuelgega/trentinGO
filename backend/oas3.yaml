@@ -2,61 +2,85 @@ openapi: 3.0.0
 info:
   version: '1.0'
   title: "TrentinGO API"
-  description: Documentazione delle API di TrentinGO.
+  description: "API per la gestione di TrentinGO"
 
 servers:
-  - url: http://localhost:3000/api/v1
+  - url: http://localhost:3001/api/v1
     description: Localhost
 
 paths:
-
   /pdi:
     get:
       summary: "Ottieni la lista di tutti i PDI"
-      description: Restituisce un array contenente tutti i PDI salvati nel database.
       tags: 
         - PDI
       responses:
         '200':
-          description: "Lista dei PDI recuperata con successo"
+          description: "Lista recuperata"
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/PDI"
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: "Lista dei PDI"
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/PDI"
         '500':
-          description: "Errore interno del server"
+          $ref: "#/components/responses/ErrorResponse"
 
     post:
-      summary: Crea un nuovo PDI
-      description: Inserisce un nuovo Punto di Interesse nel database.
+      summary: "Crea un nuovo PDI"
       tags: 
         - PDI
       requestBody:
-        description: "Il nome e la posizione (latitudine e longitudine) sono obbligatori. Altri campi sono facoltativi."
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PDIInput"
+              $ref: "#/components/schemas/PDIUploadInput"
       responses:
         '201':
-          description: "PDI creato correttamente"
-          headers:
-            'Location':
-              description: "URL del PDI appena creato"
+          description: "PDI creato"
+          content:
+            application/json:
               schema:
-                type: string
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: "PDI creato con successo"
+                  data:
+                    $ref: "#/components/schemas/PDI"
         '400':
-          description: "Dati mancanti o non validi (es. nome o coordinate assenti)"
+          $ref: "#/components/responses/ErrorResponse"
         '500':
-          description: "Errore durante il salvataggio nel database"
+          $ref: "#/components/responses/ErrorResponse"
 
 components:
+  responses:
+    ErrorResponse:
+      description: "Errore"
+      content:
+        application/json:
+          schema:
+            type: object
+            additionalProperties: false
+            properties:
+              error:
+                type: string
+                maxLength: 255
+
   schemas:
-    PDIInput:
+
+    PDIUploadInput:
       type: object
+      additionalProperties: false
       required:
         - nome
         - latitudine
@@ -64,13 +88,14 @@ components:
       properties:
         nome:
           type: string
+          maxLength: 100
           example: "MUSE"
         descrizione:
           type: string
-          example: "Museo delle Scienze di Trento"
+          maxLength: 500
         categoria:
           type: string
-          example: "Cultura"
+          maxLength: 50
         latitudine:
           type: number
           format: float
@@ -81,25 +106,32 @@ components:
           example: 11.1118
         prezzo:
           type: number
-          example: 10
+          minimum: 0
         punteggio:
           type: integer
-          example: 100
-        immagine:
-          type: string
-          example: "muse_trento.jpg"
+          minimum: 0
+        immagines: 
+          type: array
+          items:
+            type: string
+            format: binary 
+          description: "Carica i file delle immagini"
+
 
     PDI:
       type: object
+      additionalProperties: false
       properties:
         _id:
           type: string
-          description: "ID generato da MongoDB"
+          pattern: '^[a-fA-F0-9]{24}$'
         type:
           type: string
           example: "Feature"
         geometry:
           type: object
+          additionalProperties: false
+          required: [type, coordinates]
           properties:
             type:
               type: string
@@ -110,4 +142,24 @@ components:
                 type: number
               example: [11.1118, 46.0633]
         properties:
-          $ref: "#/components/schemas/PDIInput"
+          type: object
+          additionalProperties: false
+          properties:
+            nome:
+              type: string
+              maxLength: 100
+            descrizione:
+              type: string
+              maxLength: 500
+            categoria:
+              type: string
+              maxLength: 50
+            prezzo:
+              type: number
+            punteggio:
+              type: integer
+            immagine:
+              type: array
+              items:
+                type: string
+                maxLength: 255

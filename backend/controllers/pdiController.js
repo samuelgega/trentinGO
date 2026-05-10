@@ -1,20 +1,30 @@
-//importa il modello del PDI
-//const PDI = require("../models/PDI");
 
-/**
- * 
- * @param {*} req 
- * @param {*} res 
- * @returns 
- */
+const PDI = require("../models/PDI");
+
+//crea un PDI
 const creaPDI = async (req, res) => {
 
     try{
-        const{nome, descrizione, categoria, latitudine, longitudine, prezzo, punteggio, immagine} = req.body;
+        const{nome, descrizione, categoria, latitudine, longitudine, prezzo, punteggio} = req.body;
+
+        let arrayImmagini = [];
+        if(req.files && req.files.length > 0){
+            arrayImmagini = req.files.map(file => file.filename);
+        }
         
         //controllo se il nome è presente e non è vuoto
         if(!nome || nome.trim() === ""){
             return res.status(400).json({ error: "Il nome è un campo obbligatorio" });
+        }
+        
+        //controllo se la categoria è presente
+        if(!categoria ){
+            return res.status(400).json({ error: "La categoria è un campo obbligatorio" });
+        }
+
+        //controllo se il punteggio è un numero valido
+        if(!punteggio || punteggio < 0){
+            return res.status(400).json({ error: "Il punteggio è un campo obbligatorio e deve essere un numero positivo" });
         }
 
         //controllo se la posizione è presente e ha valori validi
@@ -34,16 +44,11 @@ const creaPDI = async (req, res) => {
                 nome,
                 descrizione,
                 categoria,
-                latitudine,
-                longitudine,
                 prezzo: prezzo || 0,
                 punteggio: punteggio || 0,
-                immagine: immagine || ""
+                immagine: arrayImmagini
             }
         });
-        
-        
-        console.log("PDI creato con successo:", nuovoPDI.properties.nome);
 
         res.status(201).json({
             message: "PDI creato con successo",
