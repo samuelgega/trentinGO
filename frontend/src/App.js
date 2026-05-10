@@ -1,24 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import react, { Component } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-function App() {
+import { AlertProvider } from './components/AlertController'
+
+import AdminHome from './components/adminComponents/AdminHome';
+import GestisciPDI from './components/adminComponents/GestisciPDI';
+import CreaPDI from './components/adminComponents/CreaPDI'
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AlertProvider>
+      <Router>
+        <Routes>
+          <Route path="/admin-home" element={<AdminHome />} />
+          <Route path="/gestisci-pdi" element={<GestisciPDI />} />
+          <Route path="/crea-pdi" element={<CreaPDI />} />
+        </Routes>
+      </Router>
+    </AlertProvider>
   );
 }
 
