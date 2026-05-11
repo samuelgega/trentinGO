@@ -9,14 +9,31 @@ const GestisciEventi = () => {
     const [listaEventi, setListaEventi] = useState([
         {
             _id: '1',
-            properties: { nome: 'Evento 1' },
-            categoria: 'Cultura'
+            properties: { 
+                nome: 'Marcatini di natale',
+                categoria: 'Cultura',
+                dataInizio: '2026-05-01', // Passato
+                dataFine: '2026-05-20'    // Futuro
+            }
         },
         {
             _id: '2',
-            properties: { nome: 'Evento 2' },
-            categoria: 'Sport'
+            properties: { 
+                nome: 'Mercato',
+                categoria: 'Sport',
+                dataInizio: '2026-04-10', // Passato
+                dataFine: '2026-04-15'    // Passato
+            }
         },
+        {
+            _id: '3',
+            properties: { 
+                nome: 'Festival dello sport',
+                categoria: 'Musica',
+                dataInizio: '2026-06-01', // Futuro
+                dataFine: '2026-06-10'    // Futuro
+            }
+        }
     ])
 
 
@@ -40,6 +57,29 @@ const GestisciEventi = () => {
         const conferma = window.confirm(`Sei sicuro di voler eliminare ${evento.properties.nome}?`)
         if (conferma) {
             alert(`Evento ${evento._id} eliminato!`)
+        }
+    }
+
+    //ricordasi di cambiarlo in base al backend
+    //funzione per determinare lo stato dell'evento in base alle date
+    const getStatoEvento = (dataInizio, dataFine) => {
+        if (!dataInizio || !dataFine) return null;
+
+        const oggi = new Date();
+        const inizio = new Date(dataInizio);
+        const fine = new Date(dataFine);
+
+        //Azzero le ore per confrontare solo le date
+        oggi.setHours(0, 0, 0, 0);
+        inizio.setHours(0, 0, 0, 0);
+        fine.setHours(0, 0, 0, 0);
+
+        if (oggi < inizio) {
+            return <span className="badge bg-warning text-dark ms-2">In arrivo</span>;
+        } else if (oggi > fine) {
+            return <span className="badge bg-secondary ms-2">Concluso</span>;
+        } else {
+            return <span className="badge bg-success ms-2">In corso</span>;
         }
     }
 
@@ -72,6 +112,7 @@ const GestisciEventi = () => {
                                         <tr>
                                             <th>Nome</th>
                                             <th>Tipo</th>
+                                            <th>Stato</th>
                                             <th className="text-end" style={{ width: '200px' }}>Azioni</th>
                                         </tr>
                                     </thead>
@@ -81,6 +122,9 @@ const GestisciEventi = () => {
                                                 <td className="fw-body">{evento.properties.nome}</td>
                                                 <td>
                                                     <span className="badge bg-info text-dark">{evento.properties.categoria}</span>
+                                                </td>
+                                                <td>
+                                                    {getStatoEvento(evento.properties.dataInizio, evento.properties.dataFine)}
                                                 </td>
                                                 <td className="text-end">
                                                     <button

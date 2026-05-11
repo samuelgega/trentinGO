@@ -90,7 +90,7 @@ const GestisciPDI = () => {
                                             <tr key={pdi._id}>
                                                 <td className="fw">{pdi.properties.nome}</td>
                                                 <td>
-                                                    <span className="badge bg-info text-dark">{pdi.categoria}</span>
+                                                    <span className="badge bg-info text-dark">{pdi.properties.categoria}</span>
                                                 </td>
                                                 <td className="text-end">
                                                     <button

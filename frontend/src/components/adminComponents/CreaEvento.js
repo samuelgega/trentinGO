@@ -166,7 +166,6 @@ const CreaEvento = () => {
 
    return (
         <>
-            <AdminNav />
             <div className="container mt-4 mb-5">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Crea nuovo evento</h2>
