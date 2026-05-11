@@ -49,7 +49,7 @@ const AdminHome = () => {
                                     Aggiungi, modifica o elimina eventi presenti nel sistema.
                                 </p>
                                 <button 
-                                    className="btn btn-outline-secondary mt-auto"
+                                    className="btn btn-primary mt-auto"
                                     onClick={goToGestioneEventi}
                                 >
                                     Gestisci eventi

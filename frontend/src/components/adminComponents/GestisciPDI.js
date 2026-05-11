@@ -1,15 +1,31 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminNav from './AdminNav'
 
 const GestisciPDI = () => {
     const navigate = useNavigate()
 
-    // dati provvisori
-    const [listaPDI, setListaPDI] = useState([
-        { id: 1, nome: "Castello del Buonconsiglio", tipo: "Monumento" },
-        { id: 2, nome: "MUSE - Museo delle Scienze", tipo: "Museo" }
-    ])
+    // dati dal backend
+    const [listaPDI, setListaPDI] = useState([])
+
+    const recuperaDatiDalDatabase = async () => {
+        try {
+            const response = await fetch('http://localhost:3001/api/v1/pdi');                
+            if (!response.ok) {
+                throw new Error(`Errore HTTP: ${response.status}`);
+            }
+            const jsonResponse = await response.json();
+            setListaPDI(jsonResponse.data); 
+            
+        } catch (error) {
+            console.error("Errore di connessione:", error);
+            alert("Errore di connessione. Assicurati che il backend sia acceso!");
+        }
+    }
+
+    useEffect(() => {
+        recuperaDatiDalDatabase()
+    }, [])
 
     // handler per tornare alla home 
     const goToHome = () => {
@@ -23,14 +39,14 @@ const GestisciPDI = () => {
 
     // handler per gestire la modifica
     const gestisciModifica = (pdi) => {
-        alert(`Hai cliccato MODIFICA sul PDI: ${pdi.nome} (ID: ${pdi.id})`)
+        alert(`Hai cliccato MODIFICA sul PDI: ${pdi.properties.nome} (ID: ${pdi._id})`)
     }
 
     // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
     const gestisciElimina = (pdi) => {
-        const conferma = window.confirm(`Sei sicuro di voler eliminare ${pdi.nome}?`)
+        const conferma = window.confirm(`Sei sicuro di voler eliminare ${pdi.properties.nome}?`)
         if (conferma) {
-            alert(`PDI ${pdi.id} eliminato!`)
+            alert(`PDI ${pdi._id} eliminato!`)
         }
     }
 
@@ -66,10 +82,10 @@ const GestisciPDI = () => {
                                     <tbody>
                                         {/* La lista ora è renderizzata direttamente dallo stato */}
                                         {listaPDI.map((pdi) => (
-                                            <tr key={pdi.id}>
-                                                <td className="fw">{pdi.nome}</td>
+                                            <tr key={pdi._id}>
+                                                <td className="fw">{pdi.properties.nome}</td>
                                                 <td>
-                                                    <span className="badge bg-info text-dark">{pdi.tipo}</span>
+                                                    <span className="badge bg-info text-dark">{pdi.categoria}</span>
                                                 </td>
                                                 <td className="text-end">
                                                     <button
