@@ -3,10 +3,12 @@ const connectDB = require("./config/db");
 const fs = require("fs");
 const yaml = require("js-yaml");
 const swaggerUi = require("swagger-ui-express");
+const cors = require("cors");
 
 const app = express();
 
 //Middleware
+app.use(cors());
 app.use(express.json());
 
 //Connessione al DB
