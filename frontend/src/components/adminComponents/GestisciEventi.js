@@ -49,13 +49,16 @@ const GestisciEventi = () => {
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestione Eventi</h2>
-                    <button
-                        className="btn btn-secondary"
-                        onClick={goToHome}
-                    >
-                        &larr; Torna alla Home
-                    </button>
+                    <div>   
+                        <button className="btn btn-primary me-2" onClick={goToCreaEvento}>
+                            + Aggiungi Nuovo Evento
+                        </button>
+                        <button className="btn btn-secondary" onClick={goToHome}>
+                            &larr; Torna alla Home
+                        </button>
+                    </div>
                 </div>
+                
 
                 <div className="card shadow-sm p-4 text-center text-muted">
                     <h4>Interfaccia in costruzione</h4>
@@ -99,12 +102,6 @@ const GestisciEventi = () => {
                                 </table>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="mt-4">
-                        <button className="btn btn-primary me-2" onClick={goToCreaEvento}>
-                            Aggiungi Nuovo Evento
-                        </button>
                     </div>
                 </div>
             </div>

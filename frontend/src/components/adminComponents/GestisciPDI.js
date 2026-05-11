@@ -56,12 +56,17 @@ const GestisciPDI = () => {
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestione Punti di Interesse (PDI)</h2>
+                    <div>   
+                        <button className="btn btn-primary me-2" onClick={goToCreaPdi}>
+                            + Aggiungi Nuovo PDI
+                        </button>
                     <button
                         className="btn btn-secondary"
                         onClick={goToHome}
                     >
                         &larr; Torna alla Home
                     </button>
+                    </div>
                 </div>
 
                 <div className="card shadow-sm p-4 text-center text-muted">
@@ -107,12 +112,6 @@ const GestisciPDI = () => {
                                 </table>
                             </div>
                         </div>
-                    </div>
-
-                    <div className="mt-4">
-                        <button className="btn btn-primary me-2" onClick={goToCreaPdi}>
-                            Aggiungi Nuovo PDI
-                        </button>
                     </div>
                 </div>
             </div>

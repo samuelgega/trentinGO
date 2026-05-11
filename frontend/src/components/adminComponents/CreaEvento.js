@@ -16,7 +16,9 @@ const statoInizialeForm ={
     punteggio: '',
     prezzo: '',
     dataInizio: '',
-    dataFine: ''
+    dataFine: '',
+    longitudine: '',
+    latitudine: ''
 }
 
 const CreaEvento = () => {
@@ -36,7 +38,7 @@ const CreaEvento = () => {
         else if (dati.nome.trim().length < 3) error.nome = "Il nome deve avere almeno 3 caratteri"
         else if (dati.nome.trim().length > 30) error.nome = "Il nome deve avere al massimo 30 caratteri"
 
-        if (!dati.tipo) error.tipo = "Seleziona una tipologia"
+        if (!dati.categoria) error.categoria = "Seleziona una categoria"
 
         if (dati.descrizione.length > 500) error.descrizione = "La descrizione deve avere al massimo 500 caratteri"
 
@@ -51,6 +53,12 @@ const CreaEvento = () => {
 
         if(!dati.dataFine) error.dataFine = "La data di fine è obbligatoria"
         else if (new Date(dati.dataFine) <= new Date(dati.dataInizio)) error.dataFine = "La data di fine deve essere successiva alla data di inizio"
+
+        if(!dati.longitudine && (isNaN(dati.longitudine) || dati.longitudine < -180 || dati.longitudine > 180))
+            error.longitudine = "La longitudine deve essere compresa tra -180 e 180"
+
+        if(!dati.latitudine && (isNaN(dati.latitudine) || dati.latitudine < -90 || dati.latitudine > 90))
+            error.latitudine = "La latitudine deve essere compresa tra -90 e 90"
 
         return error
     }
@@ -98,29 +106,8 @@ const CreaEvento = () => {
         })
         immagini.forEach((img) => submitData.append('immagini', img))
         
-        /*aspettare che la api venga fatta
-        //chiamata API
-        try {
-            const response = await fetch('/api/v1/evento', {
-                method: 'POST',
-                body: submitData,
-                headers: {
-                    //TODO: header di autenticazione
-                }
-            })
-
-            if (response.status === 200) {
-                showAlert("Operazione completata.", "L'evento è stato creato con successo", "success")
-                navigate('/gestisci-eventi')
-            } else if (response.status === 500) {
-                showAlert("Operazione non riuscita.", "Errore interno al server", "danger")
-            } else {
-                showAlert("Operazione non riuscita.", "Controllare i dati inseriti o riprovare", "danger")
-            }
-        } catch (error) {
-            showAlert("Errore di connessione.", "Controllare la connessione o riprovare più tardi", "danger")
-        }
-    */
+        //aspettare che la api venga fatta
+        
 
    }
 
@@ -152,7 +139,7 @@ const CreaEvento = () => {
                                         name="nome"
                                         value={formData.nome}
                                         className="form-control"
-                                        placeholder="es. Piazza Duomo"
+                                        placeholder="es. Mercatini di Natale a Trento"
                                         onChange={handleInput}
                                     />
                                     <small className="text-danger">{errori.nome}</small>
@@ -164,13 +151,14 @@ const CreaEvento = () => {
                                         value={formData.tipo}
                                         className="form-select"
                                         onChange={handleInput}
-                                    >
-                                        <option value="">Selezionare tipologia</option>
-                                        <option value="Monumento">Monumento</option>
-                                        <option value="Museo">Museo</option>
-                                        <option value="Parco">Parco</option>
-                                        <option value="Sentiero">Sentiero</option>
-                                        <option value="Lago">Lago</option>
+                                    >   
+                                        <option value="">Seleziona categoria</option>
+                                        <option value="Musica e Concerti">Musica e Concerti</option>
+                                        <option value="Sport e Natura">Sport e Natura</option>
+                                        <option value="Arte e Cultura">Arte e Cultura</option>
+                                        <option value="Enogastronomia">Enogastronomia</option>
+                                        <option value="Fiere e Mercati">Fiere e Mercati</option>
+                                        <option value="Famiglia e Bambini">Famiglia e Bambini</option>
                                         <option value="Altro">Altro</option>
                                     </select>
                                     <small className="text-danger">{errori.tipo}</small>
@@ -188,10 +176,10 @@ const CreaEvento = () => {
                                 ></textarea>
                                 <small className="text-danger">{errori.descrizione}</small>
                             </div>
-
+                            <hr />
 
                             {/* Dettagli */}
-                            <h5 className="text-primary mb-3">3. Dettagli</h5>
+                            <h5 className="text-primary mb-3">2. Dettagli</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Punteggio*</label>
@@ -245,8 +233,9 @@ const CreaEvento = () => {
                                     <small className="text-muted">Tipi di file ammessi: JPEG, PNG, WEBP. Massimo 10 immagini</small>
                                 </div>
                             </div>
-
-                            <h5 className="text-primary mb-3">4. Date</h5>
+                            <hr />
+                            {/* Date */}
+                            <h5 className="text-primary mb-3">3. Date</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Data di Inizio*</label>
@@ -271,7 +260,39 @@ const CreaEvento = () => {
                                     <small className="text-danger">{errori.dataFine}</small>
                                 </div>
                             </div>
+                            <hr />
+                            {/* Posizione */}
+                            <h5 className="text-primary mb-3">4. Posizione Geografica</h5>
+                            <div className="row g-3 mb-4">
+                                <div className="col-md-6">
+                                    <label className="form-label fw-bold">Latitudine*</label>
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        name="latitudine"
+                                        value={formData.latitudine}
+                                        className="form-control"
+                                        placeholder="Inserire latitudine"
+                                        onChange={handleInput}
+                                    />
+                                    <small className="text-danger">{errori.latitudine}</small>
+                                </div>
+                                <div className="col-md-6">
+                                    <label className="form-label fw-bold">Longitudine*</label>
+                                    <input
+                                        type="number"
+                                        step="any"
+                                        name="longitudine"
+                                        value={formData.longitudine}
+                                        className="form-control"
+                                        placeholder="Inserire longitudine"
+                                        onChange={handleInput}
+                                    />
+                                    <small className="text-danger">{errori.longitudine}</small>
+                                </div>
+                            </div>
 
+                            <hr />
                             {/* Tasti azione */}
                             <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                                 <button type="reset" className="btn btn-light me-md-2">Svuota Campi</button>
