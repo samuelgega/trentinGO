@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react';
+import React, { useState,useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../AlertController';
 import AdminNav from './AdminNav';
@@ -18,7 +18,8 @@ const statoInizialeForm ={
     dataInizio: '',
     dataFine: '',
     longitudine: '',
-    latitudine: ''
+    latitudine: '',
+    pdiCollegato: ''
 }
 
 const CreaEvento = () => {
@@ -29,6 +30,31 @@ const CreaEvento = () => {
     const [immagini, setImmagini] = useState([])
     const [errori, setErrori] = useState({})
     const { showAlert } = useAlert()
+    const [menuPdiAperto, setMenuPdiAperto] = useState(false); 
+
+    //prendo la lista dei PDI per poterli collegare all'evento
+    const [listaPDI, setListaPDI] = useState([])
+
+    useEffect(() => {
+        const fetchPDI = async () => {
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/pdi');
+                if (response.ok) {
+                    const json = await response.json();
+                    setListaPDI(json.data);
+                }
+            } catch (error) {
+                console.error("Impossibile caricare i PDI:", error);
+            }
+        };
+        fetchPDI();
+    }, []);
+
+    //filtro listaPDI
+    const [ricercaPDI, setRicercaPDI] = useState("");
+    const pdiFiltrati = listaPDI.filter(pdi => 
+        pdi.properties.nome.toLowerCase().includes(ricercaPDI.toLowerCase())
+    );
 
     //funzione validazione dei dati
     const validazioneDati = (dati) => {
@@ -87,6 +113,33 @@ const CreaEvento = () => {
         setErrori({})
         setImmagini([])
         if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+
+    //handle per il menu a tendina dei PDI collegabili
+    const handlePdiChange = (e) => {
+        const pdiSelezionatoId = e.target.value;
+        
+        if (!pdiSelezionatoId) {
+            setFormData(prev => ({ ...prev, pdiCollegato: '', latitudine: '', longitudine: '' }));
+            return;
+        }
+
+        //Trovo il PDI completo dalla lista
+        const pdi = listaPDI.find(p => p._id === pdiSelezionatoId);
+        
+        if (pdi && pdi.geometry && pdi.geometry.coordinates) {
+            const [longitudine, latitudine] = pdi.geometry.coordinates;
+            
+            setFormData(prev => ({
+                ...prev,
+                pdiCollegato: pdiSelezionatoId,
+                latitudine: latitudine,
+                longitudine: longitudine
+            }));
+            
+            //Tolgo eventuali errori legati al PDI con latitudine e longitudine
+            setErrori(prev => ({ ...prev, pdiCollegato: undefined, latitudine: undefined, longitudine: undefined }));
+        }
     }
 
 
@@ -263,6 +316,69 @@ const CreaEvento = () => {
                             <hr />
                             {/* Posizione */}
                             <h5 className="text-primary mb-3">4. Posizione Geografica</h5>
+                            <div className="row g-3 mb-3">
+                                <div className="col-12 position-relative">
+                                    <label className="form-label fw-bold">Collega a un PDI esistente</label>
+                                    <div 
+                                        className="form-select border-primary shadow-sm" 
+                                        onClick={() => setMenuPdiAperto(!menuPdiAperto)}
+                                        style={{ cursor: 'pointer' }}
+                                    >
+                                        {formData.pdiCollegato 
+                                            ? listaPDI.find(p => p._id === formData.pdiCollegato)?.properties.nome 
+                                            : "-- Nessun PDI (Inserire le coordinate manualmente) --"}
+                                    </div>
+                                    {menuPdiAperto && (
+                                        <div 
+                                            className="card position-absolute w-100 shadow mt-1 border-primary" 
+                                            style={{ top: '100%', left: 0, zIndex: 1000 }}
+                                        >
+                                            <div className="card-body p-2">
+                                                <input 
+                                                    type="text" 
+                                                    className="form-control mb-2" 
+                                                    placeholder="Cerca PDI per nome"
+                                                    value={ricercaPDI}
+                                                    onChange={(e) => setRicercaPDI(e.target.value)}
+                                                    autoFocus
+                                                />
+                                                
+                                                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                                    <div 
+                                                        className="p-2 border-bottom text-primary fw-bold" 
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => { 
+                                                            handlePdiChange({ target: { value: '' } }); 
+                                                            setMenuPdiAperto(false); 
+                                                        }}
+                                                    >
+                                                        -- Nessun PDI --
+                                                    </div>
+                                                    
+                                                    {pdiFiltrati.length > 0 ? (
+                                                        pdiFiltrati.map(pdi => (
+                                                            <div 
+                                                                key={pdi._id} 
+                                                                className="p-2 border-bottom" 
+                                                                style={{ cursor: 'pointer' }}
+                                                                onClick={() => { 
+                                                                    handlePdiChange({ target: { value: pdi._id } }); 
+                                                                    setMenuPdiAperto(false); 
+                                                                    setRicercaPDI("");
+                                                                }}
+                                                            >
+                                                                {pdi.properties.nome} <small className="text-muted">({pdi.properties.categoria})</small>
+                                                            </div>
+                                                        ))
+                                                    ) : (
+                                                        <div className="p-2 text-muted">Nessun PDI trovato...</div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Latitudine*</label>
