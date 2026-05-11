@@ -1,0 +1,1257 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8500, 45.8833] },
+      "properties": {
+        "id": 1,
+        "nome": "Lago di Garda",
+        "descrizione": "",
+        "latitudine": 45.8833,
+        "longitudine": 10.8500,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7367, 45.8731] },
+      "properties": {
+        "id": 2,
+        "nome": "Lago di Ledro",
+        "descrizione": "",
+        "latitudine": 45.8731,
+        "longitudine": 10.7367,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8206, 45.9069] },
+      "properties": {
+        "id": 3,
+        "nome": "Lago di Tenno",
+        "descrizione": "",
+        "latitudine": 45.9069,
+        "longitudine": 10.8206,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9706, 46.0703] },
+      "properties": {
+        "id": 4,
+        "nome": "Lago di Molveno",
+        "descrizione": "",
+        "latitudine": 46.0703,
+        "longitudine": 10.9706,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9328, 46.2422] },
+      "properties": {
+        "id": 5,
+        "nome": "Lago di Tovel",
+        "descrizione": "",
+        "latitudine": 46.2422,
+        "longitudine": 10.9328,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.2397, 46.0022] },
+      "properties": {
+        "id": 6,
+        "nome": "Lago di Caldonazzo",
+        "descrizione": "",
+        "latitudine": 46.0022,
+        "longitudine": 11.2397,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.2900, 46.0133] },
+      "properties": {
+        "id": 7,
+        "nome": "Lago di Levico",
+        "descrizione": "",
+        "latitudine": 46.0133,
+        "longitudine": 11.2900,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9575, 45.9969] },
+      "properties": {
+        "id": 8,
+        "nome": "Lago di Toblino",
+        "descrizione": "",
+        "latitudine": 45.9969,
+        "longitudine": 10.9575,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1050, 46.3558] },
+      "properties": {
+        "id": 9,
+        "nome": "Lago di Santa Giustina",
+        "descrizione": "",
+        "latitudine": 46.3558,
+        "longitudine": 11.1050,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9992, 45.9122] },
+      "properties": {
+        "id": 10,
+        "nome": "Lago di Cei",
+        "descrizione": "",
+        "latitudine": 45.9122,
+        "longitudine": 10.9992,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.2556, 45.9211] },
+      "properties": {
+        "id": 11,
+        "nome": "Lago di Lavarone",
+        "descrizione": "",
+        "latitudine": 45.9211,
+        "longitudine": 11.2556,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.2142, 46.1964] },
+      "properties": {
+        "id": 12,
+        "nome": "Lago di Serraia",
+        "descrizione": "",
+        "latitudine": 46.1964,
+        "longitudine": 11.2142,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0756, 46.3153] },
+      "properties": {
+        "id": 13,
+        "nome": "Lago di Coredo",
+        "descrizione": "",
+        "latitudine": 46.3153,
+        "longitudine": 11.0756,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0917, 46.3100] },
+      "properties": {
+        "id": 14,
+        "nome": "Lago di Tavon",
+        "descrizione": "",
+        "latitudine": 46.3100,
+        "longitudine": 11.0917,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.7333, 46.2167] },
+      "properties": {
+        "id": 15,
+        "nome": "Lago di Calaita",
+        "descrizione": "",
+        "latitudine": 46.2167,
+        "longitudine": 11.7333,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.6817, 46.3028] },
+      "properties": {
+        "id": 16,
+        "nome": "Lago di Paneveggio",
+        "descrizione": "",
+        "latitudine": 46.3028,
+        "longitudine": 11.6817,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.2300, 46.1800] },
+      "properties": {
+        "id": 17,
+        "nome": "Lago delle Piazze",
+        "descrizione": "",
+        "latitudine": 46.1800,
+        "longitudine": 11.2300,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8150, 46.2100] },
+      "properties": {
+        "id": 18,
+        "nome": "Lago di Nambino",
+        "descrizione": "",
+        "latitudine": 46.2100,
+        "longitudine": 10.8150,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8200, 46.2350] },
+      "properties": {
+        "id": 19,
+        "nome": "Lago Ritort",
+        "descrizione": "",
+        "latitudine": 46.2350,
+        "longitudine": 10.8200,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8400, 46.2300] },
+      "properties": {
+        "id": 20,
+        "nome": "Lago Spinale",
+        "descrizione": "",
+        "latitudine": 46.2300,
+        "longitudine": 10.8400,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8000, 46.1700] },
+      "properties": {
+        "id": 21,
+        "nome": "Lago di Valagola",
+        "descrizione": "",
+        "latitudine": 46.1700,
+        "longitudine": 10.8000,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7200, 45.9500] },
+      "properties": {
+        "id": 22,
+        "nome": "Lago di Roncone",
+        "descrizione": "",
+        "latitudine": 45.9500,
+        "longitudine": 10.7200,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.6500, 46.1800] },
+      "properties": {
+        "id": 23,
+        "nome": "Lago di Garzon",
+        "descrizione": "",
+        "latitudine": 46.1800,
+        "longitudine": 11.6500,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9800, 46.2200] },
+      "properties": {
+        "id": 24,
+        "nome": "Lago Nero (Cornisello)",
+        "descrizione": "",
+        "latitudine": 46.2200,
+        "longitudine": 10.9800,
+        "categoria": "lago",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.6167, 46.4500] },
+      "properties": {
+        "id": 25,
+        "nome": "Monte Cevedale (3769 m)",
+        "descrizione": "",
+        "latitudine": 46.4500,
+        "longitudine": 10.6167,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.5350, 46.4581] },
+      "properties": {
+        "id": 26,
+        "nome": "Punta San Matteo (3678 m)",
+        "descrizione": "",
+        "latitudine": 46.4581,
+        "longitudine": 10.5350,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.5950, 46.4347] },
+      "properties": {
+        "id": 27,
+        "nome": "Monte Vioz (3645 m)",
+        "descrizione": "",
+        "latitudine": 46.4347,
+        "longitudine": 10.5950,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.6144, 46.2278] },
+      "properties": {
+        "id": 28,
+        "nome": "Presanella (3558 m)",
+        "descrizione": "",
+        "latitudine": 46.2278,
+        "longitudine": 10.6144,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.5094, 46.1481] },
+      "properties": {
+        "id": 29,
+        "nome": "Adamello (3539 m)",
+        "descrizione": "",
+        "latitudine": 46.1481,
+        "longitudine": 10.5094,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.8572, 46.4394] },
+      "properties": {
+        "id": 30,
+        "nome": "Marmolada (3343 m)",
+        "descrizione": "",
+        "latitudine": 46.4394,
+        "longitudine": 11.8572,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.5700, 46.1800] },
+      "properties": {
+        "id": 31,
+        "nome": "Monte Fumo (3327 m)",
+        "descrizione": "",
+        "latitudine": 46.1800,
+        "longitudine": 10.5700,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.8394, 46.2881] },
+      "properties": {
+        "id": 32,
+        "nome": "Cima della Vezzana (3192 m)",
+        "descrizione": "",
+        "latitudine": 46.2881,
+        "longitudine": 11.8394,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.8228, 46.2811] },
+      "properties": {
+        "id": 33,
+        "nome": "Cimon della Pala (3186 m)",
+        "descrizione": "",
+        "latitudine": 46.2811,
+        "longitudine": 11.8228,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9097, 46.1631] },
+      "properties": {
+        "id": 34,
+        "nome": "Cima Tosa (3173 m)",
+        "descrizione": "",
+        "latitudine": 46.1631,
+        "longitudine": 10.9097,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.6500, 46.4167] },
+      "properties": {
+        "id": 35,
+        "nome": "Cima Careser (3163 m)",
+        "descrizione": "",
+        "latitudine": 46.4167,
+        "longitudine": 10.6500,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9031, 46.1739] },
+      "properties": {
+        "id": 36,
+        "nome": "Cima Brenta (3150 m)",
+        "descrizione": "",
+        "latitudine": 46.1739,
+        "longitudine": 10.9031,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9017, 46.1600] },
+      "properties": {
+        "id": 37,
+        "nome": "Crozzon di Brenta (3135 m)",
+        "descrizione": "",
+        "latitudine": 46.1600,
+        "longitudine": 10.9017,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9100, 46.1900] },
+      "properties": {
+        "id": 38,
+        "nome": "Cima d'Ambiez (3102 m)",
+        "descrizione": "",
+        "latitudine": 46.1900,
+        "longitudine": 10.9100,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.8400, 46.2600] },
+      "properties": {
+        "id": 39,
+        "nome": "Cima di Ball (3069 m)",
+        "descrizione": "",
+        "latitudine": 46.2600,
+        "longitudine": 11.8400,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.5600, 46.4200] },
+      "properties": {
+        "id": 40,
+        "nome": "Punta di Peio (3056 m)",
+        "descrizione": "",
+        "latitudine": 46.4200,
+        "longitudine": 10.5600,
+        "categoria": "montagna",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1197, 46.0603] },
+      "properties": {
+        "id": 41,
+        "nome": "MUSE – Museo delle Scienze",
+        "descrizione": "",
+        "latitudine": 46.0603,
+        "longitudine": 11.1197,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0439, 45.8894] },
+      "properties": {
+        "id": 42,
+        "nome": "MART – Museo di Arte Moderna e Contemporanea di Trento e Rovereto",
+        "descrizione": "",
+        "latitudine": 45.8894,
+        "longitudine": 11.0439,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1261, 46.0694] },
+      "properties": {
+        "id": 43,
+        "nome": "Museo Diocesano Tridentino",
+        "descrizione": "",
+        "latitudine": 46.0694,
+        "longitudine": 11.1261,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1258, 46.0742] },
+      "properties": {
+        "id": 44,
+        "nome": "Castello del Buonconsiglio – Museo Provinciale d'Arte",
+        "descrizione": "",
+        "latitudine": 46.0742,
+        "longitudine": 11.1258,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0403, 45.8906] },
+      "properties": {
+        "id": 45,
+        "nome": "Museo Storico Italiano della Guerra",
+        "descrizione": "",
+        "latitudine": 45.8906,
+        "longitudine": 11.0403,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1317, 46.1933] },
+      "properties": {
+        "id": 46,
+        "nome": "Museo degli Usi e Costumi della Gente Trentina",
+        "descrizione": "",
+        "latitudine": 46.1933,
+        "longitudine": 11.1317,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1100, 46.0522] },
+      "properties": {
+        "id": 47,
+        "nome": "Museo dell'Aeronautica Gianni Caproni",
+        "descrizione": "",
+        "latitudine": 46.0522,
+        "longitudine": 11.1100,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0433, 45.8897] },
+      "properties": {
+        "id": 48,
+        "nome": "Museo Civico di Rovereto",
+        "descrizione": "",
+        "latitudine": 45.8897,
+        "longitudine": 11.0433,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1253, 46.0614] },
+      "properties": {
+        "id": 49,
+        "nome": "Palazzo delle Albere",
+        "descrizione": "",
+        "latitudine": 46.0614,
+        "longitudine": 11.1253,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1175, 46.0694] },
+      "properties": {
+        "id": 50,
+        "nome": "Galleria Civica di Trento",
+        "descrizione": "",
+        "latitudine": 46.0694,
+        "longitudine": 11.1175,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1486, 46.0678] },
+      "properties": {
+        "id": 51,
+        "nome": "Museo Storico del Trentino",
+        "descrizione": "",
+        "latitudine": 46.0678,
+        "longitudine": 11.1486,
+        "categoria": "museo",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1233, 46.0697] },
+      "properties": {
+        "id": 52,
+        "nome": "Cattedrale di San Vigilio",
+        "descrizione": "",
+        "latitudine": 46.0697,
+        "longitudine": 11.1233,
+        "categoria": "chiesa",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1194, 46.0703] },
+      "properties": {
+        "id": 53,
+        "nome": "Basilica di Santa Maria Maggiore",
+        "descrizione": "",
+        "latitudine": 46.0703,
+        "longitudine": 11.1194,
+        "categoria": "chiesa",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1272, 46.0644] },
+      "properties": {
+        "id": 54,
+        "nome": "Chiesa di Sant'Apollinare",
+        "descrizione": "",
+        "latitudine": 46.0644,
+        "longitudine": 11.1272,
+        "categoria": "chiesa",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0428, 45.8903] },
+      "properties": {
+        "id": 55,
+        "nome": "Basilica di San Marco (Rovereto)",
+        "descrizione": "",
+        "latitudine": 45.8903,
+        "longitudine": 11.0428,
+        "categoria": "chiesa",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8406, 45.8853] },
+      "properties": {
+        "id": 56,
+        "nome": "Basilica dell'Inviolata (Riva del Garda)",
+        "descrizione": "",
+        "latitudine": 45.8853,
+        "longitudine": 10.8406,
+        "categoria": "chiesa",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1175, 46.0722] },
+      "properties": {
+        "id": 57,
+        "nome": "Chiesa di San Lorenzo (Trento)",
+        "descrizione": "",
+        "latitudine": 46.0722,
+        "longitudine": 11.1175,
+        "categoria": "chiesa",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7667, 46.1550] },
+      "properties": {
+        "id": 58,
+        "nome": "Chiesa di San Vigilio (Pinzolo)",
+        "descrizione": "",
+        "latitudine": 46.1550,
+        "longitudine": 10.7667,
+        "categoria": "chiesa",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.5311, 46.1153] },
+      "properties": {
+        "id": 59,
+        "nome": "Abbazia di San Pietro (Castello Ivano)",
+        "descrizione": "",
+        "latitudine": 46.1153,
+        "longitudine": 11.5311,
+        "categoria": "chiesa",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0825, 46.3403] },
+      "properties": {
+        "id": 60,
+        "nome": "Santuario di San Romedio",
+        "descrizione": "",
+        "latitudine": 46.3403,
+        "longitudine": 11.0825,
+        "categoria": "santuario",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7675, 46.1681] },
+      "properties": {
+        "id": 61,
+        "nome": "Santuario della Consolata (Carisolo)",
+        "descrizione": "",
+        "latitudine": 46.1681,
+        "longitudine": 10.7675,
+        "categoria": "santuario",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7700, 46.1489] },
+      "properties": {
+        "id": 62,
+        "nome": "Santuario della Madonna di Caravaggio (Pinzolo)",
+        "descrizione": "",
+        "latitudine": 46.1489,
+        "longitudine": 10.7700,
+        "categoria": "santuario",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8769, 45.9183] },
+      "properties": {
+        "id": 63,
+        "nome": "Santuario della Madonna delle Grazie (Arco)",
+        "descrizione": "",
+        "latitudine": 45.9183,
+        "longitudine": 10.8769,
+        "categoria": "santuario",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.2139, 46.1317] },
+      "properties": {
+        "id": 64,
+        "nome": "Santuario della Madonna di Pinè",
+        "descrizione": "",
+        "latitudine": 46.1317,
+        "longitudine": 11.2139,
+        "categoria": "santuario",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7422, 46.1011] },
+      "properties": {
+        "id": 65,
+        "nome": "Santuario di Porte di Rendena (Madonna del Carmine)",
+        "descrizione": "",
+        "latitudine": 46.1011,
+        "longitudine": 10.7422,
+        "categoria": "santuario",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0544, 46.0986] },
+      "properties": {
+        "id": 66,
+        "nome": "Santuario di San Valentino (Trento)",
+        "descrizione": "",
+        "latitudine": 46.0986,
+        "longitudine": 11.0544,
+        "categoria": "santuario",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7200, 45.9500] },
+      "properties": {
+        "id": 67,
+        "nome": "Santuario della Madonna di Roncone",
+        "descrizione": "",
+        "latitudine": 45.9500,
+        "longitudine": 10.7200,
+        "categoria": "santuario",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1258, 46.0742] },
+      "properties": {
+        "id": 68,
+        "nome": "Castello del Buonconsiglio",
+        "descrizione": "",
+        "latitudine": 46.0742,
+        "longitudine": 11.1258,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0469, 45.9344] },
+      "properties": {
+        "id": 69,
+        "nome": "Castel Beseno",
+        "descrizione": "",
+        "latitudine": 45.9344,
+        "longitudine": 11.0469,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0997, 46.3731] },
+      "properties": {
+        "id": 70,
+        "nome": "Castel Thun",
+        "descrizione": "",
+        "latitudine": 46.3731,
+        "longitudine": 11.0997,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8717, 46.0536] },
+      "properties": {
+        "id": 71,
+        "nome": "Castel Stenico",
+        "descrizione": "",
+        "latitudine": 46.0536,
+        "longitudine": 10.8717,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8747, 45.9194] },
+      "properties": {
+        "id": 72,
+        "nome": "Castel Arco",
+        "descrizione": "",
+        "latitudine": 45.9194,
+        "longitudine": 10.8747,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.7800, 46.3711] },
+      "properties": {
+        "id": 73,
+        "nome": "Castel Caldes",
+        "descrizione": "",
+        "latitudine": 46.3711,
+        "longitudine": 10.7800,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0833, 46.3167] },
+      "properties": {
+        "id": 74,
+        "nome": "Castel Malgolo",
+        "descrizione": "",
+        "latitudine": 46.3167,
+        "longitudine": 11.0833,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1061, 45.9569] },
+      "properties": {
+        "id": 75,
+        "nome": "Castel Noarna",
+        "descrizione": "",
+        "latitudine": 45.9569,
+        "longitudine": 11.1061,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0911, 45.9489] },
+      "properties": {
+        "id": 76,
+        "nome": "Castel Sabbionara (Avio)",
+        "descrizione": "",
+        "latitudine": 45.9489,
+        "longitudine": 11.0911,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0736, 45.9611] },
+      "properties": {
+        "id": 77,
+        "nome": "Castel Pietra",
+        "descrizione": "",
+        "latitudine": 45.9611,
+        "longitudine": 11.0736,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.9300, 45.9417] },
+      "properties": {
+        "id": 78,
+        "nome": "Castel Drena",
+        "descrizione": "",
+        "latitudine": 45.9417,
+        "longitudine": 10.9300,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.2361, 46.0628] },
+      "properties": {
+        "id": 79,
+        "nome": "Castel Pergine",
+        "descrizione": "",
+        "latitudine": 46.0628,
+        "longitudine": 11.2361,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.5311, 46.1153] },
+      "properties": {
+        "id": 80,
+        "nome": "Castel Ivano",
+        "descrizione": "",
+        "latitudine": 46.1153,
+        "longitudine": 11.5311,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.0444, 46.3236] },
+      "properties": {
+        "id": 81,
+        "nome": "Castel Nanno",
+        "descrizione": "",
+        "latitudine": 46.3236,
+        "longitudine": 11.0444,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [10.8681, 45.8742] },
+      "properties": {
+        "id": 82,
+        "nome": "Forte di Nago",
+        "descrizione": "",
+        "latitudine": 45.8742,
+        "longitudine": 10.8681,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": { "type": "Point", "coordinates": [11.1600, 46.1472] },
+      "properties": {
+        "id": 83,
+        "nome": "Castel Selva",
+        "descrizione": "",
+        "latitudine": 46.1472,
+        "longitudine": 11.1600,
+        "categoria": "castello",
+        "prezzo": 0,
+        "punteggio": 0,
+        "immagine": ""
+      }
+    }
+
+  ]
+}
