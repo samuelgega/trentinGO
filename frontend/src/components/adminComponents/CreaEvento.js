@@ -1,7 +1,6 @@
 import React, { useState,useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../AlertController';
-import AdminNav from './AdminNav';
 
 // Costanti per validazione immagini
 const MAX_SIZE = 2 * 1024 * 1024 // 2MB
@@ -61,9 +60,7 @@ const CreaEvento = () => {
         const error = {}
 
         if (!dati.nome.trim()) error.nome = "Il nome è obbligatorio"
-
         if (!dati.categoria) error.categoria = "Seleziona una categoria"
-
         if (dati.descrizione.length > 500) error.descrizione = "La descrizione deve avere al massimo 500 caratteri"
 
         if (dati.punteggio === '' || isNaN(dati.punteggio) || dati.punteggio < 10)
@@ -72,11 +69,27 @@ const CreaEvento = () => {
         if (dati.prezzo !== '' && (isNaN(dati.prezzo) || dati.prezzo < 0))
             error.prezzo = "Inserisci un prezzo valido (0 o più)"
 
-        if(!dati.dataInizio) error.dataInizio = "La data di inizio è obbligatoria"
-        else if (new Date(dati.dataInizio) < new Date()) error.dataInizio = "La data di inizio deve essere futura"
+        const oggi = new Date();
+        oggi.setHours(0, 0, 0, 0); 
 
-        if(!dati.dataFine) error.dataFine = "La data di fine è obbligatoria"
-        else if (new Date(dati.dataFine) <= new Date(dati.dataInizio)) error.dataFine = "La data di fine deve essere successiva alla data di inizio"
+        if (!dati.dataInizio) {
+            error.dataInizio = "La data di inizio è obbligatoria";
+        } else {
+            const dataInizioObj = new Date(dati.dataInizio);
+            dataInizioObj.setHours(0, 0, 0, 0);
+            if (dataInizioObj < oggi) error.dataInizio = "La data di inizio non può essere passata";
+        }
+
+        if (!dati.dataFine) {
+            error.dataFine = "La data di fine è obbligatoria";
+        } else {
+            const dataInizioObj = new Date(dati.dataInizio);
+            dataInizioObj.setHours(0,0,0,0);
+            const dataFineObj = new Date(dati.dataFine);
+            dataFineObj.setHours(0,0,0,0);
+            
+            if (dataFineObj < dataInizioObj) error.dataFine = "La data di fine deve essere uguale o successiva alla data di inizio";
+        }
 
         if (dati.latitudine === '' || isNaN(dati.latitudine) || dati.latitudine < -90 || dati.latitudine > 90)
             error.latitudine = "Inserisci una latitudine valida (-90 a 90)"
@@ -145,21 +158,48 @@ const CreaEvento = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        //alidazione dei dati
+        //validazione dei dati
         const nuoviErrori = validazioneDati(formData)
+        console.log("FormData:", formData)       // <-- aggiungi
+    console.log("Errori:", nuoviErrori)      // <-- aggiungi
         setErrori(nuoviErrori)
-        if (Object.keys(nuoviErrori).length > 0) return
+
+        if (Object.keys(nuoviErrori).length > 0) {
+            console.log("ATTENZIONE: Salvataggio bloccato. Errori trovati:", nuoviErrori);
+            return;
+        }
 
         //FormData necessario per inviare files
         const submitData = new FormData()
         Object.entries(formData).forEach(([key, value]) => {
             submitData.append(key, value)
         })
-        immagini.forEach((img) => submitData.append('immagini', img))
+        immagini.forEach((img) => submitData.append('immagine', img))
         
-        //aspettare che la api venga fatta
-        
+        try{
+            const response = await fetch('http://localhost:3001/api/v1/eventi', {
+                method: 'POST',
+                body: submitData
+            })
 
+            if (response.status === 201) {
+                console.log("Evento creato con successo!")
+                showAlert("Operazione completata.", "L'evento è stato creato con successo", "success")
+                navigate(-1)
+            } else if (response.status === 500) {
+                console.error("Errore interno del server durante la creazione dell'evento.")
+                showAlert("Operazione non riuscita.", "Errore interno al server", "danger")
+            } else {
+                console.error("Errore sconosciuto durante la creazione dell'evento. Status code:", response.status)
+                showAlert("Operazione non riuscita.", "Controllare i dati inseriti o riprovare", "danger")
+            } 
+        }catch (error) {
+            console.error("Errore di connessione durante la creazione dell'evento:", error)
+            showAlert("Errore di connessione.", "Controllare la connessione o riprovare più tardi", "danger")
+        }
+    
+        
+    
    }
 
    return (
@@ -175,10 +215,16 @@ const CreaEvento = () => {
                     </button>
                 </div>
 
+                <button 
+                    type="button" 
+                    onClick={() => console.log("TEST")}
+                >
+                 TEST
+                </button>
+                
                 <div className="card shadow border-0">
                     <div className="card-body p-4">
                         <form onSubmit={handleSubmit} onReset={handleReset}>
-
                             {/* Informazioni base */}
                             <h5 className="text-primary mb-3">1. Informazioni Generali</h5>
                             <div className="row g-3 mb-4">
@@ -404,14 +450,18 @@ const CreaEvento = () => {
                                     <small className="text-danger">{errori.longitudine}</small>
                                 </div>
                             </div>
-
                             <hr />
+                            
                             {/* Tasti azione */}
                             <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                                 <button type="reset" className="btn btn-light me-md-2">Svuota Campi</button>
-                                <button type="submit" className="btn btn-primary px-5">Salva PDI</button>
+                                <button type="button" 
+                                className="btn btn-primary px-5" 
+                                onClick={handleSubmit}>
+                                    Salva Evento</button>
                             </div>
                         </form>
+                        
                     </div>
                 </div>
             </div>

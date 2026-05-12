@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from 'react-router-dom'
 import GestoreNav from "./GestoreNav";
 
+
 const GestoreHome = () => {
     const navigate = useNavigate()
 

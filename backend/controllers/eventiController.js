@@ -3,7 +3,7 @@ const Evento = require('../models/Evento')
 const visualizzaTuttiEventi = async (req, res) => {
     try {
         //recupero tutti gli eventi dal database
-        const eventiList = await Evento.find({})
+        const eventiList = await Evento.find({}).populate('properties.pdiCollegato');
 
         res.status(200).json({
             message: "Lista degli eventi",
@@ -19,7 +19,7 @@ const visualizzaTuttiEventi = async (req, res) => {
 //creo evento
 const creaEvento = async (req, res) => {
     try {
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, punteggio, dataInizio, dataFine } = req.body
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, punteggio, dataInizio, dataFine, pdiCollegato } = req.body
 
         let arrayImmagini = [];
         if (req.files && req.files.length > 0) {
@@ -39,11 +39,12 @@ const creaEvento = async (req, res) => {
         //controllo se la posizione è presente e ha valori validi
         if (latitudine === undefined || longitudine === undefined ||
             latitudine < -90 || latitudine > 90 ||
-            longitudine < -180 || latitudine > 180
+            longitudine < -180 || longitudine > 180
         ) {
             return res.status(400).json({ error: "Le coordinate di latitudine e longitudine sono obbligatorie" })
         }
 
+        const validPdiCollegato = (pdiCollegato && pdiCollegato.trim() !== "") ? pdiCollegato : undefined;
 
         //creo il nuovo PDI nel database
         const nuovoEvento = await Evento.create({
@@ -61,12 +62,13 @@ const creaEvento = async (req, res) => {
                 immagine: arrayImmagini,
                 dataInizio,
                 dataFine,
-                dataCreazione: Date.now()
+                dataCreazione: Date.now(),
+                pdiCollegato: validPdiCollegato
             }
         })
 
         res.status(201).json({
-            message: "PDI creato con successo",
+            message: "Evento creato con successo",
             data: nuovoEvento
         })
 

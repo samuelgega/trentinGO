@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import AlertController from '../AlertController'
 import AdminNav from './AdminNav'
+import { useAlert } from '../AlertController'
 
 const GestisciPDI = () => {
     const navigate = useNavigate()
+    const { showAlert } = useAlert()
 
     // dati dal backend
     const [listaPDI, setListaPDI] = useState([])
@@ -19,7 +22,7 @@ const GestisciPDI = () => {
             
         } catch (error) {
             console.error("Errore di connessione:", error);
-            alert("Errore di connessione. Assicurati che il backend sia acceso!");
+            showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
         }
     }
 
@@ -39,14 +42,14 @@ const GestisciPDI = () => {
 
     // handler per gestire la modifica
     const gestisciModifica = (pdi) => {
-        alert(`Hai cliccato MODIFICA sul PDI: ${pdi.properties.nome} (ID: ${pdi._id})`)
+        showAlert(`Hai cliccato MODIFICA sul PDI: ${pdi.properties.nome} (ID: ${pdi._id})`)
     }
 
     // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
     const gestisciElimina = (pdi) => {
         const conferma = window.confirm(`Sei sicuro di voler eliminare ${pdi.properties.nome}?`)
         if (conferma) {
-            alert(`PDI ${pdi._id} eliminato!`)
+            showAlert(`PDI ${pdi._id} eliminato!`)
         }
     }
 

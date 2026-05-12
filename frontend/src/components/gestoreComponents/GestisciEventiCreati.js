@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GestoreNav from './GestoreNav'
+import {useAlert} from '../AlertController'
 
 const GestisciEventiCreati = () => {
     const navigate = useNavigate()
+    const { showAlert } = useAlert()
 
     //dati prova da implementare in futuro con il backend
     const [listaEventi, setListaEventi] = useState([
@@ -48,14 +50,14 @@ const GestisciEventiCreati = () => {
 
     // handler per gestire la modifica
     const gestisciModifica = (evento) => {
-        alert(`Hai cliccato MODIFICA sull'Evento: ${evento.properties.nome} (ID: ${evento._id})`)
+        showAlert(`Hai cliccato MODIFICA sull'Evento: ${evento.properties.nome} (ID: ${evento._id})`)
     }
 
     // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
     const gestisciElimina = (evento) => {
         const conferma = window.confirm(`Sei sicuro di voler eliminare ${evento.properties.nome}?`)
         if (conferma) {
-            alert(`Evento ${evento._id} eliminato!`)
+            showAlert(`Evento ${evento._id} eliminato!`)
         }
     }
 

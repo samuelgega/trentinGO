@@ -25,7 +25,11 @@ const schemaEvento = new mongoose.Schema({
         dataInizio: Date,
         dataFine: Date,
         gestore: String,
-        dataCreazione: Date
+        dataCreazione: Date,
+        pdiCollegato: { 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'PDI'
+        }
     }
 })
 

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAlert } from '../AlertController'
 import GestoreNav from './GestoreNav'
 
 const GestisciPDIAssociati = () => {
 
     const navigate = useNavigate()
+    const { showAlert } = useAlert()
     
     // dati di prova da implementare in futuro con il backend
         const [listaPDI, setListaPDI] = useState([
@@ -38,7 +40,7 @@ const GestisciPDIAssociati = () => {
 
         // handler per gestire la modifica
         const gestisciModifica = (pdi) => {
-            alert(`Hai cliccato MODIFICA sul PDI: ${pdi.properties.nome} (ID: ${pdi._id})`)
+            showAlert(`Hai cliccato MODIFICA sul PDI: ${pdi.properties.nome} (ID: ${pdi._id})`)
         }
 
         return (

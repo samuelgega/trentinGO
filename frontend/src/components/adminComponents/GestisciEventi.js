@@ -1,40 +1,33 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminNav from './AdminNav'
+import {useAlert} from '../AlertController'
 
 const GestisciEventi = () => {
     const navigate = useNavigate()
-
+    const { showAlert } = useAlert()
     // dati prova
-    const [listaEventi, setListaEventi] = useState([
-        {
-            _id: '1',
-            properties: { 
-                nome: 'Marcatini di natale',
-                categoria: 'Cultura',
-                dataInizio: '2026-05-01', // Passato
-                dataFine: '2026-05-20'    // Futuro
-            }
-        },
-        {
-            _id: '2',
-            properties: { 
-                nome: 'Mercato',
-                categoria: 'Sport',
-                dataInizio: '2026-04-10', // Passato
-                dataFine: '2026-04-15'    // Passato
-            }
-        },
-        {
-            _id: '3',
-            properties: { 
-                nome: 'Festival dello sport',
-                categoria: 'Musica',
-                dataInizio: '2026-06-01', // Futuro
-                dataFine: '2026-06-10'    // Futuro
+    const [listaEventi, setListaEventi] = useState([])
+        
+    const recuperaDatiDalDatabase = async () => {
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/eventi');                
+                if (!response.ok) {
+                    throw new Error(`Errore HTTP: ${response.status}`);
+                }
+                const jsonResponse = await response.json();
+                setListaEventi(jsonResponse.data); 
+                
+            } catch (error) {
+                console.error("Errore di connessione:", error);
+                showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
             }
         }
-    ])
+        
+    useEffect(() => {
+        recuperaDatiDalDatabase()
+    }, [])
+    
 
 
     // handler per tornare alla home 
@@ -49,18 +42,17 @@ const GestisciEventi = () => {
 
     // handler per gestire la modifica
     const gestisciModifica = (evento) => {
-        alert(`Hai cliccato MODIFICA sull'Evento: ${evento.properties.nome} (ID: ${evento._id})`)
+        showAlert(`Hai cliccato MODIFICA sull'Evento: ${evento.properties.nome} (ID: ${evento._id})`)
     }
 
     // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
     const gestisciElimina = (evento) => {
         const conferma = window.confirm(`Sei sicuro di voler eliminare ${evento.properties.nome}?`)
         if (conferma) {
-            alert(`Evento ${evento._id} eliminato!`)
+            showAlert(`Evento ${evento._id} eliminato!`)
         }
     }
 
-    //ricordasi di cambiarlo in base al backend
     //funzione per determinare lo stato dell'evento in base alle date
     const getStatoEvento = (dataInizio, dataFine) => {
         if (!dataInizio || !dataFine) return null;
