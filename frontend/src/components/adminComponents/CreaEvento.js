@@ -64,6 +64,7 @@ const CreaEvento = () => {
         else if (dati.nome.trim().length < 3) error.nome = "Il nome deve avere almeno 3 caratteri"
         else if (dati.nome.trim().length > 30) error.nome = "Il nome deve avere al massimo 30 caratteri"
 
+
         if (!dati.categoria) error.categoria = "Seleziona una categoria"
 
         if (dati.descrizione.length > 500) error.descrizione = "La descrizione deve avere al massimo 500 caratteri"
@@ -80,11 +81,11 @@ const CreaEvento = () => {
         if(!dati.dataFine) error.dataFine = "La data di fine è obbligatoria"
         else if (new Date(dati.dataFine) <= new Date(dati.dataInizio)) error.dataFine = "La data di fine deve essere successiva alla data di inizio"
 
-        if(!dati.longitudine && (isNaN(dati.longitudine) || dati.longitudine < -180 || dati.longitudine > 180))
-            error.longitudine = "La longitudine deve essere compresa tra -180 e 180"
+        if (dati.latitudine === '' || isNaN(dati.latitudine) || dati.latitudine < -90 || dati.latitudine > 90)
+            error.latitudine = "Inserisci una latitudine valida (-90 a 90)"
 
-        if(!dati.latitudine && (isNaN(dati.latitudine) || dati.latitudine < -90 || dati.latitudine > 90))
-            error.latitudine = "La latitudine deve essere compresa tra -90 e 90"
+        if (dati.longitudine === '' || isNaN(dati.longitudine) || dati.longitudine < -180 || dati.longitudine > 180)
+            error.longitudine = "Inserisci una longitudine valida (-180 a 180)"
 
         return error
     }
@@ -171,7 +172,7 @@ const CreaEvento = () => {
                     <h2>Crea nuovo evento</h2>
                     <button
                         className="btn btn-outline-secondary"
-                        onClick={() => navigate('/gestisci-eventi')}
+                        onClick={() => navigate(-1)}
                     >
                         &larr; Annulla e torna indietro
                     </button>
@@ -199,8 +200,8 @@ const CreaEvento = () => {
                                 <div className="col-md-4">
                                     <label className="form-label fw-bold">Tipologia*</label>
                                     <select
-                                        name="tipo"
-                                        value={formData.tipo}
+                                        name="categoria"
+                                        value={formData.categoria}
                                         className="form-select"
                                         onChange={handleInput}
                                     >   
@@ -213,7 +214,7 @@ const CreaEvento = () => {
                                         <option value="Famiglia e Bambini">Famiglia e Bambini</option>
                                         <option value="Altro">Altro</option>
                                     </select>
-                                    <small className="text-danger">{errori.tipo}</small>
+                                    <small className="text-danger">{errori.categoria}</small>
                                 </div>
                             </div>
                             <div className="row g-3 mb-4">

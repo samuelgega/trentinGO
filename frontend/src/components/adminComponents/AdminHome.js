@@ -7,12 +7,12 @@ const AdminHome = () => {
 
     // handler per andare alla pagina gestione pdi
     const goToGestionePDI = () => {
-        navigate('/gestisci-pdi')
+        navigate('/admin-home/gestisci-pdi')
     }
 
     //handler per andare alla pagina gestione eventi
     const goToGestioneEventi = () => {
-        navigate('/gestisci-eventi')
+        navigate('/admin-home/gestisci-eventi')
     }
 
     return (

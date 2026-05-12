@@ -5,6 +5,17 @@ import GestoreNav from "./GestoreNav";
 const GestoreHome = () => {
     const navigate = useNavigate()
 
+
+    //hander per la gestione dei pdi associati
+    const goToGestionePDIAssociati = () => {
+        navigate('/gestore-home/gestisci-pdi-associati')
+    }
+
+    //handler per la gestione degli eventi creati
+    const goToGestioneEventiCreati = () => {
+        navigate('/gestore-home/gestisci-eventi-creati')
+    }
+
     return (
         <div>
             <GestoreNav />
@@ -16,12 +27,11 @@ const GestoreHome = () => {
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">Gestione PDI</h5>
                                 <p className="card-text text-muted mb-4">
-                                    Visualizza e gestisci i PDI (Punti di Interesse) presenti sulla mappa.
+                                    Visualizza e gestisci i PDI (Punti di Interesse) associati a te.
                                 </p>
-                                {/* bottome da implementare */}
                                 <button
-                                    className="btn btn-outline-secondary mt-auto"
-                                    onClick={() => navigate('/gestisci-pdi')}
+                                    className="btn btn-primary mt-auto"
+                                    onClick={goToGestionePDIAssociati}
                                 >
                                     Gestisci PDI
                                 </button>
@@ -34,12 +44,11 @@ const GestoreHome = () => {
                             <div className="card-body d-flex flex-column">
                                 <h5 className="card-title">Gestione Eventi</h5>
                                 <p className="card-text text-muted mb-4">
-                                    Visualizza e gestisci gli eventi presenti nel sistema.
+                                    Visualizza e gestisci gli eventi creati da te.
                                 </p>
-                                {/* bottome da implementare */}
                                 <button
-                                    className="btn btn-outline-secondary mt-auto"
-                                    onClick={() => navigate('/gestisci-eventi')}
+                                    className="btn btn-primary mt-auto"
+                                    onClick={goToGestioneEventiCreati}
                                 >
                                     Gestisci Eventi
                                 </button>

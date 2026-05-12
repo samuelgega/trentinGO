@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AdminNav from './AdminNav'
+import GestoreNav from './GestoreNav'
 
-const GestisciEventi = () => {
+const GestisciEventiCreati = () => {
     const navigate = useNavigate()
 
-    // dati prova
+    //dati prova da implementare in futuro con il backend
     const [listaEventi, setListaEventi] = useState([
         {
             _id: '1',
             properties: { 
                 nome: 'Marcatini di natale',
                 categoria: 'Cultura',
-                dataInizio: '2026-05-01', // Passato
-                dataFine: '2026-05-20'    // Futuro
+                dataInizio: '2026-05-01', 
+                dataFine: '2026-05-20'   
             }
         },
         {
@@ -21,8 +21,8 @@ const GestisciEventi = () => {
             properties: { 
                 nome: 'Mercato',
                 categoria: 'Sport',
-                dataInizio: '2026-04-10', // Passato
-                dataFine: '2026-04-15'    // Passato
+                dataInizio: '2026-04-10',
+                dataFine: '2026-04-15'   
             }
         },
         {
@@ -30,16 +30,15 @@ const GestisciEventi = () => {
             properties: { 
                 nome: 'Festival dello sport',
                 categoria: 'Musica',
-                dataInizio: '2026-06-01', // Futuro
-                dataFine: '2026-06-10'    // Futuro
+                dataInizio: '2026-06-01', 
+                dataFine: '2026-06-10'   
             }
         }
     ])
 
-
     // handler per tornare alla home 
     const goToHome = () => {
-        navigate('/admin-home')
+        navigate('/gestore-home')
     }
 
     // handler per andare alla pagina crea evento
@@ -60,7 +59,6 @@ const GestisciEventi = () => {
         }
     }
 
-    //ricordasi di cambiarlo in base al backend
     //funzione per determinare lo stato dell'evento in base alle date
     const getStatoEvento = (dataInizio, dataFine) => {
         if (!dataInizio || !dataFine) return null;
@@ -85,7 +83,7 @@ const GestisciEventi = () => {
 
     return (
         <>
-            <AdminNav />
+            <GestoreNav />
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestione Eventi</h2>
@@ -151,7 +149,7 @@ const GestisciEventi = () => {
             </div>
         </>
     )
+
 }
 
-
-export default GestisciEventi
+export default GestisciEventiCreati
