@@ -42,7 +42,7 @@ const GestisciPDI = () => {
 
     // handler per gestire la modifica
     const gestisciModifica = (pdi) => {
-        showAlert(`Hai cliccato MODIFICA sul PDI: ${pdi.properties.nome} (ID: ${pdi._id})`)
+        navigate(`/modifica-pdi/${pdi._id}`)
     }
 
     // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
