@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { AlertProvider } from './components/AlertController'
-import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi } from './components/adminComponents';
+import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI } from './components/adminComponents';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './components/gestoreComponents';
 
 const App = () => {
@@ -18,6 +18,7 @@ const App = () => {
           <Route path="/gestore-home" element={<GestoreHome />} />
           <Route path="/gestore-home/gestisci-pdi-associati" element={<GestisciPDIAssociati />} />
           <Route path="/gestore-home/gestisci-eventi-creati" element={<GestisciEventiCreati />} />
+          <Route path="/modifica-pdi/:id" element={<ModificaPDI />} />
         </Routes>
       </Router>
     </AlertProvider>
