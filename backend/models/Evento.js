@@ -25,7 +25,7 @@ const schemaEvento = new mongoose.Schema({
         dataInizio: Date,
         dataFine: Date,
         gestore: String,
-        dataCreazione: Date.now
+        dataCreazione: Date
     }
 })
 

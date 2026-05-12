@@ -30,6 +30,9 @@ app.get("/", (req, res) => {
 const pdiRoutes = require("./routes/pdiRoutes");
 app.use("/api/v1/pdi", pdiRoutes);
 
+//router degli eventi
+const eventiRouter = require('./routes/eventiRouter')
+app.use('/api/v1/eventi', eventiRouter)
 
 //handler per errori 404
 app.use((req, res) => {
