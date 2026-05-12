@@ -7,7 +7,12 @@ const AdminHome = () => {
 
     // handler per andare alla pagina gestione pdi
     const goToGestionePDI = () => {
-        navigate('/gestisci-pdi')
+        navigate('/admin-home/gestisci-pdi')
+    }
+
+    //handler per andare alla pagina gestione eventi
+    const goToGestioneEventi = () => {
+        navigate('/admin-home/gestisci-eventi')
     }
 
     return (
@@ -43,7 +48,10 @@ const AdminHome = () => {
                                 <p className="card-text text-muted mb-4">
                                     Aggiungi, modifica o elimina eventi presenti nel sistema.
                                 </p>
-                                <button className="btn btn-outline-secondary mt-auto">
+                                <button 
+                                    className="btn btn-primary mt-auto"
+                                    onClick={goToGestioneEventi}
+                                >
                                     Gestisci eventi
                                 </button>
                             </div>

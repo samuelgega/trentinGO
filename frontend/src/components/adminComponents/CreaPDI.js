@@ -32,10 +32,8 @@ const CreaPDI = () => {
         const err = {}
 
         if (!dati.nome.trim()) err.nome = "Il nome è obbligatorio"
-        else if (dati.nome.trim().length < 3) err.nome = "Il nome deve avere almeno 3 caratteri"
-        else if (dati.nome.trim().length > 30) err.nome = "Il nome deve avere al massimo 30 caratteri"
 
-        if (!dati.tipo) err.tipo = "Seleziona una tipologia"
+        if (!dati.categoria) err.categoria = "Seleziona una tipologia"
 
         if (dati.descrizione.length > 500) err.descrizione = "La descrizione deve avere al massimo 500 caratteri"
 
@@ -84,7 +82,7 @@ const CreaPDI = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
 
-        //alidazione dei dati
+        //validazione dei dati
         const nuoviErrori = validaDati(formData)
         setErrori(nuoviErrori)
         if (Object.keys(nuoviErrori).length > 0) return
@@ -94,7 +92,7 @@ const CreaPDI = () => {
         Object.entries(formData).forEach(([key, value]) => {
             submitData.append(key, value)
         })
-        immagini.forEach((img) => submitData.append('immagini', img))
+        immagini.forEach((img) => submitData.append('immagine', img))
 
         //chiamata API
         try {
@@ -106,9 +104,9 @@ const CreaPDI = () => {
                 }
             })
 
-            if (response.status === 200) {
+            if (response.status === 201) {
                 showAlert("Operazione completata.", "Il punto di interesse è stato creato con successo", "success")
-                navigate('/gestisci-pdi')
+                navigate(-1)
             } else if (response.status === 500) {
                 showAlert("Operazione non riuscita.", "Errore interno al server", "danger")
             } else {
@@ -121,13 +119,12 @@ const CreaPDI = () => {
 
     return (
         <>
-            <AdminNav />
             <div className="container mt-4 mb-5">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Crea nuovo punto di interesse</h2>
                     <button
                         className="btn btn-outline-secondary"
-                        onClick={() => navigate('/gestisci-pdi')}
+                        onClick={() => navigate(-1)}
                     >
                         &larr; Annulla e torna indietro
                     </button>
@@ -155,8 +152,8 @@ const CreaPDI = () => {
                                 <div className="col-md-4">
                                     <label className="form-label fw-bold">Tipologia*</label>
                                     <select
-                                        name="tipo"
-                                        value={formData.tipo}
+                                        name="categoria"
+                                        value={formData.categoria}
                                         className="form-select"
                                         onChange={handleInput}
                                     >
@@ -168,7 +165,7 @@ const CreaPDI = () => {
                                         <option value="Lago">Lago</option>
                                         <option value="Altro">Altro</option>
                                     </select>
-                                    <small className="text-danger">{errori.tipo}</small>
+                                    <small className="text-danger">{errori.categoria}</small>
                                 </div>
                             </div>
                             <div className="row g-3 mb-4">
