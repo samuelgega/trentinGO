@@ -77,4 +77,70 @@ const visualizzaTuttiPDI = async (req, res) => {
     }
 };
 
-module.exports = { creaPDI, visualizzaTuttiPDI };
+//visualizza un PDI specifico
+const visualizzaPDI = async (req, res) => {
+    try{
+        //recupero pdi speifico
+        const pdiID = await PDI.findById(req.params.id);
+        if(!pdiID){
+            return res.status(404).json({ error: "PDI non trovato" });
+        }
+        res.status(200).json({ data : pdiID });
+    }catch(error){
+        console.error("Errore nel recupero del PDI:", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+}
+
+//modifica PDI esistente
+const modificaPDI = async (req, res) => {
+    try{
+        const { id } = req.params;
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, punteggio } = req.body;
+
+        const pdiEsistente = await PDI.findById(id);
+        
+        if(!pdiEsistente){
+            return res.status(404).json({ error: "PDI non trovato" });
+        }
+
+        //se vengono aggiunti nuove immagini, le aggiungo all'array esistente
+        let arrayImmaginiAggiornato = pdiEsistente.properties.immagine;
+        if (req.files && req.files.length > 0) {
+            const nuoveImmagini = req.files.map(file => file.filename);
+            arrayImmaginiAggiornato = [...arrayImmaginiAggiornato, ...nuoveImmagini];
+        }
+
+        //aggiorno le coordinate solo se vengono fornite nuove
+        const nuovaLongitudine = longitudine !== undefined ? Number(longitudine) : pdiEsistente.geometry.coordinates[0];
+        const nuovaLatitudine = latitudine !== undefined ? Number(latitudine) : pdiEsistente.geometry.coordinates[1];
+
+        //aggiorno il PDI nel database
+        pdiEsistente.properties.nome = nome || pdiEsistente.properties.nome;
+        pdiEsistente.properties.descrizione = descrizione || pdiEsistente.properties.descrizione;
+        pdiEsistente.properties.categoria = categoria || pdiEsistente.properties.categoria;
+        pdiEsistente.properties.prezzo = prezzo !== undefined ? Number(prezzo) : pdiEsistente.properties.prezzo;
+        pdiEsistente.properties.punteggio = punteggio !== undefined ? Number(punteggio) : pdiEsistente.properties.punteggio;
+        pdiEsistente.properties.immagine = arrayImmaginiAggiornato;
+
+        //savo le modifiche al database
+        const pdiAggiornato = await pdiEsistente.save();
+
+        res.status(200).json({
+            message: "PDI aggiornato con successo",
+            data: pdiAggiornato
+        });
+
+    } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ 
+                error: "Esiste già un Punto di Interesse con questo nome. Scegline uno diverso." 
+            });
+        }
+
+        console.error("Errore nella modifica del PDI:", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+};
+
+module.exports = {creaPDI, visualizzaTuttiPDI, visualizzaPDI,modificaPDI};

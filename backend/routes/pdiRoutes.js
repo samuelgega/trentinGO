@@ -10,7 +10,14 @@ const upload = require("../middlewares/upload");
 //route per visualizzare tutti i PDI
 router.get("/", PDI.visualizzaTuttiPDI);
 
+//visualizza un PDI specifico
+router.get("/:id", PDI.visualizzaPDI);
+
 //Route per creare un nuovo PDI
-router.post("/", upload.array("immagine", 10), PDI.creaPDI);
+router.post("/", upload.array("immagine",10), PDI.creaPDI);
+
+//route per modificare un PDI esistente
+router.put("/:id", upload.array("immagine",10), PDI.modificaPDI);
+
 
 module.exports = router;
