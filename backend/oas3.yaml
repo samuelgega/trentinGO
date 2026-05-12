@@ -16,7 +16,7 @@ paths:
         - PDI
       responses:
         '200':
-          description: "Lista recuperata"
+          description: "Lista recuperata con successo"
           content:
             application/json:
               schema:
@@ -45,7 +45,7 @@ paths:
               $ref: "#/components/schemas/PDIUploadInput"
       responses:
         '201':
-          description: "PDI creato"
+          description: "PDI creato con successo"
           content:
             application/json:
               schema:
@@ -62,10 +62,72 @@ paths:
         '500':
           $ref: "#/components/responses/ErrorResponse"
 
+  /pdi/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        description: "L'ID univoco del PDI"
+    
+    get:
+      summary: "Visualizza un PDI specifico"
+      tags:
+        - PDI
+      responses:
+        '200':
+          description: "PDI recuperato con successo"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/PDI"
+        '404':
+          description: "PDI non trovato"
+          $ref: "#/components/responses/ErrorResponse"
+        '500':
+          $ref: "#/components/responses/ErrorResponse"
+
+    put:
+      summary: "Modifica un PDI esistente"
+      tags:
+        - PDI
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PDIUpdateInput"
+      responses:
+        '200':
+          description: "PDI aggiornato con successo"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "PDI aggiornato con successo"
+                  data:
+                    $ref: "#/components/schemas/PDI"
+        '400':
+          description: "Errore di validazione o nome già esistente"
+          $ref: "#/components/responses/ErrorResponse"
+        '404':
+          description: "PDI non trovato"
+          $ref: "#/components/responses/ErrorResponse"
+        '500':
+          $ref: "#/components/responses/ErrorResponse"
+
 components:
   responses:
     ErrorResponse:
-      description: "Errore"
+      description: "Risposta di Errore Standard"
       content:
         application/json:
           schema:
@@ -75,16 +137,19 @@ components:
               error:
                 type: string
                 maxLength: 255
+                example: "Errore interno del server"
 
   schemas:
-
+  
     PDIUploadInput:
       type: object
       additionalProperties: false
       required:
         - nome
+        - categoria
         - latitudine
         - longitudine
+        - punteggio
       properties:
         nome:
           type: string
@@ -110,13 +175,45 @@ components:
         punteggio:
           type: integer
           minimum: 0
-        immagines: 
+        immagine: 
           type: array
           items:
             type: string
             format: binary 
-          description: "Carica i file delle immagini"
+          description: "Carica i file delle immagini (max 10)"
 
+    PDIUpdateInput:
+      type: object
+      additionalProperties: false
+      description: "Tutti i campi sono opzionali in fase di modifica"
+      properties:
+        nome:
+          type: string
+          maxLength: 100
+        descrizione:
+          type: string
+          maxLength: 500
+        categoria:
+          type: string
+          maxLength: 50
+        latitudine:
+          type: number
+          format: float
+        longitudine:
+          type: number
+          format: float
+        prezzo:
+          type: number
+          minimum: 0
+        punteggio:
+          type: integer
+          minimum: 0
+        immagine: 
+          type: array
+          items:
+            type: string
+            format: binary 
+          description: "Nuove immagini da aggiungere al PDI"
 
     PDI:
       type: object
