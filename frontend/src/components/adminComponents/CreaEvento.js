@@ -61,9 +61,6 @@ const CreaEvento = () => {
         const error = {}
 
         if (!dati.nome.trim()) error.nome = "Il nome è obbligatorio"
-        else if (dati.nome.trim().length < 3) error.nome = "Il nome deve avere almeno 3 caratteri"
-        else if (dati.nome.trim().length > 30) error.nome = "Il nome deve avere al massimo 30 caratteri"
-
 
         if (!dati.categoria) error.categoria = "Seleziona una categoria"
 

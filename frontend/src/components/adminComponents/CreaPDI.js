@@ -32,8 +32,6 @@ const CreaPDI = () => {
         const err = {}
 
         if (!dati.nome.trim()) err.nome = "Il nome è obbligatorio"
-        else if (dati.nome.trim().length < 3) err.nome = "Il nome deve avere almeno 3 caratteri"
-        else if (dati.nome.trim().length > 30) err.nome = "Il nome deve avere al massimo 30 caratteri"
 
         if (!dati.categoria) err.categoria = "Seleziona una tipologia"
 
@@ -94,7 +92,7 @@ const CreaPDI = () => {
         Object.entries(formData).forEach(([key, value]) => {
             submitData.append(key, value)
         })
-        immagini.forEach((img) => submitData.append('immagini', img))
+        immagini.forEach((img) => submitData.append('immagine', img))
 
         //chiamata API
         try {
@@ -106,7 +104,7 @@ const CreaPDI = () => {
                 }
             })
 
-            if (response.status === 200) {
+            if (response.status === 201) {
                 showAlert("Operazione completata.", "Il punto di interesse è stato creato con successo", "success")
                 navigate(-1)
             } else if (response.status === 500) {

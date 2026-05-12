@@ -5,6 +5,7 @@ const PDI = require("../models/PDI");
 const creaPDI = async (req, res) => {
 
     try{
+        console.log("Dati ricevuti:", req.files);
         const{nome, descrizione, categoria, latitudine, longitudine, prezzo, punteggio} = req.body;
 
         let arrayImmagini = [];
