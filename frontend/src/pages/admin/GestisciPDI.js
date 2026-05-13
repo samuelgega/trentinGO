@@ -11,6 +11,10 @@ const GestisciPDI = () => {
     // dati dal backend
     const [listaPDI, setListaPDI] = useState([])
 
+    //popup elimina
+    const [popupAperto, setPopupAperto] = useState(false)
+    const [pdiDaEliminare, setPdiDaEliminare] = useState(null)
+
     const recuperaDatiDalDatabase = async () => {
         try {
             const response = await fetch('http://localhost:3001/api/v1/pdi');                
@@ -44,14 +48,25 @@ const GestisciPDI = () => {
     const gestisciModifica = (pdi) => {
         navigate(`/modifica-pdi/${pdi._id}`)
     }
-
-    // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
-    const gestisciElimina = (pdi) => {
-        const conferma = window.confirm(`Sei sicuro di voler eliminare ${pdi.properties.nome}?`)
-        if (conferma) {
-            showAlert(`PDI ${pdi._id} eliminato!`)
-        }
+        
+    //popup conferma eliminazione
+    const apriPopupElimina = (pdi) => {
+        setPdiDaEliminare(pdi)
+        setPopupAperto(true)
     }
+
+    const chiudiPopupElimina = () => {
+        setPdiDaEliminare(null)
+        setPopupAperto(false)
+       }
+    
+    //handler per l'eliminazione del PDI
+    
+        //alert di conferma eliminazione
+        //if (conferma) {
+        //    showAlert(`PDI ${pdi._id} eliminato!`)
+        //}
+    
 
     return (
         <>
@@ -103,7 +118,7 @@ const GestisciPDI = () => {
                                                     </button>
                                                     <button
                                                         className="btn btn-sm btn-danger"
-                                                        onClick={() => gestisciElimina(pdi)}
+                                                        onClick={() => apriPopupElimina(pdi)}
                                                     >
                                                         Elimina
                                                     </button>
@@ -117,6 +132,11 @@ const GestisciPDI = () => {
                     </div>
                 </div>
             </div>
+            <PopUpElimina 
+                isOpen={popupAperto} 
+                onClose={chiudiPopupElimina}  
+                nomeElemento={pdiDaEliminare ? pdiDaEliminare.properties.nome : ""} 
+            />
         </>
     )
 }
