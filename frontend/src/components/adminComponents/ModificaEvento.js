@@ -10,7 +10,6 @@ const statoInizialeForm = {
     nome: '',
     descrizione: '',
     categoria: '',
-    punteggio: '',
     prezzo: '',
     dataInizio: '',
     dataFine: '',
@@ -81,7 +80,6 @@ const ModificaEvento = () => {
                         latitudine: evento.geometry.coordinates[1] || '',
                         longitudine: evento.geometry.coordinates[0] || '',
                         prezzo: evento.properties.prezzo || 0,
-                        punteggio: evento.properties.punteggio || 0,
                         dataInizio: evento.properties.dataInizio ? evento.properties.dataInizio.split('T')[0] : '',
                         dataFine: evento.properties.dataFine ? evento.properties.dataFine.split('T')[0] : '',
                         pdiCollegato: idPdi || ''
@@ -104,9 +102,6 @@ const ModificaEvento = () => {
         if (!dati.nome.trim()) error.nome = "Il nome è obbligatorio"
         if (!dati.categoria) error.categoria = "Seleziona una categoria"
         if (dati.descrizione.length > 500) error.descrizione = "La descrizione deve avere al massimo 500 caratteri"
-
-        if (dati.punteggio === '' || isNaN(dati.punteggio) || dati.punteggio < 10)
-            error.punteggio = "Il punteggio minimo è di 10 punti"
 
         if (dati.prezzo !== '' && (isNaN(dati.prezzo) || dati.prezzo < 0))
             error.prezzo = "Inserisci un prezzo valido (0 o più)"
@@ -296,18 +291,6 @@ const ModificaEvento = () => {
                             {/* Dettagli */}
                             <h5 className="text-primary mb-3">2. Dettagli</h5>
                             <div className="row g-3 mb-4">
-                                <div className="col-md-6">
-                                    <label className="form-label fw-bold">Punteggio*</label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        name="punteggio"
-                                        value={formData.punteggio}
-                                        className="form-control"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.punteggio}</small>
-                                </div>
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Prezzo</label>
                                     <input

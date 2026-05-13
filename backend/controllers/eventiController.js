@@ -19,7 +19,7 @@ const visualizzaTuttiEventi = async (req, res) => {
 //creo evento
 const creaEvento = async (req, res) => {
     try {
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, punteggio, dataInizio, dataFine, pdiCollegato } = req.body
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato } = req.body
 
         let arrayImmagini = [];
         if (req.files && req.files.length > 0) {
@@ -29,11 +29,6 @@ const creaEvento = async (req, res) => {
         //controllo se il nome è presente e non è vuoto
         if (!nome || nome.trim() === "" || nome.trim().length < 2 || nome.trim().length > 100) {
             return res.status(400).json({ error: "Il campo nome non è valido" })
-        }
-
-        //controllo se il punteggio è un numero valido
-        if (!punteggio || punteggio < 0) {
-            return res.status(400).json({ error: "Il punteggio è un campo obbligatorio e deve essere un numero positivo" })
         }
 
         //controllo se la posizione è presente e ha valori validi
@@ -58,7 +53,6 @@ const creaEvento = async (req, res) => {
                 descrizione,
                 categoria,
                 prezzo: prezzo || 0,
-                punteggio: punteggio || 0,
                 immagine: arrayImmagini,
                 dataInizio,
                 dataFine,

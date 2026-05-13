@@ -20,7 +20,6 @@ const schemaEvento = new mongoose.Schema({
         },
         categoria: String,
         prezzo: Number,
-        punteggio: Number,
         immagine: [String],
         dataInizio: Date,
         dataFine: Date,
