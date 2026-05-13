@@ -61,12 +61,27 @@ const GestisciPDI = () => {
        }
     
     //handler per l'eliminazione del PDI
-    
-        //alert di conferma eliminazione
-        //if (conferma) {
-        //    showAlert(`PDI ${pdi._id} eliminato!`)
-        //}
-    
+
+    const gestisciEliminazione = async () => {
+        if(!pdiDaEliminare) return;
+        
+        try {
+            const response = await fetch(`http://localhost:3001/api/v1/pdi/${pdiDaEliminare._id}`, {
+                method: 'DELETE',
+            });
+        if (response.ok) {
+            showAlert(`PDI ${pdiDaEliminare._id} eliminato!`)
+            //aggiorno la lista dei PDI 
+            recuperaDatiDalDatabase();
+        } else {
+            showAlert("Errore", "impossibile eliminare il PDI", "danger");
+        }
+        }catch (error) {
+            showAlert("Errore di connessione. Assicurati che il backend sia acceso!", "Controlla la console per maggiori dettagli", "danger");
+        } finally {
+            chiudiPopupElimina();
+        }
+    }
 
     return (
         <>
@@ -135,6 +150,7 @@ const GestisciPDI = () => {
             <PopUpElimina 
                 isOpen={popupAperto} 
                 onClose={chiudiPopupElimina}  
+                onConfirm={gestisciEliminazione}
                 nomeElemento={pdiDaEliminare ? pdiDaEliminare.properties.nome : ""} 
             />
         </>
