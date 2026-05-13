@@ -124,6 +124,28 @@ paths:
         '500':
           $ref: "#/components/responses/ErrorResponse"
 
+    delete:
+      summary: "Elimina un PDI esistente"
+      tags:
+        - PDI
+      responses:
+        '200':
+          description: "PDI eliminato con successo"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "PDI eliminato con successo"
+                  data:
+                    $ref: "#/components/schemas/PDI"
+        '404':
+          description: "PDI non trovato"
+          $ref: "#/components/responses/ErrorResponse"
+        '500':
+          $ref: "#/components/responses/ErrorResponse"
 components:
   responses:
     ErrorResponse:
