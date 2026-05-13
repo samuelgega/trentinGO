@@ -20,6 +20,7 @@ const App = () => {
           <Route path="/gestore-home/gestisci-pdi-associati" element={<GestisciPDIAssociati />} />
           <Route path="/gestore-home/gestisci-eventi-creati" element={<GestisciEventiCreati />} />
           <Route path="/modifica-pdi/:id" element={<ModificaPDI />} />
+          <Route path="/modifica-evento/:id" element={<ModificaEvento />} />
         </Routes>
       </Router>
     </AlertProvider>

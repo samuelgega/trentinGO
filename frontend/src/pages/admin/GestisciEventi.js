@@ -42,7 +42,7 @@ const GestisciEventi = () => {
 
     // handler per gestire la modifica
     const gestisciModifica = (evento) => {
-        showAlert(`Hai cliccato MODIFICA sull'Evento: ${evento.properties.nome} (ID: ${evento._id})`)
+        navigate(`/modifica-evento/${evento._id}`)
     }
 
     // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
