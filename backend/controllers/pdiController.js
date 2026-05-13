@@ -143,4 +143,29 @@ const modificaPDI = async (req, res) => {
     }
 };
 
-module.exports = {creaPDI, visualizzaTuttiPDI, visualizzaPDI,modificaPDI};
+//elimina un PDI esistente
+const eliminaPDI = async (req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const pdiEsistente = await PDI.findById(id);
+
+        if(!pdiEsistente){
+            return res.status(404).json({ error: "PDI non trovato" });
+        }
+
+        const pdiEliminato = await PDI.deleteOne({ _id: id});
+
+        res.status(200).json({
+            message: "PDI eliminato con successo",
+            data: pdiEliminato
+        });
+
+    }catch (error) {
+        console.error("Errore nel recupero del PDI:", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+}
+
+module.exports = {creaPDI, visualizzaTuttiPDI, visualizzaPDI,modificaPDI, eliminaPDI};

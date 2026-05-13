@@ -19,5 +19,8 @@ router.post("/", upload.array("immagine",10), PDI.creaPDI);
 //route per modificare un PDI esistente
 router.put("/:id", upload.array("immagine",10), PDI.modificaPDI);
 
+//route per eliminare un PDI esistente
+router.delete("/:id", PDI.eliminaPDI);
+
 
 module.exports = router;
