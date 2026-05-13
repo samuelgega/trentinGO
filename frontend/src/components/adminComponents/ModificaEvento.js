@@ -34,62 +34,68 @@ const ModificaEvento = () => {
     const [datiModificati, setDatiModificati] = useState(false)
 
     //prendo la lista dei PDI per poterli collegare all'evento
-        const [listaPDI, setListaPDI] = useState([])
-    
-        useEffect(() => {
-            const fetchPDI = async () => {
-                try {
-                    const response = await fetch('http://localhost:3001/api/v1/pdi');
-                    if (response.ok) {
-                        const json = await response.json();
-                        setListaPDI(json.data);
-                    }
-                } catch (error) {
-                    console.error("Impossibile caricare i PDI:", error);
+    const [listaPDI, setListaPDI] = useState([])
+    useEffect(() => {
+        const fetchPDI = async () => {
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/pdi');
+                if (response.ok) {
+                    const json = await response.json();
+                    setListaPDI(json.data);
                 }
-            };
+            } catch (error) {
+                console.error("Impossibile caricare i PDI:", error);
+            }
+        };
             fetchPDI();
-        }, []);
+    }, []);
     
-        //filtro listaPDI
-        const [ricercaPDI, setRicercaPDI] = useState("");
-        const pdiFiltrati = listaPDI.filter(pdi => 
-            pdi.properties.nome.toLowerCase().includes(ricercaPDI.toLowerCase())
-        );
+    //filtro listaPDI
+    const [ricercaPDI, setRicercaPDI] = useState("");
+    const pdiFiltrati = listaPDI.filter(pdi => 
+        pdi.properties.nome.toLowerCase().includes(ricercaPDI.toLowerCase())
+    );
 
     //recupero i dati dell'evento da modificare
-        useEffect(() => {
-            const fetchPDI = async () => {
-                try {
-                    const response = await fetch(`http://localhost:3001/api/v1/eventi/${id}`)
-                    if (response.ok) {
-                        const json = await response.json()
-                        const evento = json.data
+    useEffect(() => {
+        const fetchPDI = async () => {
+            try {
+                const response = await fetch(`http://localhost:3001/api/v1/eventi/${id}`)
+                if (response.ok) {
+                    const json = await response.json()
+                    const evento = json.data
                         
-                        //Pre-compipilazione del form con i dati dell'evento selezionato
-                        setFormData({
-                            nome: evento.properties.nome || '',
-                            categoria: evento.properties.categoria || '',
-                            descrizione: evento.properties.descrizione || '',
-                            latitudine: evento.geometry.coordinates[1] || '',
-                            longitudine: evento.geometry.coordinates[0] || '',
-                            prezzo: evento.properties.prezzo || 0,
-                            punteggio: evento.properties.punteggio || 0,
-                            dataInizio: evento.properties.dataInizio ? evento.properties.dataInizio.split('T')[0] : '',
-                            dataFine: evento.properties.dataFine ? evento.properties.dataFine.split('T')[0] : '',
-                            pdiCollegato: evento.properties.pdiCollegato || ''
-                        })
-                    } else {
-                        showAlert("Errore", "Evento non trovato", "danger")
-                        navigate(-1)
+                    //controllo se c'è un pdi associato
+                    let idPdi = '';
+                    if (evento.properties.pdiCollegato) {
+                        idPdi = typeof evento.properties.pdiCollegato === 'object' 
+                        ? evento.properties.pdiCollegato._id 
+                        : evento.properties.pdiCollegato;
                     }
-                } catch (error) {
-                    showAlert("Errore di rete", "Impossibile recuperare i dati", "danger")
-                } 
-            }
-    
+                        
+                    //Pre-compipilazione del form con i dati dell'evento selezionato
+                    setFormData({
+                        nome: evento.properties.nome || '',
+                        categoria: evento.properties.categoria || '',
+                        descrizione: evento.properties.descrizione || '',
+                        latitudine: evento.geometry.coordinates[1] || '',
+                        longitudine: evento.geometry.coordinates[0] || '',
+                        prezzo: evento.properties.prezzo || 0,
+                        punteggio: evento.properties.punteggio || 0,
+                        dataInizio: evento.properties.dataInizio ? evento.properties.dataInizio.split('T')[0] : '',
+                        dataFine: evento.properties.dataFine ? evento.properties.dataFine.split('T')[0] : '',
+                        pdiCollegato: idPdi || ''
+                    })
+                } else {
+                    showAlert("Errore", "Evento non trovato", "danger")
+                    navigate(-1)
+                }
+            } catch (error) {
+                showAlert("Errore di rete", "Impossibile recuperare i dati", "danger")
+            } 
+        }
             fetchPDI()
-        }, [id, navigate, showAlert])
+    }, [id, navigate, showAlert])
 
     //convalida dei dati
     const validazioneDati = (dati) => {
@@ -111,7 +117,7 @@ const ModificaEvento = () => {
         if (!dati.dataInizio) {
             error.dataInizio = "La data di inizio è obbligatoria";
         } 
-        
+
         if (!dati.dataFine) {
             error.dataFine = "La data di fine è obbligatoria";
         } else {
@@ -158,6 +164,8 @@ const ModificaEvento = () => {
     //handle per il menu a tendina dei PDI collegabili
     const handlePdiChange = (e) => {
         const pdiSelezionatoId = e.target.value;
+
+        setDatiModificati(true);
         
         if (!pdiSelezionatoId) {
             setFormData(prev => ({ ...prev, pdiCollegato: '', latitudine: '', longitudine: '' }));
