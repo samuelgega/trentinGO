@@ -1,4 +1,5 @@
 const PDI = require("../models/PDI");
+const fs = require("fs");
 
 //crea un PDI
 const creaPDI = async (req, res) => {
@@ -114,6 +115,7 @@ const modificaPDI = async (req, res) => {
         //aggiorno le coordinate solo se vengono fornite nuove
         const nuovaLongitudine = longitudine !== undefined ? Number(longitudine) : pdiEsistente.geometry.coordinates[0];
         const nuovaLatitudine = latitudine !== undefined ? Number(latitudine) : pdiEsistente.geometry.coordinates[1];
+        pdiEsistente.geometry.coordinates = [nuovaLongitudine, nuovaLatitudine];
 
         //aggiorno il PDI nel database
         pdiEsistente.properties.nome = nome || pdiEsistente.properties.nome;
@@ -149,17 +151,29 @@ const eliminaPDI = async (req, res) => {
 
         const { id } = req.params;
 
+        //cerco se esiste il PDI da eliminare
         const pdiEsistente = await PDI.findById(id);
 
         if(!pdiEsistente){
             return res.status(404).json({ error: "PDI non trovato" });
         }
 
-        const pdiEliminato = await PDI.deleteOne({ _id: id});
+        //controlle se il PDI ha immagini associate e le elimino
+        if(pdiEsistente.properties.immagine && pdiEsistente.properties.immagine.length > 0){
+            pdiEsistente.properties.immagine.forEach(immagine => {
+                const percorsoImmagine = `./uploads/${immagine}`;
+                if (fs.existsSync(percorsoImmagine)) {
+                    fs.unlinkSync(percorsoImmagine);
+                }
+            });
+        }
+        
+        //elimino il PDI dal db
+        await pdiEsistente.deleteOne();
 
         res.status(200).json({
             message: "PDI eliminato con successo",
-            data: pdiEliminato
+            data: pdiEsistente
         });
 
     }catch (error) {
