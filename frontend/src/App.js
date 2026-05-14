@@ -5,6 +5,7 @@ import { AlertProvider } from '../src/contexts/AlertController';
 import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
 import { Homepage, HomeEventi } from './pages/home';
+import HomeProfilo from './pages/profilo/HomeProfilo';
 import Error404 from './pages/Error/NotFound';
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Homepage />} />
           <Route path="/home/eventi" element={<HomeEventi />} />
+          <Route path="/profilo" element={<HomeProfilo />} />
           <Route path="/admin-home" element={<AdminHome />} />
           <Route path="/admin-home/gestisci-pdi" element={<GestisciPDI />} />
           <Route path="/crea-pdi" element={<CreaPDI />} />

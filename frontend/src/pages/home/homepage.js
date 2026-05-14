@@ -6,7 +6,8 @@ const Homepage = () => {
       <>
       <HomeNav />
       <div className="home-content">
-        <h1 className="home-title">Pagina in costruzione</h1>
+        <h1 className="home-title">Mappa e lista dei PDI</h1>
+        <p className="home-description">pagina in costruzione</p>
       </div>
       </>
   );
