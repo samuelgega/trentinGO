@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import '../../assets/home.css';
 
 const HomeNav = () => {
@@ -7,6 +8,8 @@ const HomeNav = () => {
     //capire quale link è attivo
     const location = useLocation();
     const isActive = (path) => location.pathname === path ? 'active' : '';
+
+    const navigate = useNavigate();
 
     return (
         <header className="home-navbar">  
@@ -27,7 +30,11 @@ const HomeNav = () => {
             </div>
             {/* pulsante del profilo */}
             <div className='nav-actions'>
-                <button className='icon-button' title='Profilo'>
+                <button 
+                    className='icon-button' 
+                    title='Profilo'
+                    onClick={() => navigate('/profilo')}
+                >
                     <span className="material-symbols-outlined">account_circle</span>
                 </button>
             </div>
