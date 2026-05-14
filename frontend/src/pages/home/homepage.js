@@ -1,10 +1,10 @@
 import React from 'react';
+import HomeNav from '../../components/homeComponents/HomeNav';
 
 const Homepage = () => {
   return (
     <div>
-      <h1>Homepage</h1>
-      <p>In fase di sviluppo</p>
+      <HomeNav />
     </div>
   );
 };
