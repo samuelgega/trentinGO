@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AlertProvider } from '../src/contexts/AlertController';
 import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
-import { Homepage } from './pages/home';
+import { Homepage, HomeEventi } from './pages/home';
 import Error404 from './pages/Error/NotFound';
 
 const App = () => {
@@ -14,6 +14,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Homepage />} />
+          <Route path="/home/eventi" element={<HomeEventi />} />
           <Route path="/admin-home" element={<AdminHome />} />
           <Route path="/admin-home/gestisci-pdi" element={<GestisciPDI />} />
           <Route path="/crea-pdi" element={<CreaPDI />} />
