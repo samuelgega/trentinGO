@@ -1,16 +1,18 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 import { AlertProvider } from '../src/contexts/AlertController';
 import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
-
+import { Homepage } from './pages/home';
 
 const App = () => {
   return (
     <AlertProvider>
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/home" element={<Homepage />} />
           <Route path="/admin-home" element={<AdminHome />} />
           <Route path="/admin-home/gestisci-pdi" element={<GestisciPDI />} />
           <Route path="/crea-pdi" element={<CreaPDI />} />
