@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AlertController from '../AlertController'
-import AdminNav from './AdminNav'
-import { useAlert } from '../AlertController'
+import AlertController from '../../contexts/AlertController'
+import AdminNav from '../../components/adminComponents/AdminNav'
+import { useAlert } from '../../contexts/AlertController'
 
 const GestisciPDI = () => {
     const navigate = useNavigate()

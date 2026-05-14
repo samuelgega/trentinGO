@@ -1,6 +1,6 @@
 import React, { useState,useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAlert } from '../AlertController';
+import { useAlert } from '../../contexts/AlertController';
 
 // Costanti per validazione immagini
 const MAX_SIZE = 2 * 1024 * 1024 // 2MB

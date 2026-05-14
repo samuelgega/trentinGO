@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom'
-import GestoreNav from "./GestoreNav";
+import GestoreNav from "../../components/gestoreComponents/GestoreNav";
 
 
 const GestoreHome = () => {

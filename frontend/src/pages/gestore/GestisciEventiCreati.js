@@ -1,38 +1,46 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AdminNav from './AdminNav'
-import {useAlert} from '../AlertController'
+import GestoreNav from '../../components/gestoreComponents/GestoreNav'
+import {useAlert} from '../../contexts/AlertController'
 
-const GestisciEventi = () => {
+const GestisciEventiCreati = () => {
     const navigate = useNavigate()
     const { showAlert } = useAlert()
-    // dati prova
-    const [listaEventi, setListaEventi] = useState([])
-        
-    const recuperaDatiDalDatabase = async () => {
-            try {
-                const response = await fetch('http://localhost:3001/api/v1/eventi');                
-                if (!response.ok) {
-                    throw new Error(`Errore HTTP: ${response.status}`);
-                }
-                const jsonResponse = await response.json();
-                setListaEventi(jsonResponse.data); 
-                
-            } catch (error) {
-                console.error("Errore di connessione:", error);
-                showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
+
+    //dati prova da implementare in futuro con il backend
+    const [listaEventi, setListaEventi] = useState([
+        {
+            _id: '1',
+            properties: { 
+                nome: 'Marcatini di natale',
+                categoria: 'Cultura',
+                dataInizio: '2026-05-01', 
+                dataFine: '2026-05-20'   
+            }
+        },
+        {
+            _id: '2',
+            properties: { 
+                nome: 'Mercato',
+                categoria: 'Sport',
+                dataInizio: '2026-04-10',
+                dataFine: '2026-04-15'   
+            }
+        },
+        {
+            _id: '3',
+            properties: { 
+                nome: 'Festival dello sport',
+                categoria: 'Musica',
+                dataInizio: '2026-06-01', 
+                dataFine: '2026-06-10'   
             }
         }
-        
-    useEffect(() => {
-        recuperaDatiDalDatabase()
-    }, [])
-    
-
+    ])
 
     // handler per tornare alla home 
     const goToHome = () => {
-        navigate('/admin-home')
+        navigate('/gestore-home')
     }
 
     // handler per andare alla pagina crea evento
@@ -77,7 +85,7 @@ const GestisciEventi = () => {
 
     return (
         <>
-            <AdminNav />
+            <GestoreNav />
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestione Eventi</h2>
@@ -143,7 +151,7 @@ const GestisciEventi = () => {
             </div>
         </>
     )
+
 }
 
-
-export default GestisciEventi
+export default GestisciEventiCreati
