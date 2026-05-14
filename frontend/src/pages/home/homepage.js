@@ -3,9 +3,12 @@ import HomeNav from '../../components/homeComponents/HomeNav';
 
 const Homepage = () => {
   return (
-    <div>
+      <>
       <HomeNav />
-    </div>
+      <div className="home-content">
+        <h1 className="home-title">Pagina in costruzione</h1>
+      </div>
+      </>
   );
 };
 
