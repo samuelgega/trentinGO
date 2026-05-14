@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useAlert } from "../AlertController";
+import { useAlert } from "../../contexts/AlertController";
 import { useNavigate, useParams } from "react-router-dom";
 
 const MAX_SIZE = 2 * 1024 * 1024 // 2MB
