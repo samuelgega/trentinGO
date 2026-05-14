@@ -21,11 +21,6 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 //cartella updloads per le immagini
 app.use("/uploads", express.static("uploads"));
 
-//pagina iniziale
-app.get("/", (req, res) => {
-    res.send("Hello world");
-})
-
 //rotta dei pdi
 const pdiRoutes = require("./routes/pdiRoutes");
 app.use("/api/v1/pdi", pdiRoutes);

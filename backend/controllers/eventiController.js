@@ -201,3 +201,26 @@ const visualizzaEvento = async (req, res) => {
 }
 
 module.exports = { visualizzaTuttiEventi, creaEvento, modificaEvento, visualizzaEvento }
+
+//elimina evento
+const eliminaEvento = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        //controllo se l'evento esiste
+        const eventoEsistente = await Evento.findById(id)
+        if (!eventoEsistente) {
+            return res.status(404).json({ error: "Evento non trovato" })
+        }
+
+        //elimino l'evento dal database
+        await eventoEsistente.deleteOne()
+        res.status(200).json({ message: "Evento eliminato con successo" })
+    } catch (error){
+
+        console.error("Errore nell'eliminazione dell'evento:", error)
+        res.status(500).json({ error: "Errore interno del server" })
+
+    }
+}
+module.exports = { visualizzaTuttiEventi, creaEvento, eliminaEvento }
