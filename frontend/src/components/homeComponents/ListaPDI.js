@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import { useAlert } from '../../contexts/AlertController'
 
-const ListaPDI = () =>{
+const ListaPDI = ({PdiSelezionato}) =>{
 
 
 const {showAlert} = useAlert();
@@ -37,7 +37,9 @@ const {showAlert} = useAlert();
             {/*card pdi*/}
             <div className="flex-grow-1 overflow-auto pdi-scroll-container pb-4">
                 {listaPDI.map((pdi) => (
-                    <div key={pdi._id} className="pdi-card shadow-sm">
+                    <div key={pdi._id} 
+                         className="pdi-card shadow-sm"
+                         onClick={() => PdiSelezionato(pdi)}>
                         <div className="p-3">
                             {/*Nome*/}
                             <div className="d-flex justify-content-between align-items-center mb-2">
@@ -45,7 +47,7 @@ const {showAlert} = useAlert();
                             </div>
                             {/*Descrizione*/}
                             <p className="text-muted mb-3">
-                                {pdi.properties.descrizione.type}
+                                {pdi.properties.descrizione}
                             </p>
                          </div>
                     </div>

@@ -1,5 +1,5 @@
 import React, {useEffect, useState}from "react";
-import {MapContainer,TileLayer,Marker,Pin, Popup} from 'react-leaflet'
+import {MapContainer,TileLayer,Marker,Pin, Popup, useMap} from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { useAlert } from "../../contexts/AlertController";
@@ -15,8 +15,19 @@ const pinVerde = new L.Icon({
     shadowSize: [41, 41]
 });
 
+//funzione per lo zoom su pdi selezionato
+const ChangeView = ({ center, zoom }) => {
+  const map = useMap(); 
+  useEffect(() => {
+    if (center) {
+      map.flyTo(center, zoom, { duration: 1.5 });
+    }
+  }, [center, zoom, map]);
+  return null;
+}
 
-const MappaTrentino = () => {
+
+const MappaTrentino = ({pdiSelezionato}) => {
 
     const {showAlert} = useAlert();
 
@@ -60,6 +71,14 @@ const MappaTrentino = () => {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
+            
+            {/*PDI selezionato */}
+            {pdiSelezionato && (
+                <ChangeView
+                    center={[pdiSelezionato.geometry.coordinates[1], pdiSelezionato.geometry.coordinates[0]]}
+                    zoom={15}
+                />
+            )}
 
             {/*Pin dei vari PDI (Prova) */}
             {listaPDI.map((pdi) => (
