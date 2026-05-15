@@ -16,12 +16,18 @@ const Homepage = () => {
           <div className='row g-0 h-100'>
             {/*Parte sisnistra riservata alla mappa */}
             <div className="col-12 col-lg-8 col-mappa position-relative p-0">
-              <MappaTrentino pdiSelezionato={pdiSelezionato}/>
+              <MappaTrentino 
+                pdiSelezionatoLista={pdiSelezionato}
+                PdiSelezionatoMappa={setPdiSelezionato}
+              />
 
             </div>
             {/*Parte destra riservata alla lista e al filtro dei PDI */}
             <div className="col-12 col-lg-4 bg-light overflow-hidden border-start col-lista p-0">
-              <ListaPDI PdiSelezionato={setPdiSelezionato} />
+              <ListaPDI 
+                  PdiSelezionatoLista={setPdiSelezionato} 
+                  pdiSelezionatoMappa={pdiSelezionato} 
+              />
             </div>
 
           </div>

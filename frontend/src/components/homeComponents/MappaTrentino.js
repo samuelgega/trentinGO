@@ -1,11 +1,10 @@
-import React, {useEffect, useState}from "react";
-import {MapContainer,TileLayer,Marker,Pin, Popup, useMap} from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
+import React, { useEffect, useState, useRef } from "react"; 
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'; 
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import { useAlert } from "../../contexts/AlertController";
 
-
-//prendo l'icona del pin verde
+// Prendo l'icona del pin verde
 const pinVerde = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -15,7 +14,7 @@ const pinVerde = new L.Icon({
     shadowSize: [41, 41]
 });
 
-//funzione per lo zoom su pdi selezionato
+// Funzione per lo zoom su PDI selezionato
 const ChangeView = ({ center, zoom }) => {
   const map = useMap(); 
   useEffect(() => {
@@ -26,13 +25,41 @@ const ChangeView = ({ center, zoom }) => {
   return null;
 }
 
+//Componente marker
+const MarkerPDI = ({ pdi, isSelezionato, onPinClick }) => {
+  const markerRef = useRef(null);
 
-const MappaTrentino = ({pdiSelezionato}) => {
+  useEffect(() => {
+    if (isSelezionato && markerRef.current) {
+      markerRef.current.openPopup();
+    }
+  }, [isSelezionato]);
 
-    const {showAlert} = useAlert();
+  return (
+    <Marker 
+      position={[pdi.geometry.coordinates[1], pdi.geometry.coordinates[0]]} 
+      icon={pinVerde}
+      ref={markerRef}
+      eventHandlers={{
+        click: () => onPinClick(pdi)
+      }}
+    >
+      <Popup>
+        <div>
+          <strong>{pdi.properties.nome}</strong>
+        </div>
+      </Popup>
+    </Marker>
+  );
+};
 
-    //lista PDI
-    const [listaPDI, setListaPDI] = useState([])
+
+// COMPONENTE PRINCIPALE
+const MappaTrentino = ({ pdiSelezionatoLista, PdiSelezionatoMappa }) => {
+
+    const { showAlert } = useAlert();
+    const [listaPDI, setListaPDI] = useState([]);
+
     const recuperoPDI = async () => {
 
         try {
@@ -47,58 +74,53 @@ const MappaTrentino = ({pdiSelezionato}) => {
             console.error("Errore di connessione:", error);
             showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
         }
-
+        
     }
 
     useEffect(()=>{
         recuperoPDI()
     }, []);
     
-
-    //coodinatre di centro trento
+    // Coordinate di centro trento
     const centroTrento = [46.0667, 11.1167]
 
     return(
-
         <MapContainer 
             center={centroTrento} 
             zoom={9} 
             minZoom={8}
             style={{ height: '100%', width: '100%', zIndex: 0 }}
         >
-            {/*OpenStreetMap */}
+            {/* OpenStreetMap */}
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             
-            {/*PDI selezionato */}
-            {pdiSelezionato && (
+            {/* PDI selezionato: esegue lo zoom se cambia */}
+            {pdiSelezionatoLista && (
                 <ChangeView
-                    center={[pdiSelezionato.geometry.coordinates[1], pdiSelezionato.geometry.coordinates[0]]}
+                    center={[pdiSelezionatoLista.geometry.coordinates[1], pdiSelezionatoLista.geometry.coordinates[0]]}
                     zoom={15}
                 />
             )}
 
-            {/*Pin dei vari PDI (Prova) */}
-            {listaPDI.map((pdi) => (
-                <tr key={pdi.id}>
-                    {/*latitudine [1] e longitudine [0] */}
-                    <Marker
-                        position={[pdi.geometry.coordinates[1], pdi.geometry.coordinates[0]]}
-                        icon={pinVerde}
-                    >
-                        <Popup>
-                            <strong>{pdi.properties.nome}</strong>
-                        </Popup>
-                    </Marker>
-                </tr>
-            )
-            )}
+            {/*lista pdi*/}
+            {listaPDI.map((pdi) => {
+                
+                const isSelezionato = pdiSelezionatoLista && pdiSelezionatoLista._id === pdi._id;
+
+                return (
+                    <MarkerPDI 
+                        key={pdi._id}
+                        pdi={pdi}
+                        isSelezionato={isSelezionato}
+                        onPinClick={PdiSelezionatoMappa} 
+                    />
+                );
+            })}
         </MapContainer>
-
     );
-
 }
 
 export default MappaTrentino;
