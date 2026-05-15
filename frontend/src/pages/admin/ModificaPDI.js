@@ -79,7 +79,7 @@ const ModificaPDI = () => {
         return err
     }
 
-    // Handle degli input
+    // Handler degli input
     const handleInput = (e) => {
         const { name, value } = e.target
         setFormData(prev => ({ ...prev, [name]: value }))
