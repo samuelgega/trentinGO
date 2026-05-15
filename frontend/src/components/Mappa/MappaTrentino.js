@@ -52,6 +52,7 @@ const MappaTrentino = () => {
         <MapContainer 
             center={centroTrento} 
             zoom={9} 
+            minZoom={8}
             style={{ height: '100%', width: '100%', zIndex: 0 }}
         >
             {/*OpenStreetMap */}

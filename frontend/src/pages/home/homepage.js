@@ -9,12 +9,12 @@ const Homepage = () => {
         <div className='container-fluid p-0 w-100 flex-grow-1'>
           <div className='row g-0 h-100'>
             {/*Parte sisnistra riservata alla mappa */}
-            <div className="col-12 col-lg-8 h-100 position-relative">
+            <div className="col-12 col-lg-8 col-mappa position-relative">
               <MappaTrentino />
 
             </div>
             {/*Parte destra riservata alla lista e al filtro dei PDI */}
-            <div className="col-12 col-lg-4 h-100 bg-light overflow-auto border-start shadow-sm p-4">
+            <div className="col-12 col-lg-4 col-lista bg-light overflow-auto border-start shadow-sm p-4">
               <h3 className="fw-bold mb-4">Lista PDI</h3>
             </div>
 
