@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { AlertProvider } from '../src/contexts/AlertController';
-import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI } from './pages/admin';
+import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
 
 
