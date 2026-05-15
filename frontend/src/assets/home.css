@@ -98,3 +98,20 @@
     background-color: #f1f5f9;
 }
 
+/* mappa e lista */
+.col-mappa {
+    height: 45%;
+}
+
+.col-lista {
+    height: 55%;
+}
+
+/*per la visualizzazione su pc*/
+@media (min-width: 992px) {
+    .col-mappa, 
+    .col-lista {
+        height: 100%;
+    }
+}
+
