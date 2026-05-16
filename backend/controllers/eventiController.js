@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const Evento = require('../models/Evento')
 const PDI = require('../models/PDI')
-const Gestore = require('../models/Gestore')
+//const Gestore = require('../models/Gestore')
 
 const validaDati = (dati) => {
     const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento, idGestore } = dati
@@ -39,15 +39,18 @@ const validaDati = (dati) => {
     }
 
     //controllo se le date hanno senso
+    const dInizio = new Date(dataInizio)
+    const dFine = new Date(dataFine)
     if (
-        (dataInizio instanceof Date && !isNaN(dataInizio.getTime()))
-        || (dataFine instanceof Date && !isNaN(dataFine.getTime()))
-        || (dataInizio.getTime() > dataFine.getTime)) {
+        isNaN(dInizio.getTime())
+        || isNaN(dFine.getTime())
+        || dInizio.getTime() > dFine.getTime()) {
         return {
             datiValidi: false,
             errore: 'Le date di inizio e fine sono obbligatorie e la data di fine non può venire prima di quella di inizio'
         }
     }
+
 
     //controllo degli id
     if (idEvento && !mongoose.Types.ObjectId.isValid(idEvento))
@@ -60,6 +63,8 @@ const validaDati = (dati) => {
             datiValidi: false,
             errore: 'Id gestore non valido'
         }
+
+    return { datiValidi: true }
 }
 const fs = require('fs')
 
@@ -152,10 +157,10 @@ const modificaEvento = async (req, res) => {
         if (!ev) {
             return res.status(404).json({ error: "Evento non trovato" })
         }
-        const gest = await Gestore.findById(idGestore)
-        if (!gest) {
-            return res.status(404).json({ error: "Gestore non trovato" })
-        }
+        // const gest = await Gestore.findById(idGestore)
+        // if (!gest) {
+        //     return res.status(404).json({ error: "Gestore non trovato" })
+        // }
 
         let arrayImmagini = []
         if (req.files && req.files.length > 0) {
@@ -201,8 +206,6 @@ const visualizzaEvento = async (req, res) => {
     }
 }
 
-module.exports = { visualizzaTuttiEventi, creaEvento, modificaEvento, visualizzaEvento }
-
 //elimina evento
 const eliminaEvento = async (req, res) => {
     try {
@@ -215,7 +218,7 @@ const eliminaEvento = async (req, res) => {
         }
 
         //controlle se l'evento ha immagini associate e le elimino
-        if(eventoEsistente.properties.immagine && eventoEsistente.properties.immagine.length > 0){
+        if (eventoEsistente.properties.immagine && eventoEsistente.properties.immagine.length > 0) {
             eventoEsistente.properties.immagine.forEach(immagine => {
                 const percorsoImmagine = `./uploads/${immagine}`;
                 if (fs.existsSync(percorsoImmagine)) {
@@ -223,19 +226,19 @@ const eliminaEvento = async (req, res) => {
                 }
             });
         }
-                
+
         //elimino l'evento dal database
         await eventoEsistente.deleteOne()
-        res.status(200).json({ 
+        res.status(200).json({
             message: "Evento eliminato con successo",
             data: eventoEsistente
         });
 
-    } catch (error){
+    } catch (error) {
 
         console.error("Errore nell'eliminazione dell'evento:", error)
         res.status(500).json({ error: "Errore interno del server" })
 
     }
 }
-module.exports = { visualizzaTuttiEventi, creaEvento, eliminaEvento }
+module.exports = { visualizzaTuttiEventi, creaEvento, eliminaEvento, modificaEvento, visualizzaEvento }
