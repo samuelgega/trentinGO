@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import AlertController from '../../contexts/AlertController'
 import AdminNav from '../../components/adminComponents/AdminNav'
 import { useAlert } from '../../contexts/AlertController'
+import PopUpElimina from '../../contexts/EliminaController'
 
 const GestisciPDI = () => {
     const navigate = useNavigate()
@@ -10,6 +10,10 @@ const GestisciPDI = () => {
 
     // dati dal backend
     const [listaPDI, setListaPDI] = useState([])
+
+    //popup elimina
+    const [popupAperto, setPopupAperto] = useState(false)
+    const [pdiDaEliminare, setPdiDaEliminare] = useState(null)
 
     const recuperaDatiDalDatabase = async () => {
         try {
@@ -44,12 +48,38 @@ const GestisciPDI = () => {
     const gestisciModifica = (pdi) => {
         navigate(`/modifica-pdi/${pdi._id}`)
     }
+        
+    //popup conferma eliminazione
+    const apriPopupElimina = (pdi) => {
+        setPdiDaEliminare(pdi)
+        setPopupAperto(true)
+    }
 
-    // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
-    const gestisciElimina = (pdi) => {
-        const conferma = window.confirm(`Sei sicuro di voler eliminare ${pdi.properties.nome}?`)
-        if (conferma) {
-            showAlert(`PDI ${pdi._id} eliminato!`)
+    const chiudiPopupElimina = () => {
+        setPdiDaEliminare(null)
+        setPopupAperto(false)
+       }
+    
+    //handler per l'eliminazione del PDI
+
+    const gestisciEliminazione = async () => {
+        if(!pdiDaEliminare) return;
+        
+        try {
+            const response = await fetch(`http://localhost:3001/api/v1/pdi/${pdiDaEliminare._id}`, {
+                method: 'DELETE',
+            });
+        if (response.ok) {
+            showAlert(`PDI ${pdiDaEliminare._id} eliminato!`)
+            //aggiorno la lista dei PDI 
+            recuperaDatiDalDatabase();
+        } else {
+            showAlert("Errore", "impossibile eliminare il PDI", "danger");
+        }
+        }catch (error) {
+            showAlert("Errore di connessione. Assicurati che il backend sia acceso!", "Controlla la console per maggiori dettagli", "danger");
+        } finally {
+            chiudiPopupElimina();
         }
     }
 
@@ -103,7 +133,7 @@ const GestisciPDI = () => {
                                                     </button>
                                                     <button
                                                         className="btn btn-sm btn-danger"
-                                                        onClick={() => gestisciElimina(pdi)}
+                                                        onClick={() => apriPopupElimina(pdi)}
                                                     >
                                                         Elimina
                                                     </button>
@@ -117,6 +147,12 @@ const GestisciPDI = () => {
                     </div>
                 </div>
             </div>
+            <PopUpElimina 
+                isOpen={popupAperto} 
+                onClose={chiudiPopupElimina}  
+                onConfirm={gestisciEliminazione}
+                nomeElemento={pdiDaEliminare ? pdiDaEliminare.properties.nome : ""} 
+            />
         </>
     )
 }
