@@ -117,16 +117,14 @@ paths:
           $ref: "#/components/responses/ErrorResponse"
         "500":
           $ref: "#/components/responses/ErrorResponse"
-      parameters: []
-  /eventi:
-    get:
-      description: ""
+
+    delete:
+      summary: "Elimina un PDI esistente"
       tags:
-        - eventi
-      parameters: []
+        - PDI
       responses:
-        "200":
-          description: Lista eventi recuperata
+        '200':
+          description: "PDI eliminato con successo"
           content:
             application/json:
               schema:
@@ -134,211 +132,14 @@ paths:
                 properties:
                   message:
                     type: string
-                    x-stoplight:
-                      id: stoald617n7zh
-                    example: Lista degli eventi
+                    example: "PDI eliminato con successo"
                   data:
-                    x-stoplight:
-                      id: rtlxhrsjihj4j
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Evento"
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: mwmdaegv6z31f
-      x-stoplight:
-        id: of2rkrjle76j5
-      operationId: visualizzaTuttiEventi
-      summary: Ottieni la lista di tutti gli eventi
-    post:
-      summary: Crea un nuovo evento
-      tags: []
-      responses:
-        "201":
-          description: Evento creato con successo
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    x-stoplight:
-                      id: fccjq4c00wtcj
-                    default: Evento creato con successo
-                  data:
-                    $ref: "#/components/schemas/Evento"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: yqs8qn4r3gy3s
-                    example: Dati mancanti
-        "404":
-          description: PDI non trovato
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: h98zedvf5cycx
-                    default: PDI non trovato
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    x-stoplight:
-                      id: cfakca2s2h0ep
-                    example: Errore nella creazione dell'evento
-      operationId: creaEvento
-      x-stoplight:
-        id: vfrwufqpr82fl
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: "#/components/schemas/EventoUploadInput"
-    parameters: []
-  /eventi/idEvento:
-    get:
-      summary: Visualizza un evento specifico
-      tags: []
-      responses:
-        "200":
-          description: Evento trovato
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    x-stoplight:
-                      id: 71j2w7pvqf3ix
-                    default: Evento trovato
-                  data:
-                    $ref: "#/components/schemas/Evento"
-        "404":
-          description: Evento non trovato
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: v0r3awt4qqs2u
-                    default: Evento non trovato
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  "":
-                    type: string
-                    x-stoplight:
-                      id: 3sgqcg6oo4wmn
-                    example: Errore nella visualizzazione dell'evento
-      operationId: visualizzaEvento
-      x-stoplight:
-        id: z8ve41hvbdnam
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: idEvento
-    put:
-      summary: Modifica un evento
-      tags: []
-      responses:
-        "200":
-          description: Evento aggiornato
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    x-stoplight:
-                      id: e5nerbrosukr5
-                    default: Evento aggiornato con successo
-                  data:
-                    $ref: "#/components/schemas/Evento"
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: 8rvh4o5a62twf
-                    example: Dati mancanti
-        "404":
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: r5so79dqe4p6r
-                    example: Evento non trovato
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: 19744xe7s2r5x
-                    example: Errore nella modifica dell'evento
-      operationId: modificaEvento
-      x-stoplight:
-        id: 528jqk696r8qy
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: idEvento
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PDIUpdateInput"
+                    $ref: "#/components/schemas/PDI"
+        '404':
+          description: "PDI non trovato"
+          $ref: "#/components/responses/ErrorResponse"
+        '500':
+          $ref: "#/components/responses/ErrorResponse"
 components:
   responses:
     ErrorResponse:
