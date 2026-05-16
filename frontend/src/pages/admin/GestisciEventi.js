@@ -2,12 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminNav from '../../components/adminComponents/AdminNav'
 import {useAlert} from '../../contexts/AlertController'
+import PopUpElimina from '../../contexts/EliminaController'
 
 const GestisciEventi = () => {
     const navigate = useNavigate()
     const { showAlert } = useAlert()
     // dati prova
     const [listaEventi, setListaEventi] = useState([])
+
+    //popup elimina
+    const [popupAperto, setPopupAperto] = useState(false)
+    const [eventoDaEliminare, setEventoDaEliminare] = useState(null)
         
     const recuperaDatiDalDatabase = async () => {
             try {
@@ -45,11 +50,37 @@ const GestisciEventi = () => {
         navigate(`/modifica-evento/${evento._id}`)
     }
 
-    // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
-    const gestisciElimina = (evento) => {
-        const conferma = window.confirm(`Sei sicuro di voler eliminare ${evento.properties.nome}?`)
-        if (conferma) {
-            showAlert(`Evento ${evento._id} eliminato!`)
+    //popup conferma eliminazione
+    const apriPopupElimina = (evento) => {
+        setEventoDaEliminare(evento)
+        setPopupAperto(true)
+    }
+
+    const chiudiPopupElimina = () => {
+        setEventoDaEliminare(null)
+        setPopupAperto(false)
+       }
+
+    //handler per l'eliminazione del PDI
+
+    const gestisciEliminazione = async () => {
+        if(!eventoDaEliminare) return;
+        
+        try {
+            const response = await fetch(`http://localhost:3001/api/v1/eventi/${eventoDaEliminare._id}`, {
+                method: 'DELETE',
+            });
+        if (response.ok) {
+            showAlert(`Evento ${eventoDaEliminare._id} eliminato!`)
+            //aggiorno la lista degli eventi
+            recuperaDatiDalDatabase();
+        } else {
+            showAlert("Errore", "impossibile eliminare l'evento", "danger");
+        }
+        }catch (error) {
+            showAlert("Errore di connessione. Assicurati che il backend sia acceso!", "Controlla la console per maggiori dettagli", "danger");
+        } finally {
+            chiudiPopupElimina();
         }
     }
 
@@ -127,7 +158,7 @@ const GestisciEventi = () => {
                                                     </button>
                                                     <button
                                                         className="btn btn-sm btn-danger"
-                                                        onClick={() => gestisciElimina(evento)}
+                                                        onClick={() => apriPopupElimina(evento)}
                                                     >
                                                         Elimina
                                                     </button>
@@ -141,6 +172,12 @@ const GestisciEventi = () => {
                     </div>
                 </div>
             </div>
+            <PopUpElimina 
+                isOpen={popupAperto} 
+                onClose={chiudiPopupElimina}  
+                onConfirm={gestisciEliminazione}
+                nomeElemento={eventoDaEliminare ? eventoDaEliminare.properties.nome : ""} 
+            />
         </>
     )
 }
