@@ -14,19 +14,25 @@ const schemaEvento = new mongoose.Schema({
             maxlength: 100,
             unique: true,
         },
-        descrizione: {
-            type: String,
-            required: false
-        },
+        descrizione: String,
         categoria: String,
         prezzo: Number,
         immagine: [String],
-        dataInizio: Date,
-        dataFine: Date,
-        gestore: String,
+        dataInizio: {
+            type: Date,
+            required: true
+        },
+        dataFine: {
+            type: Date,
+            required: true
+        },
+        idGestore: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'gestore'
+        },
         dataCreazione: Date,
-        pdiCollegato: { 
-            type: mongoose.Schema.Types.ObjectId, 
+        pdiCollegato: {
+            type: mongoose.Schema.Types.ObjectId,
             ref: 'PDI'
         }
     }

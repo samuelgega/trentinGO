@@ -1,22 +1,20 @@
 openapi: 3.0.0
 info:
-  version: '1.0'
-  title: "TrentinGO API"
-  description: "API per la gestione di TrentinGO"
-
+  version: "1.0"
+  title: TrentinGO API
+  description: API per la gestione di TrentinGO
 servers:
-  - url: http://localhost:3001/api/v1
+  - url: "http://localhost:3001/api/v1"
     description: Localhost
-
 paths:
   /pdi:
     get:
-      summary: "Ottieni la lista di tutti i PDI"
-      tags: 
+      summary: Ottieni la lista di tutti i PDI
+      tags:
         - PDI
       responses:
-        '200':
-          description: "Lista recuperata con successo"
+        "200":
+          description: Lista recuperata con successo
           content:
             application/json:
               schema:
@@ -25,17 +23,16 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "Lista dei PDI"
+                    example: Lista dei PDI
                   data:
                     type: array
                     items:
                       $ref: "#/components/schemas/PDI"
-        '500':
+        "500":
           $ref: "#/components/responses/ErrorResponse"
-
     post:
-      summary: "Crea un nuovo PDI"
-      tags: 
+      summary: Crea un nuovo PDI
+      tags:
         - PDI
       requestBody:
         required: true
@@ -44,8 +41,8 @@ paths:
             schema:
               $ref: "#/components/schemas/PDIUploadInput"
       responses:
-        '201':
-          description: "PDI creato con successo"
+        "201":
+          description: PDI creato con successo
           content:
             application/json:
               schema:
@@ -54,31 +51,29 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "PDI creato con successo"
+                    example: PDI creato con successo
                   data:
                     $ref: "#/components/schemas/PDI"
-        '400':
+        "400":
           $ref: "#/components/responses/ErrorResponse"
-        '500':
+        "500":
           $ref: "#/components/responses/ErrorResponse"
-
-  /pdi/{id}:
+  "/pdi/{id}":
     parameters:
       - in: path
         name: id
         required: true
         schema:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
-        description: "L'ID univoco del PDI"
-    
+          pattern: "^[a-fA-F0-9]{24}$"
+        description: L'ID univoco del PDI
     get:
-      summary: "Visualizza un PDI specifico"
+      summary: Visualizza un PDI specifico
       tags:
         - PDI
       responses:
-        '200':
-          description: "PDI recuperato con successo"
+        "200":
+          description: PDI recuperato con successo
           content:
             application/json:
               schema:
@@ -86,14 +81,13 @@ paths:
                 properties:
                   data:
                     $ref: "#/components/schemas/PDI"
-        '404':
-          description: "PDI non trovato"
+        "404":
+          description: PDI non trovato
           $ref: "#/components/responses/ErrorResponse"
-        '500':
+        "500":
           $ref: "#/components/responses/ErrorResponse"
-
     put:
-      summary: "Modifica un PDI esistente"
+      summary: Modifica un PDI esistente
       tags:
         - PDI
       requestBody:
@@ -103,8 +97,8 @@ paths:
             schema:
               $ref: "#/components/schemas/PDIUpdateInput"
       responses:
-        '200':
-          description: "PDI aggiornato con successo"
+        "200":
+          description: PDI aggiornato con successo
           content:
             application/json:
               schema:
@@ -112,16 +106,16 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: "PDI aggiornato con successo"
+                    example: PDI aggiornato con successo
                   data:
                     $ref: "#/components/schemas/PDI"
-        '400':
-          description: "Errore di validazione o nome già esistente"
+        "400":
+          description: Errore di validazione o nome già esistente
           $ref: "#/components/responses/ErrorResponse"
-        '404':
-          description: "PDI non trovato"
+        "404":
+          description: PDI non trovato
           $ref: "#/components/responses/ErrorResponse"
-        '500':
+        "500":
           $ref: "#/components/responses/ErrorResponse"
 
     delete:
@@ -149,7 +143,7 @@ paths:
 components:
   responses:
     ErrorResponse:
-      description: "Risposta di Errore Standard"
+      description: Risposta di Errore Standard
       content:
         application/json:
           schema:
@@ -159,10 +153,8 @@ components:
               error:
                 type: string
                 maxLength: 255
-                example: "Errore interno del server"
-
+                example: Errore interno del server
   schemas:
-  
     PDIUploadInput:
       type: object
       additionalProperties: false
@@ -176,7 +168,7 @@ components:
         nome:
           type: string
           maxLength: 100
-          example: "MUSE"
+          example: MUSE
         descrizione:
           type: string
           maxLength: 500
@@ -197,17 +189,16 @@ components:
         punteggio:
           type: integer
           minimum: 0
-        immagine: 
+        immagine:
           type: array
           items:
             type: string
-            format: binary 
-          description: "Carica i file delle immagini (max 10)"
-
+            format: binary
+          description: Carica i file delle immagini (max 10)
     PDIUpdateInput:
       type: object
       additionalProperties: false
-      description: "Tutti i campi sono opzionali in fase di modifica"
+      description: Tutti i campi sono opzionali in fase di modifica
       properties:
         nome:
           type: string
@@ -230,36 +221,39 @@ components:
         punteggio:
           type: integer
           minimum: 0
-        immagine: 
+        immagine:
           type: array
           items:
             type: string
-            format: binary 
-          description: "Nuove immagini da aggiungere al PDI"
-
+            format: binary
+          description: Nuove immagini da aggiungere al PDI
     PDI:
       type: object
       additionalProperties: false
       properties:
         _id:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         type:
           type: string
-          example: "Feature"
+          example: Feature
         geometry:
           type: object
           additionalProperties: false
-          required: [type, coordinates]
+          required:
+            - type
+            - coordinates
           properties:
             type:
               type: string
-              example: "Point"
+              example: Point
             coordinates:
               type: array
               items:
                 type: number
-              example: [11.1118, 46.0633]
+              example:
+                - 11.1118
+                - 46.0633
         properties:
           type: object
           additionalProperties: false
@@ -281,4 +275,156 @@ components:
               type: array
               items:
                 type: string
+    Evento:
+      type: object
+      additionalProperties: false
+      x-stoplight:
+        id: j31hl996bbtsx
+      properties:
+        _id:
+          type: string
+          pattern: "^[a-fA-F0-9]{24}$"
+        type:
+          type: string
+          example: Feature
+        geometry:
+          type: object
+          additionalProperties: false
+          properties:
+            type:
+              type: object
+              example: Point
+              additionalProperties: false
+              minProperties: 2
+              maxProperties: 2
+              properties:
+                type:
+                  type: string
+                  x-stoplight:
+                    id: lbghsorz6r4f7
+                enum:
+                  type: array
+                  x-stoplight:
+                    id: y4vfj2ajte4re
+                  minItems: 1
+                  maxItems: 1
+                  items:
+                    x-stoplight:
+                      id: 30er3fnpcj935
+                    type: string
+                    default: Point
+            coordinates:
+              type: array
+              example:
+                - 11.1118
+                - 46.0633
+              items:
+                type: number
+        properties:
+          type: object
+          additionalProperties: false
+          required:
+            - nome
+          properties:
+            nome:
+              type: string
+              maxLength: 100
+              minLength: 2
+            descrizione:
+              type: string
+              maxLength: 500
+            categoria:
+              type: string
+              maxLength: 50
+            prezzo:
+              type: number
+            punteggio:
+              type: number
+            immagine:
+              type: array
+              items:
+                type: string
                 maxLength: 255
+            dataInizio:
+              type: object
+            dataFine:
+              type: object
+            gestore:
+              type: string
+              x-stoplight:
+                id: zf50g0rd0b844
+            dataCreazione:
+              type: string
+              x-stoplight:
+                id: 2pahaw6wk1ca4
+      description: ""
+    EventoUploadInput:
+      title: EventoUploadInput
+      x-stoplight:
+        id: in8g1bfdpc2po
+      type: object
+      required:
+        - nome
+        - latitudine
+        - longitudine
+        - punteggio
+      properties:
+        nome:
+          type: string
+          x-stoplight:
+            id: 4e961tdnoizen
+          minLength: 2
+          maxLength: 100
+          example: Mercatini di natale
+        descrizione:
+          type: string
+          x-stoplight:
+            id: 8twwkegc62fbl
+        categoria:
+          type: string
+          x-stoplight:
+            id: 69vnkf2atyuh7
+        latitudine:
+          type: number
+          x-stoplight:
+            id: p8n0b8odi3jal
+          format: float
+          minimum: -90
+          maximum: 90
+        longitudine:
+          type: number
+          x-stoplight:
+            id: 5wujb5z08ucea
+          format: float
+          minimum: -180
+          maximum: 180
+        prezzo:
+          type: number
+          x-stoplight:
+            id: ua2oilqubf0so
+          format: float
+          minimum: 0
+        punteggio:
+          type: integer
+          x-stoplight:
+            id: gw4dbbzp5vtyn
+          minimum: 0
+        dataInizio:
+          type: string
+          x-stoplight:
+            id: pwm74agxhi58e
+          format: date-time
+        dataFine:
+          type: string
+          x-stoplight:
+            id: 444sknhz9ogez
+          format: date-time
+        immagine:
+          type: array
+          x-stoplight:
+            id: cbz0kgk81w5of
+          items:
+            x-stoplight:
+              id: yw8r9h3yor73l
+            type: string
+            format: binary
