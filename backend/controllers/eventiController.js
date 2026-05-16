@@ -61,6 +61,7 @@ const validaDati = (dati) => {
             errore: 'Id gestore non valido'
         }
 }
+const fs = require('fs')
 
 const visualizzaTuttiEventi = async (req, res) => {
     try {
@@ -201,3 +202,40 @@ const visualizzaEvento = async (req, res) => {
 }
 
 module.exports = { visualizzaTuttiEventi, creaEvento, modificaEvento, visualizzaEvento }
+
+//elimina evento
+const eliminaEvento = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        //controllo se l'evento esiste
+        const eventoEsistente = await Evento.findById(id)
+        if (!eventoEsistente) {
+            return res.status(404).json({ error: "Evento non trovato" })
+        }
+
+        //controlle se l'evento ha immagini associate e le elimino
+        if(eventoEsistente.properties.immagine && eventoEsistente.properties.immagine.length > 0){
+            eventoEsistente.properties.immagine.forEach(immagine => {
+                const percorsoImmagine = `./uploads/${immagine}`;
+                if (fs.existsSync(percorsoImmagine)) {
+                    fs.unlinkSync(percorsoImmagine);
+                }
+            });
+        }
+                
+        //elimino l'evento dal database
+        await eventoEsistente.deleteOne()
+        res.status(200).json({ 
+            message: "Evento eliminato con successo",
+            data: eventoEsistente
+        });
+
+    } catch (error){
+
+        console.error("Errore nell'eliminazione dell'evento:", error)
+        res.status(500).json({ error: "Errore interno del server" })
+
+    }
+}
+module.exports = { visualizzaTuttiEventi, creaEvento, eliminaEvento }

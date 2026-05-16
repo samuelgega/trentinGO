@@ -13,6 +13,8 @@ router.post('/', upload.array('immagine', 10), EventiController.creaEvento)
 
 //modifica degli eventi
 router.put('/:idEvento', upload.array('immagine', 10), EventiController.modificaEvento)
+//route per eliminare un singolo evento
+router.delete('/:id', EventiController.eliminaEvento)
 
 module.exports = router
 
