@@ -12,7 +12,7 @@ router.get('/:idEvento', EventiController.visualizzaEvento)
 router.post('/', upload.array('immagine', 10), EventiController.creaEvento)
 
 //modifica degli eventi
-router.put('/', upload.array('immagine', 10), EventiController.modificaEvento)
+router.put('/:idEvento', upload.array('immagine', 10), EventiController.modificaEvento)
 
 module.exports = router
 

@@ -1,9 +1,10 @@
 const mongoose = require('mongoose')
 const Evento = require('../models/Evento')
 const PDI = require('../models/PDI')
+const Gestore = require('../models/Gestore')
 
 const validaDati = (dati) => {
-    const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine } = dati
+    const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento, idGestore } = dati
     //controllo se il nome è valido
     if (nome.trim() === "" || nome.trim().length < 2 || nome.trim().length > 100) {
         return {
@@ -38,12 +39,27 @@ const validaDati = (dati) => {
     }
 
     //controllo se le date hanno senso
-    if (dataInizio > dataFine) {
+    if (
+        (dataInizio instanceof Date && !isNaN(dataInizio.getTime()))
+        || (dataFine instanceof Date && !isNaN(dataFine.getTime()))
+        || (dataInizio.getTime() > dataFine.getTime)) {
         return {
             datiValidi: false,
             errore: 'Le date di inizio e fine sono obbligatorie e la data di fine non può venire prima di quella di inizio'
         }
     }
+
+    //controllo degli id
+    if (idEvento && !mongoose.Types.ObjectId.isValid(idEvento))
+        return {
+            datiValidi: false,
+            errore: 'Id evento non valido'
+        }
+    if (idGestore && !mongoose.Types.ObjectId.isValid(idGestore))
+        return {
+            datiValidi: false,
+            errore: 'Id gestore non valido'
+        }
 }
 
 const visualizzaTuttiEventi = async (req, res) => {
@@ -69,7 +85,7 @@ const creaEvento = async (req, res) => {
         if (!validazione.datiValidi)
             return res.status(400).json({ error: validazione.errore })
 
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato } = req.body
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato, idGestore } = req.body
 
         if (!nome || !dataInizio || !dataFine || !latitudine || !longitudine)
             return res.status(400).json({ error: "Dati mancanti" })
@@ -82,13 +98,10 @@ const creaEvento = async (req, res) => {
         //controllo se il pdi fornito esiste nel db
         let refPdi = undefined
         if (pdiCollegato) {
-            if (!mongoose.Types.ObjectId.isValid(pdiCollegato)) {
-                return res.status(400).json({ error: "Id fornito non è valido" })
-            }
             if (await PDI.findById(pdiCollegato))
                 refPdi = pdiCollegato
             else
-                return res.status(400).json({ error: "PDI non trovato" })
+                return res.status(404).json({ error: "PDI non trovato" })
         }
 
         //creo il nuovo evento nel database
@@ -106,8 +119,9 @@ const creaEvento = async (req, res) => {
                 immagine: arrayImmagini,
                 dataInizio,
                 dataFine,
-                dataCreazione: Date.now(),
-                pdiCollegato: refPdi
+                dataCreazione: new Date(),
+                pdiCollegato: refPdi,
+                idGestore: idGestore
             }
         })
 
@@ -124,13 +138,22 @@ const creaEvento = async (req, res) => {
 
 const modificaEvento = async (req, res) => {
     try {
-        const { idEvento, nuoviDati } = req.body
-        if (!idEvento || !mongoose.Types.ObjectId.isValid(idEvento))
-            return res.status(400).json({ error: "Id fornito non è valido" })
+        const { idEvento } = req.params
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idGestore, pdiCollegato } = req.body
 
+        if (!idEvento || !nome || !dataInizio || !dataFine || !latitudine || !longitudine)
+            return res.status(400).json({ error: "Dati mancanti" })
+
+        const validazione = validaDati(req.body)
+        if (!validazione.datiValidi)
+            return res.status(400).json({ error: validazione.errore })
         const ev = await Evento.findById(idEvento)
         if (!ev) {
             return res.status(404).json({ error: "Evento non trovato" })
+        }
+        const gest = await Gestore.findById(idGestore)
+        if (!gest) {
+            return res.status(404).json({ error: "Gestore non trovato" })
         }
 
         let arrayImmagini = []
@@ -138,13 +161,22 @@ const modificaEvento = async (req, res) => {
             arrayImmagini = req.files.map(file => file.filename)
         }
 
-        for (const key in nuoviDati)
-            ev.set(`properties.${key}`, nuoviDati[key])
-        ev.set('properties.immagine', arrayImmagini)
+        ev.set('properties.nome', (nome || ev.properties.nome))
+        ev.set('properties.descrizione', (descrizione || ev.properties.descrizione))
+        ev.set('properties.categoria', (categoria || ev.properties.categoria))
+        ev.set('properties.prezzo', (prezzo || ev.properties.prezzo))
+        ev.set('properties.immagine', (arrayImmagini || ev.properties.immagine))
+        ev.set('properties.dataInizio', (dataInizio || ev.properties.dataInizio))
+        ev.set('properties.dataFine', (dataFine || ev.properties.dataFine))
+        ev.set('properties.idGestore', (idGestore || ev.properties.idGestore))
+        ev.set('properties.pdiCollegato', (pdiCollegato || ev.properties.pdiCollegato))
+
+        ev.set('geometry.coordinates.0', (longitudine, ev.geometry.coordinates[0]))
+        ev.set('geometry.coordinates.1', (latitudine, ev.geometry.coordinates[1]))
 
         const eventoAggiornato = await ev.save()
 
-        return res.status(201).json({
+        return res.status(200).json({
             message: "Evento aggiornato con successo",
             data: eventoAggiornato
         })
@@ -163,7 +195,7 @@ const visualizzaEvento = async (req, res) => {
         return res.status(200).json({ message: "Evento trovato", data: ev })
     }
     catch ({ name, message }) {
-        console.error("Errore nella modifica dell'evento: ", message)
+        console.error("Errore nella visualizzazione dell'evento: ", message)
         return res.status(500).json({ error: `${name}: ${message}` })
     }
 }
