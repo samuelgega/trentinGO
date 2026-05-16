@@ -1,6 +1,6 @@
 import React, { useState,useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAlert } from '../AlertController';
+import { useAlert } from '../../contexts/AlertController';
 
 // Costanti per validazione immagini
 const MAX_SIZE = 2 * 1024 * 1024 // 2MB
@@ -12,7 +12,6 @@ const statoInizialeForm ={
     nome: '',
     descrizione: '',
     categoria: '',
-    punteggio: '',
     prezzo: '',
     dataInizio: '',
     dataFine: '',
@@ -62,10 +61,6 @@ const CreaEvento = () => {
         if (!dati.nome.trim()) error.nome = "Il nome è obbligatorio"
         if (!dati.categoria) error.categoria = "Seleziona una categoria"
         if (dati.descrizione.length > 500) error.descrizione = "La descrizione deve avere al massimo 500 caratteri"
-
-        if (dati.punteggio === '' || isNaN(dati.punteggio) || dati.punteggio < 10)
-            error.punteggio = "Il punteggio minimo è di 10 punti"
-
         if (dati.prezzo !== '' && (isNaN(dati.prezzo) || dati.prezzo < 0))
             error.prezzo = "Inserisci un prezzo valido (0 o più)"
 
@@ -159,9 +154,7 @@ const CreaEvento = () => {
         e.preventDefault()
 
         //validazione dei dati
-        const nuoviErrori = validazioneDati(formData)
-        console.log("FormData:", formData)       // <-- aggiungi
-    console.log("Errori:", nuoviErrori)      // <-- aggiungi
+        const nuoviErrori = validazioneDati(formData)      
         setErrori(nuoviErrori)
 
         if (Object.keys(nuoviErrori).length > 0) {
@@ -214,13 +207,6 @@ const CreaEvento = () => {
                         &larr; Annulla e torna indietro
                     </button>
                 </div>
-
-                <button 
-                    type="button" 
-                    onClick={() => console.log("TEST")}
-                >
-                 TEST
-                </button>
                 
                 <div className="card shadow border-0">
                     <div className="card-body p-4">
@@ -277,19 +263,6 @@ const CreaEvento = () => {
                             {/* Dettagli */}
                             <h5 className="text-primary mb-3">2. Dettagli</h5>
                             <div className="row g-3 mb-4">
-                                <div className="col-md-6">
-                                    <label className="form-label fw-bold">Punteggio*</label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        name="punteggio"
-                                        value={formData.punteggio}
-                                        className="form-control"
-                                        placeholder="Inserire punteggio"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.punteggio}</small>
-                                </div>
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Prezzo</label>
                                     <input

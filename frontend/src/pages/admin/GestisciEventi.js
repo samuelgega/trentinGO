@@ -1,46 +1,38 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import GestoreNav from './GestoreNav'
-import {useAlert} from '../AlertController'
+import AdminNav from '../../components/adminComponents/AdminNav'
+import {useAlert} from '../../contexts/AlertController'
 
-const GestisciEventiCreati = () => {
+const GestisciEventi = () => {
     const navigate = useNavigate()
     const { showAlert } = useAlert()
-
-    //dati prova da implementare in futuro con il backend
-    const [listaEventi, setListaEventi] = useState([
-        {
-            _id: '1',
-            properties: { 
-                nome: 'Marcatini di natale',
-                categoria: 'Cultura',
-                dataInizio: '2026-05-01', 
-                dataFine: '2026-05-20'   
-            }
-        },
-        {
-            _id: '2',
-            properties: { 
-                nome: 'Mercato',
-                categoria: 'Sport',
-                dataInizio: '2026-04-10',
-                dataFine: '2026-04-15'   
-            }
-        },
-        {
-            _id: '3',
-            properties: { 
-                nome: 'Festival dello sport',
-                categoria: 'Musica',
-                dataInizio: '2026-06-01', 
-                dataFine: '2026-06-10'   
+    // dati prova
+    const [listaEventi, setListaEventi] = useState([])
+        
+    const recuperaDatiDalDatabase = async () => {
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/eventi');                
+                if (!response.ok) {
+                    throw new Error(`Errore HTTP: ${response.status}`);
+                }
+                const jsonResponse = await response.json();
+                setListaEventi(jsonResponse.data); 
+                
+            } catch (error) {
+                console.error("Errore di connessione:", error);
+                showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
             }
         }
-    ])
+        
+    useEffect(() => {
+        recuperaDatiDalDatabase()
+    }, [])
+    
+
 
     // handler per tornare alla home 
     const goToHome = () => {
-        navigate('/gestore-home')
+        navigate('/admin-home')
     }
 
     // handler per andare alla pagina crea evento
@@ -50,7 +42,7 @@ const GestisciEventiCreati = () => {
 
     // handler per gestire la modifica
     const gestisciModifica = (evento) => {
-        showAlert(`Hai cliccato MODIFICA sull'Evento: ${evento.properties.nome} (ID: ${evento._id})`)
+        navigate(`/modifica-evento/${evento._id}`)
     }
 
     // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
@@ -85,7 +77,7 @@ const GestisciEventiCreati = () => {
 
     return (
         <>
-            <GestoreNav />
+            <AdminNav />
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestione Eventi</h2>
@@ -151,7 +143,7 @@ const GestisciEventiCreati = () => {
             </div>
         </>
     )
-
 }
 
-export default GestisciEventiCreati
+
+export default GestisciEventi

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import AdminNav from './AdminNav'
+import AdminNav from '../../components/adminComponents/AdminNav'
 
 const AdminHome = () => {
     const navigate = useNavigate()

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-import { AlertProvider } from './components/AlertController'
-import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI } from './components/adminComponents';
-import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './components/gestoreComponents';
+import { AlertProvider } from '../src/contexts/AlertController';
+import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento } from './pages/admin';
+import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
+
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/gestore-home/gestisci-pdi-associati" element={<GestisciPDIAssociati />} />
           <Route path="/gestore-home/gestisci-eventi-creati" element={<GestisciEventiCreati />} />
           <Route path="/modifica-pdi/:id" element={<ModificaPDI />} />
+          <Route path="/modifica-evento/:id" element={<ModificaEvento />} />
         </Routes>
       </Router>
     </AlertProvider>

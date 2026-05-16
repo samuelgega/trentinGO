@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAlert } from '../AlertController'
-import GestoreNav from './GestoreNav'
+import { useAlert } from '../../contexts/AlertController'
+import GestoreNav from '../../components/gestoreComponents/GestoreNav'
 
 const GestisciPDIAssociati = () => {
 
