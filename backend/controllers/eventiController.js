@@ -69,9 +69,8 @@ const validaDati = (dati) => {
             datiValidi: false,
             errore: 'Id gestore non valido'
         }
-
-    return { datiValidi: true }
     */
+    return { datiValidi: true }
 }
 const fs = require('fs')
 

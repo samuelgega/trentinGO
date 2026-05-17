@@ -17,13 +17,13 @@ const GestisciPDI = () => {
 
     const recuperaDatiDalDatabase = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/v1/pdi');                
+            const response = await fetch('http://localhost:3001/api/v1/pdi');
             if (!response.ok) {
                 throw new Error(`Errore HTTP: ${response.status}`);
             }
             const jsonResponse = await response.json();
-            setListaPDI(jsonResponse.data); 
-            
+            setListaPDI(jsonResponse.data);
+
         } catch (error) {
             console.error("Errore di connessione:", error);
             showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
@@ -48,7 +48,7 @@ const GestisciPDI = () => {
     const gestisciModifica = (pdi) => {
         navigate(`/modifica-pdi/${pdi._id}`)
     }
-        
+
     //popup conferma eliminazione
     const apriPopupElimina = (pdi) => {
         setPdiDaEliminare(pdi)
@@ -58,25 +58,24 @@ const GestisciPDI = () => {
     const chiudiPopupElimina = () => {
         setPdiDaEliminare(null)
         setPopupAperto(false)
-       }
-    
-    //handler per l'eliminazione del PDI
+    }
 
+    //handler per l'eliminazione del PDI
     const gestisciEliminazione = async () => {
-        if(!pdiDaEliminare) return;
-        
+        if (!pdiDaEliminare) return;
+
         try {
             const response = await fetch(`http://localhost:3001/api/v1/pdi/${pdiDaEliminare._id}`, {
                 method: 'DELETE',
             });
-        if (response.ok) {
-            showAlert(`PDI ${pdiDaEliminare._id} eliminato!`)
-            //aggiorno la lista dei PDI 
-            recuperaDatiDalDatabase();
-        } else {
-            showAlert("Errore", "impossibile eliminare il PDI", "danger");
-        }
-        }catch (error) {
+            if (response.ok) {
+                showAlert(`PDI ${pdiDaEliminare.properties.nome} eliminato!`)
+                //aggiorno la lista dei PDI 
+                recuperaDatiDalDatabase();
+            } else {
+                showAlert("Errore", "impossibile eliminare il PDI", "danger");
+            }
+        } catch (error) {
             showAlert("Errore di connessione. Assicurati che il backend sia acceso!", "Controlla la console per maggiori dettagli", "danger");
         } finally {
             chiudiPopupElimina();
@@ -89,16 +88,16 @@ const GestisciPDI = () => {
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestione Punti di Interesse (PDI)</h2>
-                    <div>   
+                    <div>
                         <button className="btn btn-primary me-2" onClick={goToCreaPdi}>
                             + Aggiungi Nuovo PDI
                         </button>
-                    <button
-                        className="btn btn-secondary"
-                        onClick={goToHome}
-                    >
-                        &larr; Torna alla Home
-                    </button>
+                        <button
+                            className="btn btn-secondary"
+                            onClick={goToHome}
+                        >
+                            &larr; Torna alla Home
+                        </button>
                     </div>
                 </div>
 
@@ -147,11 +146,11 @@ const GestisciPDI = () => {
                     </div>
                 </div>
             </div>
-            <PopUpElimina 
-                isOpen={popupAperto} 
-                onClose={chiudiPopupElimina}  
+            <PopUpElimina
+                isOpen={popupAperto}
+                onClose={chiudiPopupElimina}
                 onConfirm={gestisciEliminazione}
-                nomeElemento={pdiDaEliminare ? pdiDaEliminare.properties.nome : ""} 
+                nomeElemento={pdiDaEliminare ? pdiDaEliminare.properties.nome : ""}
             />
         </>
     )
