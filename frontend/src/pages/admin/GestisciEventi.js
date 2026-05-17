@@ -1,38 +1,38 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminNav from '../../components/adminComponents/AdminNav'
-import {useAlert} from '../../contexts/AlertController'
+import { useAlert } from '../../contexts/AlertController'
 import PopUpElimina from '../../contexts/EliminaController'
 
 const GestisciEventi = () => {
     const navigate = useNavigate()
     const { showAlert } = useAlert()
-    // dati prova
+
     const [listaEventi, setListaEventi] = useState([])
 
     //popup elimina
     const [popupAperto, setPopupAperto] = useState(false)
     const [eventoDaEliminare, setEventoDaEliminare] = useState(null)
-        
+
     const recuperaDatiDalDatabase = async () => {
-            try {
-                const response = await fetch('http://localhost:3001/api/v1/eventi');                
-                if (!response.ok) {
-                    throw new Error(`Errore HTTP: ${response.status}`);
-                }
-                const jsonResponse = await response.json();
-                setListaEventi(jsonResponse.data); 
-                
-            } catch (error) {
-                console.error("Errore di connessione:", error);
-                showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
+        try {
+            const response = await fetch('http://localhost:3001/api/v1/eventi');
+            if (!response.ok) {
+                throw new Error(`Errore HTTP: ${response.status}`);
             }
+            const jsonResponse = await response.json();
+            setListaEventi(jsonResponse.data);
+
+        } catch (error) {
+            console.error("Errore di connessione:", error);
+            showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
         }
-        
+    }
+
     useEffect(() => {
         recuperaDatiDalDatabase()
     }, [])
-    
+
 
 
     // handler per tornare alla home 
@@ -59,25 +59,25 @@ const GestisciEventi = () => {
     const chiudiPopupElimina = () => {
         setEventoDaEliminare(null)
         setPopupAperto(false)
-       }
+    }
 
     //handler per l'eliminazione del PDI
 
     const gestisciEliminazione = async () => {
-        if(!eventoDaEliminare) return;
-        
+        if (!eventoDaEliminare) return;
+
         try {
             const response = await fetch(`http://localhost:3001/api/v1/eventi/${eventoDaEliminare._id}`, {
                 method: 'DELETE',
             });
-        if (response.ok) {
-            showAlert(`Evento ${eventoDaEliminare._id} eliminato!`)
-            //aggiorno la lista degli eventi
-            recuperaDatiDalDatabase();
-        } else {
-            showAlert("Errore", "impossibile eliminare l'evento", "danger");
-        }
-        }catch (error) {
+            if (response.ok) {
+                showAlert(`Evento ${eventoDaEliminare.properties.nome} eliminato!`)
+                //aggiorno la lista degli eventi
+                recuperaDatiDalDatabase();
+            } else {
+                showAlert("Errore", "impossibile eliminare l'evento", "danger");
+            }
+        } catch (error) {
             showAlert("Errore di connessione. Assicurati che il backend sia acceso!", "Controlla la console per maggiori dettagli", "danger");
         } finally {
             chiudiPopupElimina();
@@ -112,7 +112,7 @@ const GestisciEventi = () => {
             <div className="container">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Gestione Eventi</h2>
-                    <div>   
+                    <div>
                         <button className="btn btn-primary me-2" onClick={goToCreaEvento}>
                             + Aggiungi Nuovo Evento
                         </button>
@@ -121,7 +121,7 @@ const GestisciEventi = () => {
                         </button>
                     </div>
                 </div>
-                
+
 
                 <div className="card shadow-sm p-4 text-center text-muted">
                     <h4>Interfaccia in costruzione</h4>
@@ -172,11 +172,11 @@ const GestisciEventi = () => {
                     </div>
                 </div>
             </div>
-            <PopUpElimina 
-                isOpen={popupAperto} 
-                onClose={chiudiPopupElimina}  
+            <PopUpElimina
+                isOpen={popupAperto}
+                onClose={chiudiPopupElimina}
                 onConfirm={gestisciEliminazione}
-                nomeElemento={eventoDaEliminare ? eventoDaEliminare.properties.nome : ""} 
+                nomeElemento={eventoDaEliminare ? eventoDaEliminare.properties.nome : ""}
             />
         </>
     )

@@ -3,6 +3,8 @@ const Evento = require('../models/Evento')
 const PDI = require('../models/PDI')
 //const Gestore = require('../models/Gestore')
 
+const baseUrl = process.env.API_URL || 'http://localhost:3001'
+
 const validaDati = (dati) => {
     //implementare idGestore vando verrà aggiunta la sua collection
     const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento } = dati
@@ -40,15 +42,18 @@ const validaDati = (dati) => {
     }
 
     //controllo se le date hanno senso
+    const dInizio = new Date(dataInizio)
+    const dFine = new Date(dataFine)
     if (
-        (dataInizio instanceof Date && !isNaN(dataInizio.getTime()))
-        || (dataFine instanceof Date && !isNaN(dataFine.getTime()))
-        || (dataInizio.getTime() > dataFine.getTime)) {
+        isNaN(dInizio.getTime())
+        || isNaN(dFine.getTime())
+        || dInizio.getTime() > dFine.getTime()) {
         return {
             datiValidi: false,
             errore: 'Le date di inizio e fine sono obbligatorie e la data di fine non può venire prima di quella di inizio'
         }
     }
+
 
     //controllo degli id
     if (idEvento && !mongoose.Types.ObjectId.isValid(idEvento))
@@ -64,6 +69,8 @@ const validaDati = (dati) => {
             datiValidi: false,
             errore: 'Id gestore non valido'
         }
+
+    return { datiValidi: true }
     */
 }
 const fs = require('fs')
@@ -71,11 +78,20 @@ const fs = require('fs')
 const visualizzaTuttiEventi = async (req, res) => {
     try {
         //recupero tutti gli eventi dal database
-        const eventiList = await Evento.find({}).populate('properties.pdiCollegato');
+        const eventiList = await Evento.find({}).populate('properties.pdiCollegato')
+
+        const output = eventiList.map(ev => {
+            if (Array.isArray(ev.properties.immagine)) {
+                ev.properties.immagine = ev.properties.immagine.map(nomeImmagine => {
+                    return `${baseUrl}/uploads/${nomeImmagine}`
+                })
+            }
+            return ev
+        })
 
         return res.status(200).json({
             message: "Lista degli eventi",
-            data: eventiList
+            data: output
         })
 
     } catch (e) {
@@ -145,7 +161,7 @@ const creaEvento = async (req, res) => {
 const modificaEvento = async (req, res) => {
     try {
         const { idEvento } = req.params
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato } = req.body
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato, idGestore } = req.body
 
         if (!idEvento || !nome || !dataInizio || !dataFine || !latitudine || !longitudine)
             return res.status(400).json({ error: "Dati mancanti" })
@@ -157,12 +173,11 @@ const modificaEvento = async (req, res) => {
         if (!ev) {
             return res.status(404).json({ error: "Evento non trovato" })
         }
-        /*
-        const gest = await Gestore.findById(idGestore)
-        if (!gest) {
-            return res.status(404).json({ error: "Gestore non trovato" })
-        }
-        */
+        // const gest = await Gestore.findById(idGestore)
+        // if (!gest) {
+        //     return res.status(404).json({ error: "Gestore non trovato" })
+        // }
+
         let arrayImmagini = []
         if (req.files && req.files.length > 0) {
             arrayImmagini = req.files.map(file => file.filename)
@@ -175,7 +190,7 @@ const modificaEvento = async (req, res) => {
         ev.set('properties.immagine', (arrayImmagini || ev.properties.immagine))
         ev.set('properties.dataInizio', (dataInizio || ev.properties.dataInizio))
         ev.set('properties.dataFine', (dataFine || ev.properties.dataFine))
-        //ev.set('properties.idGestore', (idGestore || ev.properties.idGestore))
+        ev.set('properties.idGestore', (idGestore || ev.properties.idGestore))
         ev.set('properties.pdiCollegato', (pdiCollegato || ev.properties.pdiCollegato))
 
         ev.set('geometry.coordinates.0', (longitudine, ev.geometry.coordinates[0]))
@@ -199,6 +214,11 @@ const visualizzaEvento = async (req, res) => {
         const ev = await Evento.findById(req.params.idEvento)
         if (!ev)
             return res.status(404).json({ error: "Evento non trovato" })
+
+        ev.properties.immagine = ev.properties.immagine.map(nomeImmagine => {
+            return `${baseUrl}/uploads/${nomeImmagine}`
+        })
+
         return res.status(200).json({ message: "Evento trovato", data: ev })
     }
     catch ({ name, message }) {
@@ -206,8 +226,6 @@ const visualizzaEvento = async (req, res) => {
         return res.status(500).json({ error: `${name}: ${message}` })
     }
 }
-
-module.exports = { visualizzaTuttiEventi, creaEvento, modificaEvento, visualizzaEvento }
 
 //elimina evento
 const eliminaEvento = async (req, res) => {
@@ -221,7 +239,7 @@ const eliminaEvento = async (req, res) => {
         }
 
         //controlle se l'evento ha immagini associate e le elimino
-        if(eventoEsistente.properties.immagine && eventoEsistente.properties.immagine.length > 0){
+        if (eventoEsistente.properties.immagine && eventoEsistente.properties.immagine.length > 0) {
             eventoEsistente.properties.immagine.forEach(immagine => {
                 const percorsoImmagine = `./uploads/${immagine}`;
                 if (fs.existsSync(percorsoImmagine)) {
@@ -229,19 +247,19 @@ const eliminaEvento = async (req, res) => {
                 }
             });
         }
-                
+
         //elimino l'evento dal database
         await eventoEsistente.deleteOne()
-        res.status(200).json({ 
+        res.status(200).json({
             message: "Evento eliminato con successo",
             data: eventoEsistente
         });
 
-    } catch (error){
+    } catch (error) {
 
         console.error("Errore nell'eliminazione dell'evento:", error)
         res.status(500).json({ error: "Errore interno del server" })
 
     }
 }
-module.exports = { visualizzaTuttiEventi, creaEvento, modificaEvento, visualizzaEvento, eliminaEvento }
+module.exports = { visualizzaTuttiEventi, creaEvento, eliminaEvento, modificaEvento, visualizzaEvento }
