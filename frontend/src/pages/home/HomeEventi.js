@@ -2,6 +2,7 @@ import React from "react"
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '../../contexts/AlertController'
+import HomeNav from "../../components/homeComponents/HomeNav";
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -46,7 +47,9 @@ const HomeEventi = () => {
     }
 
     return (
+      <>
         <div className="container-fluid py-5 px-4 px-md-5 bg-light min-vh-100">
+            <HomeNav />
             <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
                 <div>
                     <h2 className="fw-bold text-dark mb-1">I prossimi eventi</h2>
@@ -107,6 +110,7 @@ const HomeEventi = () => {
             </div>
 
         </div>
+        </>
     )
 }
 

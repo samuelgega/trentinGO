@@ -6,7 +6,8 @@ const PDI = require('../models/PDI')
 const baseUrl = process.env.API_URL || 'http://localhost:3001'
 
 const validaDati = (dati) => {
-    const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento, idGestore } = dati
+    //implementare idGestore vando verrà aggiunta la sua collection
+    const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento } = dati
     //controllo se il nome è valido
     if (nome.trim() === "" || nome.trim().length < 2 || nome.trim().length > 100) {
         return {
@@ -60,6 +61,9 @@ const validaDati = (dati) => {
             datiValidi: false,
             errore: 'Id evento non valido'
         }
+
+    // decommentare quando verrà aggiunta la collection
+    /*
     if (idGestore && !mongoose.Types.ObjectId.isValid(idGestore))
         return {
             datiValidi: false,
@@ -67,6 +71,7 @@ const validaDati = (dati) => {
         }
 
     return { datiValidi: true }
+    */
 }
 const fs = require('fs')
 
@@ -102,7 +107,8 @@ const creaEvento = async (req, res) => {
         if (!validazione.datiValidi)
             return res.status(400).json({ error: validazione.errore })
 
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato, idGestore } = req.body
+        //aggiungere idGestore quando verrà aggiunta la collection
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato } = req.body
 
         if (!nome || !dataInizio || !dataFine || !latitudine || !longitudine)
             return res.status(400).json({ error: "Dati mancanti" })
@@ -138,7 +144,6 @@ const creaEvento = async (req, res) => {
                 dataFine,
                 dataCreazione: new Date(),
                 pdiCollegato: refPdi,
-                idGestore: idGestore
             }
         })
 
@@ -156,7 +161,7 @@ const creaEvento = async (req, res) => {
 const modificaEvento = async (req, res) => {
     try {
         const { idEvento } = req.params
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idGestore, pdiCollegato } = req.body
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato, idGestore } = req.body
 
         if (!idEvento || !nome || !dataInizio || !dataFine || !latitudine || !longitudine)
             return res.status(400).json({ error: "Dati mancanti" })
