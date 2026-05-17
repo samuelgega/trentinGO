@@ -115,3 +115,17 @@
     }
 }
 
+/*card per i pdi*/
+.pdi-card {
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    background-color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 20px;
+}
+
+.pdi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
