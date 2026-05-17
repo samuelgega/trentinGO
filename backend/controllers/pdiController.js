@@ -1,6 +1,8 @@
 const PDI = require("../models/PDI");
 const fs = require("fs");
 
+const baseUrl = process.env.API_URL || 'http://localhost:3001'
+
 //crea un PDI
 const creaPDI = async (req, res) => {
     try {
@@ -67,9 +69,18 @@ const visualizzaTuttiPDI = async (req, res) => {
         //recupero tutti i PDI dal database
         const pdiList = await PDI.find({});
 
+        const output = pdiList.map(p => {
+            if (Array.isArray(p.properties.immagine)) {
+                p.properties.immagine = p.properties.immagine.map(nomeImmagine => {
+                    return `${baseUrl}/uploads/${nomeImmagine}`
+                })
+            }
+            return p
+        })
+
         res.status(200).json({
             message: "Lista dei PDI",
-            data: pdiList
+            data: output
         });
 
     } catch (error) {
@@ -80,14 +91,18 @@ const visualizzaTuttiPDI = async (req, res) => {
 
 //visualizza un PDI specifico
 const visualizzaPDI = async (req, res) => {
-    try{
+    try {
         //recupero pdi speifico
-        const pdiID = await PDI.findById(req.params.id);
-        if(!pdiID){
+        const pdi = await PDI.findById(req.params.id);
+        if (!pdi) {
             return res.status(404).json({ error: "PDI non trovato" });
         }
-        res.status(200).json({ data : pdiID });
-    }catch(error){
+        pdi.properties.immagine = pdi.properties.immagine.map(nomeImmagine => {
+            return `${baseUrl}/uploads/${nomeImmagine}`
+        })
+
+        res.status(200).json({ data: pdi });
+    } catch (error) {
         console.error("Errore nel recupero del PDI:", error);
         res.status(500).json({ error: "Errore interno del server" });
     }
@@ -95,13 +110,13 @@ const visualizzaPDI = async (req, res) => {
 
 //modifica PDI esistente
 const modificaPDI = async (req, res) => {
-    try{
+    try {
         const { id } = req.params;
         const { nome, descrizione, categoria, latitudine, longitudine, prezzo, punteggio } = req.body;
 
         const pdiEsistente = await PDI.findById(id);
-        
-        if(!pdiEsistente){
+
+        if (!pdiEsistente) {
             return res.status(404).json({ error: "PDI non trovato" });
         }
 
@@ -135,8 +150,8 @@ const modificaPDI = async (req, res) => {
 
     } catch (error) {
         if (error.code === 11000) {
-            return res.status(400).json({ 
-                error: "Esiste già un Punto di Interesse con questo nome. Scegline uno diverso." 
+            return res.status(400).json({
+                error: "Esiste già un Punto di Interesse con questo nome. Scegline uno diverso."
             });
         }
 
@@ -154,12 +169,12 @@ const eliminaPDI = async (req, res) => {
         //cerco se esiste il PDI da eliminare
         const pdiEsistente = await PDI.findById(id);
 
-        if(!pdiEsistente){
+        if (!pdiEsistente) {
             return res.status(404).json({ error: "PDI non trovato" });
         }
 
         //controlle se il PDI ha immagini associate e le elimino
-        if(pdiEsistente.properties.immagine && pdiEsistente.properties.immagine.length > 0){
+        if (pdiEsistente.properties.immagine && pdiEsistente.properties.immagine.length > 0) {
             pdiEsistente.properties.immagine.forEach(immagine => {
                 const percorsoImmagine = `./uploads/${immagine}`;
                 if (fs.existsSync(percorsoImmagine)) {
@@ -167,7 +182,7 @@ const eliminaPDI = async (req, res) => {
                 }
             });
         }
-        
+
         //elimino il PDI dal db
         await pdiEsistente.deleteOne();
 
@@ -176,10 +191,10 @@ const eliminaPDI = async (req, res) => {
             data: pdiEsistente
         });
 
-    }catch (error) {
+    } catch (error) {
         console.error("Errore nel recupero del PDI:", error);
         res.status(500).json({ error: "Errore interno del server" });
     }
 }
 
-module.exports = {creaPDI, visualizzaTuttiPDI, visualizzaPDI,modificaPDI, eliminaPDI};
+module.exports = { creaPDI, visualizzaTuttiPDI, visualizzaPDI, modificaPDI, eliminaPDI };

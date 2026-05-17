@@ -4,8 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AlertProvider } from '../src/contexts/AlertController';
 import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
-import Mappa from './pages/Mappa'
-import ListaEventi from './pages/ListaEventi'
+import HomeEventi from './pages/home/HomeEventi'
 
 
 
@@ -14,8 +13,7 @@ const App = () => {
     <AlertProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Mappa />} />
-          <Route path="/eventi" element={<ListaEventi />} />
+          <Route path="/home/eventi" element={<HomeEventi />} />
           <Route path="/admin-home" element={<AdminHome />} />
           <Route path="/admin-home/gestisci-pdi" element={<GestisciPDI />} />
           <Route path="/crea-pdi" element={<CreaPDI />} />

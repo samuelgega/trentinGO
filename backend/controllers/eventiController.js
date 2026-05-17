@@ -3,6 +3,8 @@ const Evento = require('../models/Evento')
 const PDI = require('../models/PDI')
 //const Gestore = require('../models/Gestore')
 
+const baseUrl = process.env.API_URL || 'http://localhost:3001'
+
 const validaDati = (dati) => {
     const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento, idGestore } = dati
     //controllo se il nome è valido
@@ -71,11 +73,20 @@ const fs = require('fs')
 const visualizzaTuttiEventi = async (req, res) => {
     try {
         //recupero tutti gli eventi dal database
-        const eventiList = await Evento.find({}).populate('properties.pdiCollegato');
+        const eventiList = await Evento.find({}).populate('properties.pdiCollegato')
+
+        const output = eventiList.map(ev => {
+            if (Array.isArray(ev.properties.immagine)) {
+                ev.properties.immagine = ev.properties.immagine.map(nomeImmagine => {
+                    return `${baseUrl}/uploads/${nomeImmagine}`
+                })
+            }
+            return ev
+        })
 
         return res.status(200).json({
             message: "Lista degli eventi",
-            data: eventiList
+            data: output
         })
 
     } catch (e) {
@@ -198,6 +209,11 @@ const visualizzaEvento = async (req, res) => {
         const ev = await Evento.findById(req.params.idEvento)
         if (!ev)
             return res.status(404).json({ error: "Evento non trovato" })
+
+        ev.properties.immagine = ev.properties.immagine.map(nomeImmagine => {
+            return `${baseUrl}/uploads/${nomeImmagine}`
+        })
+
         return res.status(200).json({ message: "Evento trovato", data: ev })
     }
     catch ({ name, message }) {
