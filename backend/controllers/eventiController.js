@@ -1,10 +1,11 @@
 const mongoose = require('mongoose')
 const Evento = require('../models/Evento')
 const PDI = require('../models/PDI')
-const Gestore = require('../models/Gestore')
+//const Gestore = require('../models/Gestore')
 
 const validaDati = (dati) => {
-    const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento, idGestore } = dati
+    //implementare idGestore vando verrà aggiunta la sua collection
+    const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento } = dati
     //controllo se il nome è valido
     if (nome.trim() === "" || nome.trim().length < 2 || nome.trim().length > 100) {
         return {
@@ -55,11 +56,15 @@ const validaDati = (dati) => {
             datiValidi: false,
             errore: 'Id evento non valido'
         }
+
+    // decommentare quando verrà aggiunta la collection
+    /*
     if (idGestore && !mongoose.Types.ObjectId.isValid(idGestore))
         return {
             datiValidi: false,
             errore: 'Id gestore non valido'
         }
+    */
 }
 const fs = require('fs')
 
@@ -86,7 +91,8 @@ const creaEvento = async (req, res) => {
         if (!validazione.datiValidi)
             return res.status(400).json({ error: validazione.errore })
 
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato, idGestore } = req.body
+        //aggiungere idGestore quando verrà aggiunta la collection
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato } = req.body
 
         if (!nome || !dataInizio || !dataFine || !latitudine || !longitudine)
             return res.status(400).json({ error: "Dati mancanti" })
@@ -122,7 +128,6 @@ const creaEvento = async (req, res) => {
                 dataFine,
                 dataCreazione: new Date(),
                 pdiCollegato: refPdi,
-                idGestore: idGestore
             }
         })
 
@@ -140,7 +145,7 @@ const creaEvento = async (req, res) => {
 const modificaEvento = async (req, res) => {
     try {
         const { idEvento } = req.params
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idGestore, pdiCollegato } = req.body
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato } = req.body
 
         if (!idEvento || !nome || !dataInizio || !dataFine || !latitudine || !longitudine)
             return res.status(400).json({ error: "Dati mancanti" })
@@ -152,11 +157,12 @@ const modificaEvento = async (req, res) => {
         if (!ev) {
             return res.status(404).json({ error: "Evento non trovato" })
         }
+        /*
         const gest = await Gestore.findById(idGestore)
         if (!gest) {
             return res.status(404).json({ error: "Gestore non trovato" })
         }
-
+        */
         let arrayImmagini = []
         if (req.files && req.files.length > 0) {
             arrayImmagini = req.files.map(file => file.filename)
@@ -169,7 +175,7 @@ const modificaEvento = async (req, res) => {
         ev.set('properties.immagine', (arrayImmagini || ev.properties.immagine))
         ev.set('properties.dataInizio', (dataInizio || ev.properties.dataInizio))
         ev.set('properties.dataFine', (dataFine || ev.properties.dataFine))
-        ev.set('properties.idGestore', (idGestore || ev.properties.idGestore))
+        //ev.set('properties.idGestore', (idGestore || ev.properties.idGestore))
         ev.set('properties.pdiCollegato', (pdiCollegato || ev.properties.pdiCollegato))
 
         ev.set('geometry.coordinates.0', (longitudine, ev.geometry.coordinates[0]))
@@ -238,4 +244,4 @@ const eliminaEvento = async (req, res) => {
 
     }
 }
-module.exports = { visualizzaTuttiEventi, creaEvento, eliminaEvento }
+module.exports = { visualizzaTuttiEventi, creaEvento, modificaEvento, visualizzaEvento, eliminaEvento }
