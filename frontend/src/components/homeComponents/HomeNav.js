@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import '../../assets/home.css';
 
 const HomeNav = () => {
-
     //capire quale link è attivo
     const location = useLocation();
     const isActive = (path) => location.pathname === path ? 'active' : '';
@@ -12,8 +11,8 @@ const HomeNav = () => {
     const navigate = useNavigate();
 
     return (
-        <header className="home-navbar">  
-            <div className="d-flex allign-items-center">
+        <header className="home-navbar">
+            <div className="d-flex align-items-center">
                 {/* logo di trentinGo */}
                 <Link to="/home" className='nav-logo'>
                     TrentinGo
@@ -30,16 +29,24 @@ const HomeNav = () => {
             </div>
             {/* pulsante del profilo */}
             <div className='nav-actions'>
-                <button 
-                    className='icon-button' 
+                <button
+                    className='icon-button'
                     title='Profilo'
                     onClick={() => navigate('/profilo')}
+                    style={{
+                        'width': '4em',  /* Forza una dimensione fissa */
+                        'height': '4em',
+                        'overflow': 'hidden', /* Impedisce alla scritta "account_circle" di allargare il bottone */
+                        'display': 'inline-flex',
+                        'align-items': 'center',
+                        'justify-content': 'center'
+                    }}
                 >
-                    <span className="material-symbols-outlined">account_circle</span>
+                    <span className="material-symbols-outlined nav-icon">account_circle</span>
                 </button>
             </div>
         </header>
-    );
+    )
 }
 
 export default HomeNav;

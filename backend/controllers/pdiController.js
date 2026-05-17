@@ -176,10 +176,13 @@ const eliminaPDI = async (req, res) => {
         //controlle se il PDI ha immagini associate e le elimino
         if (pdiEsistente.properties.immagine && pdiEsistente.properties.immagine.length > 0) {
             pdiEsistente.properties.immagine.forEach(immagine => {
-                const percorsoImmagine = `./uploads/${immagine}`;
-                if (fs.existsSync(percorsoImmagine)) {
-                    fs.unlinkSync(percorsoImmagine);
+                if (immagine !== '') { //TODO: eliminare gli array vuoti dal db ed eliminare questo controllo, in quanto sarà vietato inserire stringhe vuote nel db
+                    const percorsoImmagine = `./uploads/${immagine}`;
+                    if (fs.existsSync(percorsoImmagine)) {
+                        fs.unlinkSync(percorsoImmagine);
+                    }
                 }
+
             });
         }
 
