@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef } from "react"; 
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'; 
+import React, { useEffect, useRef } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useAlert } from "../../contexts/AlertController";
 
 // Prendo l'icona del pin verde
 const pinVerde = new L.Icon({
@@ -14,14 +13,32 @@ const pinVerde = new L.Icon({
     shadowSize: [41, 41]
 });
 
-// Funzione per lo zoom su PDI selezionato
-const ChangeView = ({ center, zoom }) => {
-  const map = useMap(); 
+const CENTRO_DEFAULT = [46.0667, 11.1167];
+const ZOOM_DEFAULT = 9;
+
+const ChangeView = ({ pdiSelezionato, resetKey }) => {
+  const map = useMap();
+  const precedente = useRef(null);
+  const primoRender = useRef(true);
+
   useEffect(() => {
-    if (center) {
-      map.flyTo(center, zoom, { duration: 1.5 });
+    if (pdiSelezionato) {
+      map.flyTo(
+        [pdiSelezionato.geometry.coordinates[1], pdiSelezionato.geometry.coordinates[0]],
+        15,
+        { duration: 1.5 }
+      );
+    } else if (precedente.current !== null) {
+      map.flyTo(CENTRO_DEFAULT, ZOOM_DEFAULT, { duration: 1.5 });
     }
-  }, [center, zoom, map]);
+    precedente.current = pdiSelezionato;
+  }, [pdiSelezionato, map]);
+
+  useEffect(() => {
+    if (primoRender.current) { primoRender.current = false; return; }
+    map.flyTo(CENTRO_DEFAULT, ZOOM_DEFAULT, { duration: 1.5 });
+  }, [resetKey, map]);
+
   return null;
 }
 
@@ -55,67 +72,30 @@ const MarkerPDI = ({ pdi, isSelezionato, onPinClick }) => {
 
 
 // COMPONENTE PRINCIPALE
-const MappaTrentino = ({ pdiSelezionatoLista, PdiSelezionatoMappa }) => {
-
-    const { showAlert } = useAlert();
-    const [listaPDI, setListaPDI] = useState([]);
-
-    const recuperoPDI = async () => {
-
-        try {
-            const response = await fetch('http://localhost:3001/api/v1/pdi');                
-            if (!response.ok) {
-                throw new Error(`Errore HTTP: ${response.status}`);
-            }
-            const jsonResponse = await response.json();
-            setListaPDI(jsonResponse.data); 
-            
-        } catch (error) {
-            console.error("Errore di connessione:", error);
-            showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
-        }
-        
-    }
-
-    useEffect(()=>{
-        recuperoPDI()
-    }, []);
-    
-    // Coordinate di centro trento
-    const centroTrento = [46.0667, 11.1167]
+const MappaTrentino = ({ pdiFiltrati, pdiSelezionatoLista, PdiSelezionatoMappa, resetMappaKey }) => {
 
     return(
-        <MapContainer 
-            center={centroTrento} 
-            zoom={9} 
+        <MapContainer
+            center={CENTRO_DEFAULT}
+            zoom={ZOOM_DEFAULT}
             minZoom={8}
             style={{ height: '100%', width: '100%', zIndex: 0 }}
         >
-            {/* OpenStreetMap */}
             <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            
-            {/* PDI selezionato: esegue lo zoom se cambia */}
-            {pdiSelezionatoLista && (
-                <ChangeView
-                    center={[pdiSelezionatoLista.geometry.coordinates[1], pdiSelezionatoLista.geometry.coordinates[0]]}
-                    zoom={15}
-                />
-            )}
 
-            {/*lista pdi*/}
-            {listaPDI.map((pdi) => {
-                
+            <ChangeView pdiSelezionato={pdiSelezionatoLista} resetKey={resetMappaKey} />
+
+            {pdiFiltrati.map((pdi) => {
                 const isSelezionato = pdiSelezionatoLista && pdiSelezionatoLista._id === pdi._id;
-
                 return (
-                    <MarkerPDI 
+                    <MarkerPDI
                         key={pdi._id}
                         pdi={pdi}
                         isSelezionato={isSelezionato}
-                        onPinClick={PdiSelezionatoMappa} 
+                        onPinClick={PdiSelezionatoMappa}
                     />
                 );
             })}

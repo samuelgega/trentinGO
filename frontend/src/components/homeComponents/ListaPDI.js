@@ -1,5 +1,4 @@
-import React, {useEffect, useState, useMemo} from 'react'
-import { useAlert } from '../../contexts/AlertController'
+import React, { useEffect } from 'react'
 
 const ICONE_CATEGORIA = {
     lago: 'water',
@@ -10,53 +9,16 @@ const ICONE_CATEGORIA = {
     chiesa: 'church',
 }
 
-const ListaPDI = ({PdiSelezionatoLista, pdiSelezionatoMappa }) =>{
-
-const {showAlert} = useAlert();
-
-    const [listaPDI, setListaPDI] = useState([])
-    const [ricerca, setRicerca] = useState('')
-    const [categoriaSelezionata, setCategoriaSelezionata] = useState(null)
-
-    const recuperoPDI = async () => {
-        try {
-            const response = await fetch('http://localhost:3001/api/v1/pdi');
-            if (!response.ok) {
-                throw new Error(`Errore HTTP: ${response.status}`);
-            }
-            const jsonResponse = await response.json();
-            setListaPDI(jsonResponse.data);
-        } catch (error) {
-            console.error("Errore di connessione:", error);
-            showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
-        }
-    }
-
-    useEffect(()=>{
-        recuperoPDI()
-    }, []);
+const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezionata, setCategoriaSelezionata, PdiSelezionatoLista, pdiSelezionatoMappa }) => {
 
     useEffect(() => {
         if (pdiSelezionatoMappa) {
             const elementoCard = document.getElementById(`card-pdi-${pdiSelezionatoMappa._id}`);
             if (elementoCard) {
-                elementoCard.scrollIntoView({ behavior: 'smooth',block: 'start' });
+                elementoCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
     }, [pdiSelezionatoMappa]);
-
-    const categorie = useMemo(() => {
-        const uniche = [...new Set(listaPDI.map(p => p.properties.categoria).filter(Boolean))];
-        return uniche.sort();
-    }, [listaPDI]);
-
-    const pdiFiltrati = useMemo(() => {
-        return listaPDI.filter(pdi => {
-            const matchRicerca = pdi.properties.nome.toLowerCase().includes(ricerca.toLowerCase());
-            const matchCategoria = !categoriaSelezionata || pdi.properties.categoria === categoriaSelezionata;
-            return matchRicerca && matchCategoria;
-        });
-    }, [listaPDI, ricerca, categoriaSelezionata]);
 
     return (
         <div className="h-100 d-flex flex-column p-4">
