@@ -257,3 +257,27 @@
     margin-bottom: 12px;
     opacity: 0.5;
 }
+
+/* Bottone pieno */
+.btn-trentingo {
+    background-color: #037149 !important;
+    color: white !important;
+    border: 1px solid #037149 !important;
+}
+
+.btn-trentingo:hover {
+    background-color: #012d1d !important;
+    color: white !important;
+}
+
+/* Bottone col solo bordo (per quando nascondi gli eventi) */
+.btn-trentingo-outline {
+    background-color: transparent;
+    color: #037149 !important;
+    border: 1px solid #064e3b !important;
+}
+
+.btn-trentingo-outline:hover {
+    background-color: #064e3b !important;
+    color: white !important;
+}
