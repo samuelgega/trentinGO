@@ -117,7 +117,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                                                     <button 
                                                         className="btn text-white px-3 py-2 fw-semibold shadow-sm d-flex align-items-center gap-1"
                                                         style={{ backgroundColor: '#037149', borderRadius: '10px', fontSize: '0.9rem' }}
-                                                        onClick={(e) => { e.stopPropagation(); navigate('/dettagli/${pdi._id}') }}
+                                                        onClick={(e) => { e.stopPropagation(); navigate(`/dettagli/${pdi._id}`) }}
                                                     >
                                                         Visualizza dettagli
                                                     </button>
