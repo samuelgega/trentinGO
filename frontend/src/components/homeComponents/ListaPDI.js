@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 // Mappa ogni categoria alla relativa icona Material Symbols
 const ICONE_CATEGORIA = {
@@ -11,6 +12,8 @@ const ICONE_CATEGORIA = {
 }
 
 const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezionata, setCategoriaSelezionata, PdiSelezionatoLista, pdiSelezionatoMappa }) => {
+
+    const navigate = useNavigate();
 
     // Quando la mappa seleziona un PDI, scrolla automaticamente alla card corrispondente nella lista
     useEffect(() => {
@@ -102,10 +105,26 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                                                 {pdi.properties.categoria}
                                             </span>
                                         )}
-                                    </div>
-                                    <p className="text-muted mb-3" style={{ fontSize: '0.9rem', lineHeight: '1.4' }}>
-                                        {pdi.properties.descrizione}
-                                    </p>
+                                </div>
+                                        {isSelezionato && (
+                                            <div className="mt-3 pt-3 border-top style-fade-in">
+                                                <p className="text-secondary mb-3" style={{ fontSize: '0.9rem', lineHeight: '1.5' }}>
+                                                {pdi.properties.descrizione || "Nessuna descrizione disponibile per questo luogo."}
+                                                </p>
+                                        
+                                        {/* Pulsante Dettagli */}
+                                            <div className="d-flex justify-content-end">
+                                                    <button 
+                                                        className="btn text-white px-3 py-2 fw-semibold shadow-sm d-flex align-items-center gap-1"
+                                                        style={{ backgroundColor: '#037149', borderRadius: '10px', fontSize: '0.9rem' }}
+                                                        onClick={(e) => { e.stopPropagation(); navigate(`/dettagli/${pdi._id}`) }}
+                                                    >
+                                                        Visualizza dettagli
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    
                                 </div>
                             </div>
                         );

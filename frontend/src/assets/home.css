@@ -1,6 +1,6 @@
 
 :root {
-    --primary: #012d1d;
+    --primary: #037149;
     --on-primary: #ffffff;
     --surface: #f8f9fa;
     --on-surface: #191c1d;
@@ -140,7 +140,7 @@
 .pdi-search-icon {
     position: absolute;
     left: 12px;
-    color: var(--outline);
+    color: #037149;
     font-size: 20px;
     pointer-events: none;
 }
@@ -157,7 +157,7 @@
 }
 
 .pdi-search-input:focus {
-    border-color: var(--secondary);
+    border-color: #037149;
     box-shadow: 0 0 0 3px rgba(19, 103, 123, 0.12);
 }
 
@@ -168,13 +168,13 @@
     border: none;
     padding: 2px;
     cursor: pointer;
-    color: var(--outline);
+    color: #037149;
     display: flex;
     align-items: center;
 }
 
 .pdi-search-clear:hover {
-    color: var(--on-surface);
+    color: #037149;
 }
 
 /* chips categoria */
@@ -194,26 +194,26 @@
     background-color: #fff;
     font-size: 0.82rem;
     font-weight: 500;
-    color: #475569;
+    color: #037149;
     cursor: pointer;
     transition: all 0.18s ease;
     white-space: nowrap;
 }
 
 .pdi-chip:hover {
-    border-color: var(--secondary);
-    color: var(--secondary);
+    border-color: #037149;
+    color: #037149;
 }
 
 .pdi-chip--attivo {
-    background-color: var(--secondary);
-    border-color: var(--secondary);
+    background-color: #037149;
+    border-color: #037149;
     color: #fff;
 }
 
 .pdi-chip--attivo:hover {
-    background-color: var(--primary);
-    border-color: var(--primary);
+    background-color: #037149;
+    border-color: #037149;
     color: #fff;
 }
 
@@ -237,7 +237,7 @@
     padding: 3px 10px;
     border-radius: 20px;
     background-color: #e0f2fe;
-    color: var(--secondary);
+    color: #037149;
     flex-shrink: 0;
 }
 
@@ -248,7 +248,7 @@
     align-items: center;
     justify-content: center;
     padding: 48px 16px;
-    color: var(--outline);
+    color: #037149;
     text-align: center;
 }
 
@@ -256,4 +256,28 @@
     font-size: 48px !important;
     margin-bottom: 12px;
     opacity: 0.5;
+}
+
+/* Bottone pieno */
+.btn-trentingo {
+    background-color: #037149 !important;
+    color: white !important;
+    border: 1px solid #037149 !important;
+}
+
+.btn-trentingo:hover {
+    background-color: #012d1d !important;
+    color: white !important;
+}
+
+/* Bottone col solo bordo (per quando nascondi gli eventi) */
+.btn-trentingo-outline {
+    background-color: transparent;
+    color: #037149 !important;
+    border: 1px solid #064e3b !important;
+}
+
+.btn-trentingo-outline:hover {
+    background-color: #064e3b !important;
+    color: white !important;
 }

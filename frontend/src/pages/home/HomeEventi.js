@@ -3,8 +3,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '../../contexts/AlertController'
 import HomeNav from "../../components/homeComponents/HomeNav";
-
 import 'bootstrap/dist/css/bootstrap.min.css'
+import '../../assets/home.css'
 
 const HomeEventi = () => {
     const { showAlert } = useAlert()
@@ -58,7 +58,7 @@ const HomeEventi = () => {
                         </div>
                         <div>
                             <button
-                                className={`btn btn-${isEvPassAttivo ? 'secondary' : 'primary'} px-4 py-2 fw-semibold shadow-sm`}
+                                className={`btn ${isEvPassAttivo ? 'btn-trentingo-outline' : 'btn-trentingo'} px-4 py-2 fw-semibold shadow-sm`}
                                 onClick={handleEvPassClick}
                             >
                                 {isEvPassAttivo ? 'Nascondi eventi passati' : 'Mostra eventi passati'}

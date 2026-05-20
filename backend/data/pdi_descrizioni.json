@@ -1,0 +1,334 @@
+[
+    {
+        "nome": "Lago di Garda",
+        "descrizione": "Il lago più grande d'Italia. La sponda trentina, incastonata tra pareti rocciose verticali, è un paradiso mondiale per gli appassionati di vela, windsurf e arrampicata."
+    },
+    {
+        "nome": "Lago di Ledro",
+        "descrizione": "Splendido specchio d'acqua alpino famoso non solo per i suoi colori cangianti, ma per aver restituito un intero villaggio palafitticolo dell'Età del Bronzo, oggi Patrimonio UNESCO."
+    },
+    {
+        "nome": "Lago di Tenno",
+        "descrizione": "Un gioiello turchese noto per le sue acque limpidissime, l'iconica isoletta centrale e per la vicinanza allo storico e suggestivo borgo medievale di Canale di Tenno."
+    },
+    {
+        "nome": "Lago di Molveno",
+        "descrizione": "Pluripremiato lago alpino adagiato ai piedi delle maestose Dolomiti di Brenta, incanta i visitatori con le sue acque cristalline e le ampie spiagge di erba finissima."
+    },
+    {
+        "nome": "Lago di Tovel",
+        "descrizione": "Celebre in passato per il fenomeno naturale che tingeva le sue acque di rosso sangue, oggi è un incantevole e tranquillo specchio d'acqua smeraldo nel cuore del Parco Adamello Brenta."
+    },
+    {
+        "nome": "Lago di Caldonazzo",
+        "descrizione": "Il lago più grande interamente trentino. Un vero paradiso per gli amanti degli sport acquatici, caratterizzato da spiagge Bandiera Blu e acque piacevolmente calde in estate."
+    },
+    {
+        "nome": "Lago di Levico",
+        "descrizione": "Caratterizzato da una forma allungata che ricorda un fiordo norvegese, è circondato da una fitta vegetazione ed è rinomato per il relax e per le sue storiche terme."
+    },
+    {
+        "nome": "Lago di Toblino",
+        "descrizione": "Un romantico specchio d'acqua alpino cinto da un fitto canneto nella Valle dei Laghi, reso fiabesco dalla presenza di un affascinante castello cinquecentesco su una penisola."
+    },
+    {
+        "nome": "Lago di Santa Giustina",
+        "descrizione": "Imponente bacino artificiale situato nel cuore della Val di Non. È circondato da infiniti filari di meleti e dominato dalle suggestive rovine storiche di Castel Cles."
+    },
+    {
+        "nome": "Lago di Cei",
+        "descrizione": "Splendida riserva naturale incastonata nel verde della Vallagarina, famosa per le sue distese di ninfee e per l'atmosfera di profonda quiete e tranquillità alpina."
+    },
+    {
+        "nome": "Lago di Lavarone",
+        "descrizione": "Piccolo e limpido lago alpino situato sull'omonimo altopiano, storicamente molto caro a Sigmund Freud e oggi meta perfetta per passeggiate rigeneranti e relax in mezzo alla natura."
+    },
+    {
+        "nome": "Lago di Serraia",
+        "descrizione": "Situato sull'Altopiano di Pinè, offre una splendida e frequentata passeggiata pianeggiante che ne costeggia le rive, ideale per famiglie, sportivi e amanti del relax estivo."
+    },
+    {
+        "nome": "Lago di Coredo",
+        "descrizione": "Bacino artificiale immerso in fitte foreste di conifere sulla splendida sella di Coredo, luogo ideale per rilassanti giornate all'aria aperta, picnic e pesca sportiva."
+    },
+    {
+        "nome": "Lago di Tavon",
+        "descrizione": "Adiacente al Lago di Coredo e collegato a quest'ultimo, forma un'oasi di pace nel bosco molto apprezzata per escursioni facili a piedi e passeggiate rigeneranti."
+    },
+    {
+        "nome": "Lago di Calaita",
+        "descrizione": "Uno degli specchi d'acqua più spettacolari della Valle di Primiero, noto perché nelle sue acque si riflettono amplificate e nitide le imponenti pareti delle Pale di San Martino."
+    },
+    {
+        "nome": "Lago di Paneveggio",
+        "descrizione": "Bacino montano situato all'interno del Parco Naturale di Paneveggio, celebre per la sua vicinanza alla foresta dei violini e per i colori unici delle sue fresche acque alpestri."
+    },
+    {
+        "nome": "Lago delle Piazze",
+        "descrizione": "Situato sull'Altopiano di Pinè subito dopo il Lago di Serraia, è una meta estiva molto apprezzata per le sue spiaggette curate, la balneazione e i percorsi ciclopedonali."
+    },
+    {
+        "nome": "Lago di Nambino",
+        "descrizione": "Incantevole e pittoresco laghetto alpino raggiungibile con una breve e piacevole escursione tra i boschi partendo dai pressi della rinomata località di Madonna di Campiglio."
+    },
+    {
+        "nome": "Lago Ritort",
+        "descrizione": "Splendido lago d'alta quota di chiara origine glaciale, situato nel gruppo di Campiglio, che regala una spettacolare vista frontale panoramica sulle Dolomiti di Brenta."
+    },
+    {
+        "nome": "Lago Spinale",
+        "descrizione": "Piccolo specchio d'acqua alpino incastonato tra i pascoli d'alta quota dell'omonimo monte, raggiungibile da Madonna di Campiglio e circondato da scenari montani suggestivi."
+    },
+    {
+        "nome": "Lago di Valagola",
+        "descrizione": "Un autentico gioiello alpino nascosto tra i fitti boschi di abeti della Val Rendena, ai piedi delle Dolomiti di Brenta, ideale per chi cerca un'escursione tranquilla e selvaggia."
+    },
+    {
+        "nome": "Lago di Roncone",
+        "descrizione": "Situato nelle valli Giudicarie e premiato con la Bandiera Blu, è uno specchio d'acqua balneabile molto ben attrezzato per le famiglie, circondato da canneti e aree verdi."
+    },
+    {
+        "nome": "Lago di Garzon",
+        "descrizione": "Piccolo, appartato e incontaminato lago di montagna situato nel territorio del Primiero, perfetto come meta per escursionisti che cercano pace e un contatto autentico con la natura."
+    },
+    {
+        "nome": "Lago Nero (Cornisello)",
+        "descrizione": "Un suggestivo laghetto d'alta quota dall'aspetto severo, situato nella splendida Val Nambrone, che riflette le spettacolari e aspre guglie rocciose del Gruppo di Brenta."
+    },
+    {
+        "nome": "Monte Cevedale (3769 m)",
+        "descrizione": "Una delle vette più imponenti e importanti del gruppo Ortles-Cevedale, meta classica e rinomata per l'alpinismo e lo scialpinismo grazie ai suoi spettacolari e perenni ghiacciai."
+    },
+    {
+        "nome": "Punta San Matteo (3678 m)",
+        "descrizione": "Una splendida ed imponente vetta del gruppo Ortles-Cevedale, storicamente celebre per essere stata teatro della battaglia d'alta quota più alta della prima guerra mondiale."
+    },
+    {
+        "nome": "Monte Vioz (3645 m)",
+        "descrizione": "Vetta maestosa situata nel gruppo Ortles-Cevedale, nota agli escursionisti esperti per ospitare a brevissima distanza dalla cima il rifugio alpino più alto del Trentino."
+    },
+    {
+        "nome": "Presanella (3558 m)",
+        "descrizione": "La cima più alta situata interamente entro i confini della provincia di Trento, caratterizzata da imponenti pareti di ghiaccio e roccia amate dagli alpinisti."
+    },
+    {
+        "nome": "Adamello (3539 m)",
+        "descrizione": "Massiccio granitico imponente che ospita il più vasto ghiacciaio delle Alpi italiane, un luogo selvaggio e intriso di storie legate alla celebre Guerra Bianca."
+    },
+    {
+        "nome": "Marmolada (3343 m)",
+        "descrizione": "Conosciuta in tutto il mondo come la Regina delle Dolomiti, è la vetta più alta dell'intero gruppo dolomitico e vanta uno spettacolare ghiacciaio sul versante nord."
+    },
+    {
+        "nome": "Monte Fumo (3327 m)",
+        "descrizione": "Una cima selvaggia e isolata situata nel selvaggio sottogruppo dell'Adamello, circondata da aspre distese di roccia e spettacolari vedute sui ghiacciai perenni."
+    },
+    {
+        "nome": "Cima della Vezzana (3192 m)",
+        "descrizione": "La vetta più elevata del maestoso gruppo delle Pale di San Martino, accessibile tramite percorsi alpinistici impegnativi che regalano panorami mozzafiato a 360 gradi."
+    },
+    {
+        "nome": "Cimon della Pala (3186 m)",
+        "descrizione": "Chiamato affettuosamente il Cervino delle Dolomiti per la sua inconfondibile ed affilata forma piramidale, è il simbolo indiscusso di Passo Rolle e San Martino."
+    },
+    {
+        "nome": "Cima Tosa (3173 m)",
+        "descrizione": "Una delle vette principali e più imponenti delle Dolomiti di Brenta, caratterizzata da una cima un tempo coperta da una calotta ghiacciata e pareti verticali."
+    },
+    {
+        "nome": "Cima Careser (3163 m)",
+        "descrizione": "Situata nel cuore del Parco Nazionale dello Stelvio, è una meta d'alta quota rinomata per la vicinanza all'omonimo ghiacciaio e ai laghi artificiali sottostanti."
+    },
+    {
+        "nome": "Cima Brenta (3150 m)",
+        "descrizione": "La maestosa cima principale del massiccio centrale delle Dolomiti di Brenta, fiancheggiata da vertiginose torri rocciose e percorsi attrezzati famosi in tutto il mondo."
+    },
+    {
+        "nome": "Crozzon di Brenta (3135 m)",
+        "descrizione": "Una straordinaria ed immensa colonna di roccia verticale, pilastro leggendario per l'alpinismo mondiale e tra le strutture più fotografate delle Dolomiti occidentali."
+    },
+    {
+        "nome": "Cima d'Ambiez (3102 m)",
+        "descrizione": "Situata nella porzione meridionale del Brenta, è una tra le pareti di roccia più eleganti e compatte della regione, percorsa da storiche vie d'arrampicata."
+    },
+    {
+        "nome": "Cima di Ball (3069 m)",
+        "descrizione": "Importante e panoramica elevazione situata nel cuore delle Pale di San Martino, dedicata al pioniere dell'alpinismo dolomitico John Ball."
+    },
+    {
+        "nome": "Punta di Peio (3056 m)",
+        "descrizione": "Spettacolare punto panoramico d'alta quota sopra la Val di Peio, che offre una vista sconfinata sui giganti di ghiaccio dell'Ortles-Cevedale e dell'Adamello."
+    },
+    {
+        "nome": "MUSE – Museo delle Scienze",
+        "descrizione": "Il celeberrimo museo delle scienze di Trento progettato da Renzo Piano, caratterizzato da un profilo architettonico che richiama l'andamento delle montagne circostanti."
+    },
+    {
+        "nome": "MART – Museo di Arte Moderna e Contemporanea di Trento e Rovereto",
+        "descrizione": "Uno dei maggiori poli museali d'arte contemporanea d'Europa, inconfondibile grazie alla monumentale cupola in vetro e acciaio progettata dall'architetto Mario Botta."
+    },
+    {
+        "nome": "Museo Diocesano Tridentino",
+        "descrizione": "Ospitato nel monumentale Palazzo Pretorio accanto alla cattedrale di Trento, custodisce un ricchissimo patrimonio artistico legato alla storia del Concilio."
+    },
+    {
+        "nome": "Castello del Buonconsiglio – Museo Provinciale d'Arte",
+        "descrizione": "Antica e sontuosa residenza dei Principi Vescovi di Trento, oggi polo espositivo che custodisce il celebre Ciclo dei Mesi, capolavoro del gotico internazionale."
+    },
+    {
+        "nome": "Museo Storico Italiano della Guerra",
+        "descrizione": "Ospitato all'interno del monumentale castello di Rovereto, è uno dei principali musei italiani dedicati alla memoria e ai cimeli della prima guerra mondiale."
+    },
+    {
+        "nome": "Museo degli Usi e Costumi della Gente Trentina",
+        "descrizione": "Situato a San Michele all'Adige, è il più importante museo etnografico d'Italia dedicato alla cultura, al lavoro e alle tradizioni delle comunità alpine."
+    },
+    {
+        "nome": "Museo dell'Aeronautica Gianni Caproni",
+        "descrizione": "Situato nei pressi dell'aeroporto di Trento, raccoglie una collezione di livello mondiale di aeromobili storici, motori e cimeli del pioniere Gianni Caproni."
+    },
+    {
+        "nome": "Museo Civico di Rovereto",
+        "descrizione": "Uno dei più antichi musei accademici italiani, centro culturale attivo che vanta ricche sezioni dedicate alle scienze naturali, all'archeologia e all'astronomia."
+    },
+    {
+        "nome": "Palazzo delle Albere",
+        "descrizione": "Splendida villa-fortezza rinascimentale costruita nel Cinquecento dai Principi Vescovi Madruzzo, situata a Trento accanto al moderno quartiere delle Albere."
+    },
+    {
+        "nome": "Galleria Civica di Trento",
+        "descrizione": "Sede distaccata del MART situata nel centro storico di Trento, interamente dedicata alla sperimentazione, all'arte contemporanea e alle mostre di artisti emergenti."
+    },
+    {
+        "nome": "Museo Storico del Trentino",
+        "descrizione": "Spazio espositivo dinamico focalizzato sulla storia contemporanea, locale e regionale, teso a valorizzare la memoria del territorio attraverso mostre e archivi."
+    },
+    {
+        "nome": "Cattedrale di San Vigilio",
+        "descrizione": "Il monumentale Duomo di Trento, capolavoro romanico-gotico situato nella splendida piazza centrale, celebre per aver ospitato le sessioni del Concilio di Trento."
+    },
+    {
+        "nome": "Basilica di Santa Maria Maggiore",
+        "descrizione": "Elegante chiesa rinascimentale di Trento edificata nel Cinquecento, passata alla storia per aver ospitato importanti congregazioni generali del Concilio."
+    },
+    {
+        "nome": "Chiesa di Sant'Apollinare",
+        "descrizione": "Antica e caratteristica chiesa situata nel quartiere di Piedicastello a Trento, caratterizzata da un tetto spiovente insolitamente alto e dalle origini medievali."
+    },
+    {
+        "nome": "Basilica di San Marco (Rovereto)",
+        "descrizione": "Il principale luogo di culto cattolico di Rovereto, ricco di opere d'arte barocche e testimonianza storica del legame e del dominio della Repubblica di Venezia."
+    },
+    {
+        "nome": "Basilica dell'Inviolata (Riva del Garda)",
+        "descrizione": "Splendido capolavoro dello stile barocco in Trentino, caratterizzato da una pianta ottagonale ed interni riccamente decorati con stucchi, affreschi e pale d'altare."
+    },
+    {
+        "nome": "Chiesa di San Lorenzo (Trento)",
+        "descrizione": "Antica chiesa di origine monastica medievale situata nei pressi della stazione di Trento, caratterizzata da una suggestiva architettura in pietra austera e solenne."
+    },
+    {
+        "nome": "Chiesa di San Vigilio (Pinzolo)",
+        "descrizione": "Famosa nel mondo per ospitare sulla sua parete esterna lo straordinario affresco tardo-medievale della Danza Macabra, dipinto da Simone Baschenis nel 1539."
+    },
+    {
+        "nome": "Abbazia di San Pietro (Castello Ivano)",
+        "descrizione": "Un suggestivo luogo spirituale intriso di storia e circondato dal verde della Valsugana, storicamente legato alle vicende del vicino e monumentale maniero."
+    },
+    {
+        "nome": "Santuario di San Romedio",
+        "descrizione": "Uno dei santuari più caratteristici d'Europa, formato da cinque chiesette sovrapposte costruite su una ripida rupe di roccia alta oltre settanta metri."
+    },
+    {
+        "nome": "Santuario della Consolata (Carisolo)",
+        "descrizione": "Un piccolo e suggestivo edificio sacro situato all'imbocco della Val Genova, meta di camminate devozionali e immerso in una natura boschiva rigenerante."
+    },
+    {
+        "nome": "Santuario della Madonna di Caravaggio (Pinzolo)",
+        "descrizione": "Un tranquillo luogo di silenzio e di preghiera situato nella porzione alta della Val Rendena, circondato da pascoli alpini e dalle vette circostanti."
+    },
+    {
+        "nome": "Santuario della Madonna delle Grazie (Arco)",
+        "descrizione": "Complesso monastico francescano quattrocentesco situato ad Arco, meta costante di pellegrinaggi e custode di una venerata statua lignea della Vergine."
+    },
+    {
+        "nome": "Santuario della Madonna di Pinè",
+        "descrizione": "Situato a Montagnaga, è il luogo di pellegrinaggio mariano più celebre del Trentino, legato alle storiche apparizioni della Vergine a una pastorella locale."
+    },
+    {
+        "nome": "Santuario di Porte di Rendena (Madonna del Carmine)",
+        "descrizione": "Caratteristico edificio sacro rurale immerso nel verde della valle, edificato come ringraziamento e devozione storica della popolazione locale alla Madonna."
+    },
+    {
+        "nome": "Santuario di San Valentino (Trento)",
+        "descrizione": "Piccola ed isolata chiesetta santuario arroccata sui pendii della montagna sopra Trento, meta preferita per tranquille escursioni e passeggiate domenicali."
+    },
+    {
+        "nome": "Santuario della Madonna di Roncone",
+        "descrizione": "Un pregevole gioiello di arte sacra arroccato in splendida posizione panoramica, arricchito all'interno da splendidi intagli lignei di maestri artigiani locali."
+    },
+    {
+        "nome": "Castello del Buonconsiglio",
+        "descrizione": "Il più grande e maestoso complesso fortificato della regione, antica corte dei principi vescovi arricchita da imponenti torrioni medievali e saloni rinascimentali."
+    },
+    {
+        "nome": "Castel Beseno",
+        "descrizione": "La più estesa fortezza medievale della regione, arroccata su una collina che domina l'intera Vallagarina, oggi teatro di rievocazioni storiche in costume."
+    },
+    {
+        "nome": "Castel Thun",
+        "descrizione": "Splendido e maestoso esempio di architettura residenziale valligiana, appartenuto alla potente famiglia Thun, conserva intatti gli arredi originali del Cinquecento."
+    },
+    {
+        "nome": "Castel Stenico",
+        "descrizione": "Un'imponente fortezza che domina le valli Giudicarie, storicamente legata ai Principi Vescovi di Trento che la utilizzavano come sede amministrativa e giudiziaria."
+    },
+    {
+        "nome": "Castel Arco",
+        "descrizione": "Suggestive e spettacolari rovine di un castello medievale arroccate su un'altissima rupe rocciosa verticale che si erge a picco sopra gli uliveti di Arco."
+    },
+    {
+        "nome": "Castel Caldes",
+        "descrizione": "Elegante maniero situato all'imbocco della Val di Sole, caratterizzato da un'architettura che fonde lo stile gotico nordico con le finezze del Rinascimento italiano."
+    },
+    {
+        "nome": "Castel Malgolo",
+        "descrizione": "Affascinante residenza privata situata in Val di Non, caratterizzata da romantiche torri e tetti aguzzi che spuntano suggestivamente in mezzo ai meleti."
+    },
+    {
+        "nome": "Castel Noarna",
+        "descrizione": "Antico e possente castello abbarbicato sui colli di Vallagarina, famoso storicamente per i processi alle streghe del Cinquecento e oggi rinomata azienda vinicola."
+    },
+    {
+        "nome": "Castel Sabbionara (Avio)",
+        "descrizione": "Uno dei complessi fortificati più antichi della regione, gestito dal FAI e rinomato per gli straordinari affreschi trecenteschi dedicati alle arti della guerra e dell'amore."
+    },
+    {
+        "nome": "Castel Pietra",
+        "descrizione": "Posto ai piedi del paese di Calliano, questo antico castello sorge su un enorme masso staccatosi dalla montagna, celebre per la storica battaglia di Calliano."
+    },
+    {
+        "nome": "Castel Drena",
+        "descrizione": "Un austero maniero medievale che svetta solitario sopra lo spettacolare paesaggio lunare della 'Marocche', una monumentale distesa di massi franati."
+    },
+    {
+        "nome": "Castel Pergine",
+        "descrizione": "Imponente castello medievale che domina dall'alto la cittadina di Pergine e l'inizio della Valsugana, oggi utilizzato come hotel di charme e spazio d'arte contemporanea."
+    },
+    {
+        "nome": "Castel Ivano",
+        "descrizione": "Uno dei castelli abitati più antichi e meglio conservati della Valsugana, caratterizzato da uno splendido cortile interno, giardini curati e saloni ricchi di storia."
+    },
+    {
+        "nome": "Castel Nanno",
+        "descrizione": "Elegante e simmetrico maniero cinquecentesco situato in Val di Non, avvolto da suggestive leggende popolari e caratterizzato da una torretta centrale quadrata."
+    },
+    {
+        "nome": "Forte di Nago",
+        "descrizione": "Fortezza austro-ungarica ottocentesca costruita su una terrazza rocciosa naturale che offre un panorama d'insieme spettacolare sull'alto Lago di Garda."
+    },
+    {
+        "nome": "Castel Selva",
+        "descrizione": "Suggestivi e storici ruderi di un imponente castello medievale situati sopra l'abitato di Levico Terme, immersi in un tranquillo contesto boschivo alpino."
+    }
+]

@@ -179,11 +179,14 @@ const ModificaPDI = () => {
                                         onChange={handleInput}
                                     >
                                         <option value="">Selezionare tipologia</option>
+                                        <option value="Chiesa">Chiesa</option>
+                                        <option value="Castello">Castello</option>
                                         <option value="Monumento">Monumento</option>
                                         <option value="Museo">Museo</option>
                                         <option value="Parco">Parco</option>
-                                        <option value="Sentiero">Sentiero</option>
+                                        <option value="Montagna">Montagna</option>
                                         <option value="Lago">Lago</option>
+                                        <option value="Santuario">Santuario</option>
                                         <option value="Altro">Altro</option>
                                     </select>
                                     <small className="text-danger">{errori.categoria}</small>
