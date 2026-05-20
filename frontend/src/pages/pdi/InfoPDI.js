@@ -10,7 +10,8 @@ const InfoPDI = () => {
     const { showAlert } = useAlert();
     
     const [pdi, setPdi] = useState(null);
-   const [fotoGrandeIndex, setFotoGrandeIndex] = useState(0);
+    const [fotoGrandeIndex, setFotoGrandeIndex] = useState(0);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
     // Prendo i dati del singolo PDI
     useEffect(() => {
@@ -48,6 +49,14 @@ const InfoPDI = () => {
 
     //funzioni per il carosello di immagini
     const immagini = pdi.properties.immagine || [];
+
+    const prossimaFoto = () => {
+        setFotoGrandeIndex((prevIndex) => (prevIndex + 1) % immagini.length);
+    };
+
+    const fotoPrecedente = () => {
+        setFotoGrandeIndex((prevIndex) => (prevIndex - 1 + immagini.length) % immagini.length);
+    };
     
 
     return (
@@ -139,7 +148,7 @@ const InfoPDI = () => {
                                                         border: isSelezionata ? '3px solid #137b52' : '3px solid transparent',
                                                         transition: 'all 0.2s ease'
                                                     }}
-                                                    onClick={() => setFotoGrandeIndex(index)}
+                                                    onClick={() => { setFotoGrandeIndex(index); setIsLightboxOpen(true); }}
                                                 >
                                                     <img 
                                                         src={urlFoto} 
@@ -182,6 +191,71 @@ const InfoPDI = () => {
                     </div>
                 </div>
             </div>
+            {/*visualizza le immagini */}
+            {isLightboxOpen && (
+                <div
+                    className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+                    style={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.95)',
+                        zIndex: 2000, 
+                        transition: 'opacity 0.3s ease',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => setIsLightboxOpen(false)}
+                >
+                    {/* Contenitore Immagine */}
+                    <div
+                        className="position-relative d-flex flex-column align-items-center"
+                        style={{ cursor: 'default', maxWidth: '90%', maxHeight: '90%' }}
+                        onClick={(e) => e.stopPropagation()} 
+                    >
+                        {/* Tasto Chiudi X */}
+                        <button 
+                            className="position-absolute btn bg-white rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                            style={{ top: '-25px', right: '-25px', width: '40px', height: '40px', zIndex: 20, border: 'none' }}
+                            onClick={() => setIsLightboxOpen(false)}
+                        >
+                            <span className="material-symbols-outlined text-dark">close</span>
+                        </button>
+
+                        {/* Immagine*/}
+                        <img 
+                            src={immagini[fotoGrandeIndex]} 
+                            alt={`${pdi.properties.nome} - Visualizzazione Completa`} 
+                            className="img-fluid rounded-3 shadow"
+                            style={{ maxHeight: '80vh', objectFit: 'contain' }}
+                        />
+
+                        {/* Frecce di navigazione */}
+                        {immagini.length > 1 && (
+                            <>
+                                {/* Freccia Sinistra */}
+                                <button 
+                                    className="position-absolute btn bg-white rounded-circle d-flex align-items-center justify-content-center shadow"
+                                    style={{ top: '50%', left: '-25px', transform: 'translateY(-50%)', width: '40px', height: '40px', zIndex: 10, border: 'none' }}
+                                    onClick={(e) => { e.stopPropagation(); fotoPrecedente(); }}
+                                >
+                                    <span className="material-symbols-outlined text-dark">chevron_left</span>
+                                </button>
+
+                                {/* Freccia Destra */}
+                                <button 
+                                    className="position-absolute btn bg-white rounded-circle d-flex align-items-center justify-content-center shadow"
+                                    style={{ top: '50%', right: '-25px', transform: 'translateY(-50%)', width: '40px', height: '40px', zIndex: 10, border: 'none' }}
+                                    onClick={(e) => { e.stopPropagation(); prossimaFoto(); }}
+                                >
+                                    <span className="material-symbols-outlined text-dark">chevron_right</span>
+                                </button>
+                                
+                                {/* Contatore Immagini in basso */}
+                                <div className="position-absolute start-50 translate-middle-x mt-3 p-2 bg-dark rounded-pill text-white shadow" style={{bottom: "-50px", fontSize: "0.85rem"}}>
+                                    {fotoGrandeIndex + 1} / {immagini.length}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
