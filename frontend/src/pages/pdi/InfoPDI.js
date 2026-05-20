@@ -10,6 +10,7 @@ const InfoPDI = () => {
     const { showAlert } = useAlert();
     
     const [pdi, setPdi] = useState(null);
+   const [fotoGrandeIndex, setFotoGrandeIndex] = useState(0);
 
     // Prendo i dati del singolo PDI
     useEffect(() => {
@@ -45,15 +46,19 @@ const InfoPDI = () => {
         );
     }
 
+    //funzioni per il carosello di immagini
+    const immagini = pdi.properties.immagine || [];
+    
+
     return (
         <div className="bg-light min-vh-100 pb-5">
-            {/*Immagine di sfondo */}
+            {/*Mostra la prima foto*/}
             <div className="position-relative" style={{ height: '40vh', minHeight: '300px' }}>
                 <img 
-                    src={pdi.properties.immagine && pdi.properties.immagine[0] ? pdi.properties.immagine[0] : 'http://localhost:3001/uploads/eventoGenerico.png'} 
+                    src={immagini.length > 0 ? immagini[fotoGrandeIndex] : 'http://localhost:3001/uploads/eventoGenerico.png'} 
                     alt={pdi.properties.nome}
                     className="w-100 h-100"
-                    style={{ objectFit: 'cover' }}
+                    style={{ objectFit: 'cover', transition: 'all 0.3s ease' }}
                 />
                 <div className="position-absolute top-0 start-0 w-100 h-100" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 50%)' }}></div>
                 
@@ -118,6 +123,37 @@ const InfoPDI = () => {
                                 </div>
                             </div>
 
+                            {/*Tutte le foto */}
+                            {immagini.length > 0 && (
+                            <div className="mb-5">
+                                <h4 className="fw-bold mb-3" style={{ color: '#012d1d' }}>Galleria Fotografica</h4>
+                                <div className="row g-3">
+                                    {immagini.map((urlFoto, index) => {
+                                        const isSelezionata = index === fotoGrandeIndex;
+                                        return (
+                                            <div key={index} className="col-6 col-sm-4 col-md-3">
+                                                <div 
+                                                    className="rounded-3 overflow-hidden shadow-sm ratio ratio-4x3" 
+                                                    style={{ 
+                                                        cursor: 'pointer',
+                                                        border: isSelezionata ? '3px solid #137b52' : '3px solid transparent',
+                                                        transition: 'all 0.2s ease'
+                                                    }}
+                                                    onClick={() => setFotoGrandeIndex(index)}
+                                                >
+                                                    <img 
+                                                        src={urlFoto} 
+                                                        alt={`${pdi.properties.nome} - ${index + 1}`} 
+                                                        className="w-100 h-100 object-fit-cover"
+                                                        style={{ objectFit: 'cover' }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            )}
                             {/* Pulsanti in fondo alla pagina */}
                             <div className="d-flex flex-wrap gap-3 mt-4 pt-4 border-top justify-content-between align-items-center">
                                 <button className="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-3" onClick={() => navigate(-1)}>
