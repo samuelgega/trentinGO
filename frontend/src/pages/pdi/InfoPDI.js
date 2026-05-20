@@ -162,10 +162,20 @@ const InfoPDI = () => {
                                 <button 
                                     className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm" 
                                     style={{ backgroundColor: '#137b52' }}
-                                    onClick={() => alert(`Funzionalità 'Avvia Navigatore' per ${pdi.properties.nome} in arrivo!`)}
+                                    onClick={() => {
+                                        const lat = pdi.geometry.coordinates[1];
+                                        const lng = pdi.geometry.coordinates[0];
+                                        //pulisce il nome del luogo
+                                        const nomeLuogo = encodeURIComponent(pdi.properties.nome);
+                                        //Url per google maps 
+                                        let linkMaps = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+                                        //apre maps in una nuova scheda
+                                        window.open(linkMaps, '_blank');
+                                    }}
                                 >
                                     Ottieni indicazioni
                                 </button>
+
                             </div>
 
                         </div>
