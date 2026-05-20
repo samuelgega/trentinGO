@@ -8,22 +8,32 @@ import '../../assets/home.css'
 const Homepage = () => {
 
   const { showAlert } = useAlert();
+
+  // PDI attualmente selezionato (click su card o su marker mappa)
   const [pdiSelezionato, setPdiSelezionato] = useState(null);
+  // Lista completa dei PDI ricevuta dal backend
   const [listaPDI, setListaPDI] = useState([]);
 
+  // Seleziona un PDI oppure lo deseleziona se è già quello attivo
   const togglePdiSelezionato = (pdi) => {
     setPdiSelezionato(prev => prev?._id === pdi._id ? null : pdi);
   };
+
+  // Testo digitato nella barra di ricerca
   const [ricerca, setRicerca] = useState('');
+  // Categoria selezionata tramite i chip (null = "Tutti")
   const [categoriaSelezionata, setCategoriaSelezionata] = useState(null);
+  // Contatore incrementato ogni volta che si clicca un chip: segnala alla mappa di tornare allo zoom default
   const [resetMappaKey, setResetMappaKey] = useState(0);
 
+  // Quando si clicca un chip categoria: aggiorna il filtro, deseleziona l'eventuale PDI attivo e resetta lo zoom della mappa
   const handleSetCategoria = (cat) => {
     setCategoriaSelezionata(cat);
     setPdiSelezionato(null);
     setResetMappaKey(k => k + 1);
   };
 
+  // Recupera tutti i PDI dal backend al primo caricamento della pagina
   useEffect(() => {
     const recuperoPDI = async () => {
       try {
@@ -39,11 +49,13 @@ const Homepage = () => {
     recuperoPDI();
   }, []);
 
+  // Ricava le categorie uniche dalla lista PDI per popolare i chip filtro
   const categorie = useMemo(() => {
     const uniche = [...new Set(listaPDI.map(p => p.properties.categoria).filter(Boolean))];
     return uniche.sort();
   }, [listaPDI]);
 
+  // Applica ricerca testuale e filtro per categoria sulla lista completa
   const pdiFiltrati = useMemo(() => {
     return listaPDI.filter(pdi => {
       const matchRicerca = pdi.properties.nome.toLowerCase().includes(ricerca.toLowerCase());
@@ -57,6 +69,8 @@ const Homepage = () => {
       <HomeNav />
         <div className='container-fluid p-0 w-100 flex-grow-1 overflow-hidden'>
           <div className='row g-0 h-100'>
+
+            {/* Colonna sinistra: mappa con i marker filtrati */}
             <div className="col-12 col-lg-8 col-mappa position-relative p-0">
               <MappaTrentino
                 pdiFiltrati={pdiFiltrati}
@@ -65,6 +79,8 @@ const Homepage = () => {
                 resetMappaKey={resetMappaKey}
               />
             </div>
+
+            {/* Colonna destra: barra di ricerca, chip filtro e lista PDI */}
             <div className="col-12 col-lg-4 bg-light overflow-hidden border-start col-lista p-0">
               <ListaPDI
                 pdiFiltrati={pdiFiltrati}
@@ -77,6 +93,7 @@ const Homepage = () => {
                 pdiSelezionatoMappa={pdiSelezionato}
               />
             </div>
+
           </div>
         </div>
       </div>

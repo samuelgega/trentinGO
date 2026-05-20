@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 
+// Mappa ogni categoria alla relativa icona Material Symbols
 const ICONE_CATEGORIA = {
     lago: 'water',
     montagna: 'landscape',
@@ -11,6 +12,7 @@ const ICONE_CATEGORIA = {
 
 const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezionata, setCategoriaSelezionata, PdiSelezionatoLista, pdiSelezionatoMappa }) => {
 
+    // Quando la mappa seleziona un PDI, scrolla automaticamente alla card corrispondente nella lista
     useEffect(() => {
         if (pdiSelezionatoMappa) {
             const elementoCard = document.getElementById(`card-pdi-${pdiSelezionatoMappa._id}`);
@@ -24,7 +26,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
         <div className="h-100 d-flex flex-column p-4">
             <h3 className="fw-bold mb-3">Cerca nel trentino</h3>
 
-            {/* Barra di ricerca */}
+            {/* Barra di ricerca: filtra i PDI per nome in tempo reale */}
             <div className="pdi-search-wrapper mb-3">
                 <span className="material-symbols-outlined pdi-search-icon">search</span>
                 <input
@@ -34,6 +36,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                     value={ricerca}
                     onChange={e => setRicerca(e.target.value)}
                 />
+                {/* Bottone X visibile solo quando c'è testo nella barra */}
                 {ricerca && (
                     <button className="pdi-search-clear" onClick={() => setRicerca('')}>
                         <span className="material-symbols-outlined">close</span>
@@ -41,7 +44,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                 )}
             </div>
 
-            {/* Filtri categoria */}
+            {/* Chip filtro categoria: "Tutti" resetta il filtro, gli altri lo impostano (click doppio deseleziona) */}
             <div className="pdi-filtri-wrapper mb-3">
                 <button
                     className={`pdi-chip ${!categoriaSelezionata ? 'pdi-chip--attivo' : ''}`}
@@ -63,13 +66,14 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                 ))}
             </div>
 
-            {/* Contatore risultati */}
+            {/* Contatore dei risultati visibili dopo l'applicazione dei filtri */}
             <p className="pdi-risultati-count">
                 {pdiFiltrati.length} {pdiFiltrati.length === 1 ? 'risultato' : 'risultati'}
             </p>
 
-            {/* Lista card */}
+            {/* Lista delle card PDI filtrate */}
             <div className="flex-grow-1 overflow-auto pdi-scroll-container pb-4">
+                {/* Se nessun PDI corrisponde ai filtri mostra un messaggio vuoto */}
                 {pdiFiltrati.length === 0 ? (
                     <div className="pdi-empty-state">
                         <span className="material-symbols-outlined pdi-empty-icon">search_off</span>
@@ -77,6 +81,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                     </div>
                 ) : (
                     pdiFiltrati.map((pdi) => {
+                        // La card viene evidenziata se corrisponde al marker selezionato sulla mappa
                         const isSelezionato = pdiSelezionatoMappa && pdiSelezionatoMappa._id === pdi._id;
                         return (
                             <div
@@ -91,6 +96,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                                         <h5 className="mb-0 fw-semibold" style={{ color: '#1e293b' }}>
                                             {pdi.properties.nome}
                                         </h5>
+                                        {/* Badge categoria mostrato solo se il campo è valorizzato */}
                                         {pdi.properties.categoria && (
                                             <span className="pdi-badge-categoria">
                                                 {pdi.properties.categoria}

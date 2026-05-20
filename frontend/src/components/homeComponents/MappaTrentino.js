@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-// Prendo l'icona del pin verde
+// Icona del pin verde per i marker sulla mappa
 const pinVerde = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
@@ -13,14 +13,20 @@ const pinVerde = new L.Icon({
     shadowSize: [41, 41]
 });
 
+// Centro e zoom della mappa al caricamento iniziale
 const CENTRO_DEFAULT = [46.0667, 11.1167];
 const ZOOM_DEFAULT = 9;
 
+// Componente interno che controlla la posizione e lo zoom della mappa:
+// - zooma sul PDI selezionato
+// - torna al centro default quando il PDI viene deselezionato
+// - torna al centro default quando si clicca un chip categoria (resetKey)
 const ChangeView = ({ pdiSelezionato, resetKey }) => {
   const map = useMap();
-  const precedente = useRef(null);
-  const primoRender = useRef(true);
+  const precedente = useRef(null);  // tiene traccia del PDI precedentemente selezionato
+  const primoRender = useRef(true); // impedisce il flyTo al primo mount del componente
 
+  // Reagisce alla selezione/deselezione di un PDI dalla lista
   useEffect(() => {
     if (pdiSelezionato) {
       map.flyTo(
@@ -29,11 +35,13 @@ const ChangeView = ({ pdiSelezionato, resetKey }) => {
         { duration: 1.5 }
       );
     } else if (precedente.current !== null) {
+      // Torna al centro solo se c'era un PDI selezionato prima (non al caricamento iniziale)
       map.flyTo(CENTRO_DEFAULT, ZOOM_DEFAULT, { duration: 1.5 });
     }
     precedente.current = pdiSelezionato;
   }, [pdiSelezionato, map]);
 
+  // Reagisce al click su qualsiasi chip categoria: torna sempre al centro default
   useEffect(() => {
     if (primoRender.current) { primoRender.current = false; return; }
     map.flyTo(CENTRO_DEFAULT, ZOOM_DEFAULT, { duration: 1.5 });
@@ -42,7 +50,7 @@ const ChangeView = ({ pdiSelezionato, resetKey }) => {
   return null;
 }
 
-//Componente marker
+// Componente marker singolo: apre il popup automaticamente se è il PDI selezionato
 const MarkerPDI = ({ pdi, isSelezionato, onPinClick }) => {
   const markerRef = useRef(null);
 
@@ -53,8 +61,8 @@ const MarkerPDI = ({ pdi, isSelezionato, onPinClick }) => {
   }, [isSelezionato]);
 
   return (
-    <Marker 
-      position={[pdi.geometry.coordinates[1], pdi.geometry.coordinates[0]]} 
+    <Marker
+      position={[pdi.geometry.coordinates[1], pdi.geometry.coordinates[0]]}
       icon={pinVerde}
       ref={markerRef}
       eventHandlers={{
@@ -72,6 +80,8 @@ const MarkerPDI = ({ pdi, isSelezionato, onPinClick }) => {
 
 
 // COMPONENTE PRINCIPALE
+// Riceve pdiFiltrati (già filtrati da Homepage) invece di fare un fetch proprio,
+// così mappa e lista mostrano sempre gli stessi PDI
 const MappaTrentino = ({ pdiFiltrati, pdiSelezionatoLista, PdiSelezionatoMappa, resetMappaKey }) => {
 
     return(
@@ -86,8 +96,10 @@ const MappaTrentino = ({ pdiFiltrati, pdiSelezionatoLista, PdiSelezionatoMappa, 
                 url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
 
+            {/* Gestisce zoom e posizione in risposta a selezione PDI e cambio filtro */}
             <ChangeView pdiSelezionato={pdiSelezionatoLista} resetKey={resetMappaKey} />
 
+            {/* Renderizza solo i marker dei PDI che passano il filtro attivo */}
             {pdiFiltrati.map((pdi) => {
                 const isSelezionato = pdiSelezionatoLista && pdiSelezionatoLista._id === pdi._id;
                 return (
