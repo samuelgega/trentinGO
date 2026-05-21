@@ -57,6 +57,25 @@ const InfoEvento = () => {
         return new Date(dataStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
     };
 
+    const calcolaProgresso = () => {
+        if (!evento.properties.dataFine) return null;
+        const ora = new Date();
+        const fine = new Date(evento.properties.dataFine);
+        const inizio = evento.properties.dataInizio ? new Date(evento.properties.dataInizio) : fine;
+        if (ora < inizio) {
+            const giorni = Math.ceil((inizio - ora) / 86400000);
+            return { percent: 0, label: `Inizia tra ${giorni} giorn${giorni === 1 ? 'o' : 'i'}`, colore: '#13677b' };
+        }
+        if (ora > fine) {
+            return { percent: 100, label: 'Concluso', colore: '#6c757d' };
+        }
+        const totale = fine - inizio;
+        const trascorso = ora - inizio;
+        const percent = totale > 0 ? Math.round((trascorso / totale) * 100) : 100;
+        const giorniRimasti = Math.ceil((fine - ora) / 86400000);
+        return { percent, label: `${giorniRimasti} giorno${giorniRimasti === 1 ? '' : 'i'} rimasto${giorniRimasti === 1 ? '' : 'i'}`, colore: '#037149' };
+    };
+
     return (
         <div className="bg-light min-vh-100 pb-5">
             {/* Immagine di copertina */}
@@ -167,6 +186,25 @@ const InfoEvento = () => {
                                     </div>
                                 </div>
                             )}
+
+                            {/* Slider tempo rimasto */}
+                            {calcolaProgresso() && (() => {
+                                const prog = calcolaProgresso();
+                                return (
+                                    <div className="mb-4 p-4 rounded-4" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="d-flex justify-content-between align-items-center mb-2">
+                                            <small className="fw-semibold text-muted" style={{ fontSize: '0.75rem' }}>TEMPO RIMASTO</small>
+                                            <small className="fw-bold" style={{ color: prog.colore, fontSize: '0.85rem' }}>{prog.label}</small>
+                                        </div>
+                                        <div className="progress rounded-pill" style={{ height: '10px', backgroundColor: '#e2e8f0' }}>
+                                            <div
+                                                className="progress-bar rounded-pill"
+                                                style={{ width: `${prog.percent}%`, backgroundColor: prog.colore, transition: 'width 0.6s ease' }}
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })()}
 
                             {/* Pulsanti in fondo */}
                             <div className="d-flex flex-wrap gap-3 mt-4 pt-4 border-top justify-content-between align-items-center">
