@@ -1,6 +1,5 @@
 const Giocatore = require("../models/Giocatore")
  
-
 const registrazioneGiocatore = async (req, res) => {
     try {
 
@@ -43,8 +42,25 @@ const registrazioneGiocatore = async (req, res) => {
         });
 
     } catch (error) {
+        console.error("Errore nella registrazione del giocatore", error);
         res.status(500).json({ error: "Errore interno del server" });
     }
 }
 
-module.exports = { registrazioneGiocatore };
+const visualizzaGiocatori = async (req, res) => {
+    try {
+        //recupero i giocatori dal db
+        const giocatori = await Giocatore.find({})
+
+        //stampo la lista dei giocatori
+        res.status(200).json({ 
+            message: "Lista dei giocatori",
+            data: giocatori 
+        });
+    } catch (error) {
+        console.error("Errore nel recupero dei Giocatori", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+}
+
+module.exports = { registrazioneGiocatore, visualizzaGiocatori };
