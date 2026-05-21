@@ -1,4 +1,6 @@
 const Giocatore = require("../models/Giocatore")
+//per hashing password
+const bycrypt = require('bcrypt')
  
 const registrazioneGiocatore = async (req, res) => {
     try {
@@ -11,24 +13,27 @@ const registrazioneGiocatore = async (req, res) => {
             return res.status(400).json({ error: "username, email e password sono obbligatori" });
         }
 
-        //controllo se il giocatore esiste già
-        const giocatoreEsistente = await Giocatore.findOne({
-            $or: [
-                { username: username },
-                { email: email }
-            ]
-        })
-
-        if(giocatoreEsistente){
-            return res.status(409).json({ error: "Giocatore già registrato" });
+        //controllo se useramane esiste già
+        const usernameEsistente = await Giocatore.findOne({ username: username })
+        if(usernameEsistente){
+            return res.status(400).json({ error: "Username già esistente" });
         }
 
-        //creazione nuovo giocatore
+        //controlle se l'email è valida e se esiste già
+        const emailEsistente = await Giocatore.findOne({ email: email })
+        if(emailEsistente){
+            return res.status(400).json({ error: "Email già esistente" });
+        }
 
+        //hashing della password
+        const salt = await bycrypt.genSalt(10)
+        const hashedPassword = await bycrypt.hash(password, salt)
+
+        //creazione nuovo giocatore
         const nuovoGiocatore = await Giocatore.create({
             username: username,
             email: email.toLowerCase(),
-            password: password
+            password: hashedPassword
         })
 
         await nuovoGiocatore.save()
@@ -50,7 +55,7 @@ const registrazioneGiocatore = async (req, res) => {
 const visualizzaGiocatori = async (req, res) => {
     try {
         //recupero i giocatori dal db
-        const giocatori = await Giocatore.find({})
+        const giocatori = await Giocatore.find({}).select('-password')
 
         //stampo la lista dei giocatori
         res.status(200).json({ 
