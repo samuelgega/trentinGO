@@ -418,6 +418,65 @@ paths:
             type: string
           in: query
           name: idEvento
+  /giocatori:
+    get:
+      summary: Ottieni la lista di tutti i giocatori
+      tags:
+        - giocatori
+      responses:
+        '200':
+          description: Lista dei giocatori recuperata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Lista dei giocatori
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Giocatore'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: visualizzaGiocatori
+    post:
+      summary: Registra un nuovo giocatore
+      tags:
+        - giocatori
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GiocatoreRegistrationInput'
+      responses:
+        '200':
+          description: Giocatore registrato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Giocatore registrato con successo
+                  data:
+                    $ref: '#/components/schemas/Giocatore'
+        '400':
+          description: Bad Request (dati mancanti o duplicati)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Username già esistente
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: registrazioneGiocatore
 components:
   responses:
     ErrorResponse:
@@ -433,6 +492,39 @@ components:
                 maxLength: 255
                 example: Errore interno del server
   schemas:
+    GiocatoreRegistrationInput:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          example: mario_rossi
+        email:
+          type: string
+          format: email
+          example: mario@example.com
+        password:
+          type: string
+          format: password
+          example: PasswordSicura123!
+    Giocatore:
+      type: object
+      properties:
+        _id:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        id:
+          type: string
+        username:
+          type: string
+          example: mario_rossi
+        email:
+          type: string
+          format: email
+          example: mario@example.com
     PDIUploadInput:
       type: object
       additionalProperties: false

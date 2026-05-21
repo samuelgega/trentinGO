@@ -20,7 +20,7 @@ const registrazioneGiocatore = async (req, res) => {
         }
 
         //controlle se l'email è valida e se esiste già
-        const emailEsistente = await Giocatore.findOne({ email: email })
+        const emailEsistente = await Giocatore.findOne({ email: email.toLowerCase() })
         if(emailEsistente){
             return res.status(400).json({ error: "Email già esistente" });
         }
