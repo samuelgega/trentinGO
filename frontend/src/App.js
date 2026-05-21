@@ -8,6 +8,7 @@ import { Homepage, HomeEventi } from './pages/home';
 import HomeProfilo from './pages/profilo/HomeProfilo';
 import Error404 from './pages/Error/NotFound';
 import InfoPDI from './pages/pdi/InfoPDI'
+import InfoEvento from './pages/eventi/InfoEvento'
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/home/eventi" element={<HomeEventi />} />
           <Route path="/profilo" element={<HomeProfilo />} />
           <Route path='/dettagli/:id' element={<InfoPDI />} />
+          <Route path='/dettagli-evento/:id' element={<InfoEvento />} />
           <Route path="/admin-home" element={<AdminHome />} />
           <Route path="/admin-home/gestisci-pdi" element={<GestisciPDI />} />
           <Route path="/crea-pdi" element={<CreaPDI />} />
