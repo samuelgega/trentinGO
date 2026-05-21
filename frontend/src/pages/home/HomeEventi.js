@@ -34,8 +34,10 @@ const HomeEventi = () => {
         recuperaDatiDalDatabase()
     }, [])
 
-    const handleCardClick = (title) => {
-        alert(`Hai cliccato sull'evento: ${title}`)
+    const navigate = useNavigate()
+
+    const handleCardClick = (id) => {
+        navigate(`/dettagli-evento/${id}`)
     }
 
     const handleEvPassClick = () => {
@@ -79,7 +81,7 @@ const HomeEventi = () => {
                                         }
                             `}
                                     style={{ cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                                    onClick={() => handleCardClick(card.properties.nome)}
+                                    onClick={() => handleCardClick(card._id)}
                                     onMouseEnter={(e) => {
                                         e.currentTarget.style.transform = 'translateY(-5px)';
                                         e.currentTarget.classList.replace('shadow-sm', 'shadow');
