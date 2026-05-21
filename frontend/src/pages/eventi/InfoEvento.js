@@ -84,7 +84,7 @@ const InfoEvento = () => {
         const trascorso = ora - inizio;
         const percent = totale > 0 ? Math.round((trascorso / totale) * 100) : 100;
         const giorniRimasti = Math.ceil((fine - ora) / 86400000);
-        return { percent, label: `${giorniRimasti} giorno${giorniRimasti === 1 ? '' : 'i'} rimast${giorniRimasti === 1 ? 'o' : 'i'}`, colore: '#037149' };
+        return { percent, label: `${giorniRimasti} giorn${giorniRimasti === 1 ? 'o' : 'i'} rimast${giorniRimasti === 1 ? 'o' : 'i'}`, colore: '#037149' };
     };
 
     return (

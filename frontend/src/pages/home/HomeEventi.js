@@ -60,7 +60,7 @@ const HomeEventi = () => {
         <>
             <div className='vh-100 d-flex flex-column overflow-hidden'>
                 <HomeNav />
-                <div className="container-fluid py-5 px-4 px-md-5 bg-light min-vh-100">
+                <div className="container-fluid py-5 px-4 px-md-5 bg-light flex-grow-1" style={{ overflowY: 'auto' }}>
                     <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
                         <div>
                             <h2 className="fw-bold text-dark mb-1">I prossimi eventi</h2>
