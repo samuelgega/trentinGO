@@ -10,7 +10,7 @@ const HomeEventi = () => {
     const { showAlert } = useAlert()
     const [listaEventi, setListaEventi] = useState([])
     const [cardsData, setCardsData] = useState([])
-    const oggi = new Date('5/22/2026')
+    const oggi = new Date()
     const [isEvPassAttivo, setEvPassAttivo] = useState(false)
 
     const recuperaDatiDalDatabase = async () => {
@@ -23,7 +23,11 @@ const HomeEventi = () => {
             setListaEventi(jsonResponse.data.sort((a, b) => {
                 return new Date(a.properties.dataInizio) - new Date(b.properties.dataInizio)
             }))
-            setCardsData(jsonResponse.data.filter(ev => (new Date(ev.properties.dataFine)).getTime() >= oggi.getTime()))
+            setCardsData(jsonResponse.data.filter(ev => {
+                const fine = new Date(ev.properties.dataFine)
+                fine.setHours(23, 59, 59, 999)
+                return fine.getTime() >= oggi.getTime()
+            }))
         } catch (error) {
             console.error("Errore di connessione:", error);
             showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
@@ -42,7 +46,11 @@ const HomeEventi = () => {
 
     const handleEvPassClick = () => {
         if (isEvPassAttivo)
-            setCardsData(listaEventi.filter(ev => (new Date(ev.properties.dataFine)).getTime() >= oggi.getTime()))
+            setCardsData(listaEventi.filter(ev => {
+                const fine = new Date(ev.properties.dataFine)
+                fine.setHours(23, 59, 59, 999)
+                return fine.getTime() >= oggi.getTime()
+            }))
         else
             setCardsData(listaEventi)
         setEvPassAttivo(!isEvPassAttivo)

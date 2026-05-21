@@ -57,10 +57,21 @@ const InfoEvento = () => {
         return new Date(dataStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
     };
 
+    const calcolaStato = () => {
+        const ora = new Date();
+        const inizio = evento.properties.dataInizio ? new Date(evento.properties.dataInizio) : null;
+        const fine = evento.properties.dataFine ? new Date(evento.properties.dataFine) : null;
+        if (fine) fine.setHours(23, 59, 59, 999);
+        if (fine && ora > fine) return { colore: '#dc3545', label: 'Concluso' };
+        if (inizio && ora < inizio) return { colore: '#6c757d', label: 'Non ancora iniziato' };
+        return { colore: '#28a745', label: 'In corso' };
+    };
+
     const calcolaProgresso = () => {
         if (!evento.properties.dataFine) return null;
         const ora = new Date();
         const fine = new Date(evento.properties.dataFine);
+        fine.setHours(23, 59, 59, 999);
         const inizio = evento.properties.dataInizio ? new Date(evento.properties.dataInizio) : fine;
         if (ora < inizio) {
             const giorni = Math.ceil((inizio - ora) / 86400000);
@@ -187,20 +198,32 @@ const InfoEvento = () => {
                                 </div>
                             )}
 
-                            {/* Slider tempo rimasto */}
+                            {/* Stato + Slider tempo rimasto */}
                             {calcolaProgresso() && (() => {
                                 const prog = calcolaProgresso();
+                                const stato = calcolaStato();
                                 return (
-                                    <div className="mb-4 p-4 rounded-4" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
-                                        <div className="d-flex justify-content-between align-items-center mb-2">
-                                            <small className="fw-semibold text-muted" style={{ fontSize: '0.75rem' }}>TEMPO RIMASTO</small>
-                                            <small className="fw-bold" style={{ color: prog.colore, fontSize: '0.85rem' }}>{prog.label}</small>
+                                    <div className="mb-4 d-flex align-items-stretch gap-3">
+                                        {/* Box stato */}
+                                        <div
+                                            className="d-flex flex-column align-items-center justify-content-center px-3 py-2 rounded-4 shadow-sm text-center flex-shrink-0"
+                                            style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0', minWidth: '130px' }}
+                                        >
+                                            <span style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: stato.colore, display: 'inline-block', marginBottom: '6px' }} />
+                                            <span className="fw-bold" style={{ color: stato.colore, fontSize: '0.9rem' }}>{stato.label}</span>
                                         </div>
-                                        <div className="progress rounded-pill" style={{ height: '10px', backgroundColor: '#e2e8f0' }}>
-                                            <div
-                                                className="progress-bar rounded-pill"
-                                                style={{ width: `${prog.percent}%`, backgroundColor: prog.colore, transition: 'width 0.6s ease' }}
-                                            />
+                                        {/* Barra progresso */}
+                                        <div className="p-4 rounded-4 flex-grow-1" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                            <div className="d-flex justify-content-between align-items-center mb-2">
+                                                <small className="fw-semibold text-muted" style={{ fontSize: '0.75rem' }}>TEMPO RIMASTO</small>
+                                                <small className="fw-bold" style={{ color: prog.colore, fontSize: '0.85rem' }}>{prog.label}</small>
+                                            </div>
+                                            <div className="progress rounded-pill" style={{ height: '10px', backgroundColor: '#e2e8f0' }}>
+                                                <div
+                                                    className="progress-bar rounded-pill"
+                                                    style={{ width: `${prog.percent}%`, backgroundColor: prog.colore, transition: 'width 0.6s ease' }}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 );
