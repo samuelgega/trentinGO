@@ -190,6 +190,16 @@ const AuthGiocatore = () => {
                             </button>
                         </form>
 
+                        <hr />
+                        <p className="text-center text-muted small mb-2">Sei un gestore di eventi?</p>
+                        <button
+                            className="btn btn-outline-secondary w-100 py-2"
+                            style={{ borderRadius: '10px' }}
+                            onClick={() => navigate('/auth/gestore')}
+                        >
+                            Registrati come Gestore
+                        </button>
+
                     </div>
                 </div>
             </div>
