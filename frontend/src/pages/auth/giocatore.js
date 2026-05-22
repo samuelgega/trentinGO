@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '../../contexts/AlertController'
+import '../../assets/home.css'
 
 const statoInizialeForm = {
     username: '',
@@ -57,16 +58,19 @@ const AuthGiocatore = () => {
 
         if (Object.keys(nuoviErrori).length > 0) return
 
+        const body = {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+            iscrittoNewsletter: formData.iscrittoNewsletter,
+        }
+        console.log("JSON inviato:", body)
+
         try {
             const response = await fetch('http://localhost:3001/api/v1/giocatori/registrazione', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: formData.username,
-                    email: formData.email,
-                    password: formData.password,
-                    iscrittoNewsletter: formData.iscrittoNewsletter,
-                })
+                body: JSON.stringify(body)
             })
 
             if (response.status === 201) {
@@ -83,66 +87,77 @@ const AuthGiocatore = () => {
     }
 
     return (
-        <div className="min-vh-100 d-flex flex-column align-items-center justify-content-center bg-light">
-<div className="col-11 col-sm-8 col-md-6 col-lg-5">
-                <div className="card shadow border-0">
+        <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #e6f4f1 100%)' }}>
+            <div className="col-11 col-sm-8 col-md-6 col-lg-4">
+
+                {/* Header */}
+                <div className="text-center mb-4">
+                    <span className="nav-logo" style={{ fontSize: '2rem' }}>TrentinGO</span>
+                    <p className="text-muted mt-2 mb-0">Crea il tuo account giocatore</p>
+                </div>
+
+                <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
                     <div className="card-body p-4">
-                        <h2 className="mb-4 text-center">Registrati come Giocatore</h2>
 
-                            <form onSubmit={handleSubmit} onReset={handleReset}>
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Nome utente*</label>
-                                    <input
-                                        type="text"
-                                        name="username"
-                                        value={formData.username}
-                                        className="form-control"
-                                        placeholder="es. mario_rossi"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.username}</small>
-                                </div>
+                        <form onSubmit={handleSubmit} onReset={handleReset}>
+                            <div className="mb-3">
+                                <label className="form-label fw-semibold text-secondary small">NOME UTENTE</label>
+                                <input
+                                    type="text"
+                                    name="username"
+                                    value={formData.username}
+                                    className={`form-control ${errori.username ? 'is-invalid' : ''}`}
+                                    placeholder="es. mario_rossi"
+                                    onChange={handleInput}
+                                    style={{ borderRadius: '10px' }}
+                                />
+                                {errori.username && <div className="invalid-feedback">{errori.username}</div>}
+                            </div>
 
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Email*</label>
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        value={formData.email}
-                                        className="form-control"
-                                        placeholder="es. mario@email.com"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.email}</small>
-                                </div>
+                            <div className="mb-3">
+                                <label className="form-label fw-semibold text-secondary small">EMAIL</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    value={formData.email}
+                                    className={`form-control ${errori.email ? 'is-invalid' : ''}`}
+                                    placeholder="es. mario@email.com"
+                                    onChange={handleInput}
+                                    style={{ borderRadius: '10px' }}
+                                />
+                                {errori.email && <div className="invalid-feedback">{errori.email}</div>}
+                            </div>
 
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Password*</label>
-                                    <input
-                                        type="password"
-                                        name="password"
-                                        value={formData.password}
-                                        className="form-control"
-                                        placeholder="Almeno 8 caratteri"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.password}</small>
-                                </div>
+                            <div className="mb-3">
+                                <label className="form-label fw-semibold text-secondary small">PASSWORD</label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    className={`form-control ${errori.password ? 'is-invalid' : ''}`}
+                                    placeholder="Almeno 8 caratteri"
+                                    onChange={handleInput}
+                                    style={{ borderRadius: '10px' }}
+                                />
+                                {errori.password && <div className="invalid-feedback">{errori.password}</div>}
+                            </div>
 
-                                <div className="mb-3">
-                                    <label className="form-label fw-bold">Conferma password*</label>
-                                    <input
-                                        type="password"
-                                        name="confermaPassword"
-                                        value={formData.confermaPassword}
-                                        className="form-control"
-                                        placeholder="Ripeti la password"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.confermaPassword}</small>
-                                </div>
+                            <div className="mb-4">
+                                <label className="form-label fw-semibold text-secondary small">CONFERMA PASSWORD</label>
+                                <input
+                                    type="password"
+                                    name="confermaPassword"
+                                    value={formData.confermaPassword}
+                                    className={`form-control ${errori.confermaPassword ? 'is-invalid' : ''}`}
+                                    placeholder="Ripeti la password"
+                                    onChange={handleInput}
+                                    style={{ borderRadius: '10px' }}
+                                />
+                                {errori.confermaPassword && <div className="invalid-feedback">{errori.confermaPassword}</div>}
+                            </div>
 
-                                <div className="mb-4 form-check">
+                            <div className="mb-4 p-3 rounded-3" style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                                <div className="form-check mb-0">
                                     <input
                                         type="checkbox"
                                         name="iscrittoNewsletter"
@@ -150,21 +165,35 @@ const AuthGiocatore = () => {
                                         checked={formData.iscrittoNewsletter}
                                         className="form-check-input"
                                         onChange={handleInput}
+                                        style={{ borderColor: '#037149' }}
                                     />
                                     <label className="form-check-label" htmlFor="iscrittoNewsletter">
                                         Iscrivimi alla newsletter
+                                        <small className="d-block text-muted">Ricevi aggiornamenti su eventi e novità di TrentinGO</small>
                                     </label>
                                 </div>
+                            </div>
 
-                                <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-                                    <button type="reset" className="btn btn-light me-md-2">Svuota Campi</button>
-                                    <button type="submit" className="btn btn-primary px-5">Registrati</button>
-                                </div>
-                            </form>
-                        </div>
+                            <button
+                                type="submit"
+                                className="btn w-100 fw-semibold py-2 mb-2"
+                                style={{ backgroundColor: '#037149', color: 'white', borderRadius: '10px' }}
+                            >
+                                Crea account
+                            </button>
+                            <button
+                                type="reset"
+                                className="btn btn-light w-100 py-2"
+                                style={{ borderRadius: '10px' }}
+                            >
+                                Svuota campi
+                            </button>
+                        </form>
+
                     </div>
                 </div>
             </div>
+        </div>
     )
 }
 
