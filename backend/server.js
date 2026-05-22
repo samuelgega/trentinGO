@@ -31,6 +31,10 @@ app.use("/api/v1/pdi", pdiRoutes);
 const eventiRouter = require('./routes/eventiRouter')
 app.use('/api/v1/eventi', eventiRouter)
 
+//rotta per i giocatori
+const giocatoreRoutes = require("./routes/giocatoreRoutes");
+app.use("/api/v1/giocatori", giocatoreRoutes);
+
 //handler per errori 404
 app.use((req, res) => {
     res.status(404).json({ error: "Risorsa non trovata" });
