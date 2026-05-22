@@ -35,6 +35,10 @@ app.use('/api/v1/eventi', eventiRouter)
 const giocatoreRoutes = require("./routes/giocatoreRoutes");
 app.use("/api/v1/giocatori", giocatoreRoutes);
 
+//rotta per i gestori
+const gestoreRoutes = require("./routes/gestoreRoutes");
+app.use("/api/v1/gestori", gestoreRoutes);
+
 //handler per errori 404
 app.use((req, res) => {
     res.status(404).json({ error: "Risorsa non trovata" });
