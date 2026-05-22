@@ -7,6 +7,6 @@ const Giocatore = require("../controllers/giocatoreController");
 router.get("/", Giocatore.visualizzaGiocatori);
 
 //route per la registrazione di un nuovo giocatore
-router.post("/", Giocatore.registrazioneGiocatore);
+router.post("/registrazione", Giocatore.registrazioneGiocatore);
 
 module.exports = router;
