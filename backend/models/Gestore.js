@@ -3,26 +3,31 @@ const mongoose = require('mongoose')
 const schemaGestore = new mongoose.Schema({
     nome: {
         type: String,
-        require: true,
-        unique: true,
+        required: true,
+        unique: true
     },
     email:{
         type: String,
-        require: true,
-        unique: true,
+        required: true,
+        unique: true
     },
     password:{
         type: String,
-        require: true,
+        required: true,
+        select: false
     },
     partitaIva:{
         type: Number,
-        require: true,
+        required: true
     },
     abilitato:{
         type: Boolean,
-        default: false,
-    }
+        default: false
+    },
+    pdiCollegati:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PDI'
+    }]
 
 })
 
