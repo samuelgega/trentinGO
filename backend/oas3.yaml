@@ -418,6 +418,176 @@ paths:
             type: string
           in: query
           name: idEvento
+  /richieste-associazione:
+    get:
+      summary: Ottieni la lista delle richieste di associazione
+      tags:
+        - richieste-associazione
+      parameters:
+        - in: query
+          name: gestore
+          schema:
+            type: string
+            pattern: '^[a-fA-F0-9]{24}$'
+          description: Filtra le richieste per ID gestore
+      responses:
+        '200':
+          description: Lista recuperata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Lista delle richieste di associazione
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RichiestaAssociazionePDI'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: visualizzaRichiesteAssociazione
+    post:
+      summary: Invia una nuova richiesta di associazione a un PDI
+      tags:
+        - richieste-associazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaAssociazionePDIInput'
+      responses:
+        '201':
+          description: Richiesta inviata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Richiesta di associazione inviata con successo
+                  data:
+                    $ref: '#/components/schemas/RichiestaAssociazionePDI'
+        '400':
+          description: Campi obbligatori mancanti o richiesta già esistente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Esiste già una richiesta pendente per questo PDI
+        '404':
+          description: PDI non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: PDI non trovato
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: creaRichiestaAssociazione
+  '/richieste-associazione/{id}':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        description: L'ID univoco della richiesta di associazione
+    get:
+      summary: Visualizza una richiesta di associazione specifica
+      tags:
+        - richieste-associazione
+      responses:
+        '200':
+          description: Richiesta recuperata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/RichiestaAssociazionePDI'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: visualizzaRichiestaAssociazione
+    put:
+      summary: Aggiorna lo stato di una richiesta (approva o rifiuta)
+      tags:
+        - richieste-associazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - stato
+              properties:
+                stato:
+                  type: string
+                  enum:
+                    - approvata
+                    - rifiutata
+                  example: approvata
+      responses:
+        '200':
+          description: Stato aggiornato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Richiesta approvata con successo
+                  data:
+                    $ref: '#/components/schemas/RichiestaAssociazionePDI'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: aggiornaStatoRichiesta
+    delete:
+      summary: Elimina una richiesta di associazione
+      tags:
+        - richieste-associazione
+      responses:
+        '200':
+          description: Richiesta eliminata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Richiesta eliminata con successo
+                  data:
+                    $ref: '#/components/schemas/RichiestaAssociazionePDI'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: eliminaRichiestaAssociazione
   /gestori:
     get:
       summary: Ottieni la lista di tutti i gestori
@@ -561,6 +731,62 @@ components:
                 maxLength: 255
                 example: Errore interno del server
   schemas:
+    RichiestaAssociazionePDIInput:
+      type: object
+      additionalProperties: false
+      required:
+        - richGestore
+        - assPDI
+      properties:
+        richGestore:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+          description: ID del gestore che effettua la richiesta
+          example: 6641a2f3e4b0c12d3f456789
+        assPDI:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+          description: ID del PDI a cui si vuole essere associati
+          example: 6641a2f3e4b0c12d3f456790
+        motivazione:
+          type: string
+          maxLength: 500
+          description: Motivazione facoltativa della richiesta
+          example: Gestiamo questo museo da 10 anni e vorremmo essere associati ufficialmente.
+    RichiestaAssociazionePDI:
+      type: object
+      additionalProperties: false
+      properties:
+        _id:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        richGestore:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+          description: ID del gestore che ha effettuato la richiesta
+          example: 6641a2f3e4b0c12d3f456789
+        assPDI:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+          description: ID del PDI richiesto
+          example: 6641a2f3e4b0c12d3f456790
+        stato:
+          type: string
+          enum:
+            - in_attesa
+            - approvata
+            - rifiutata
+          default: in_attesa
+          example: in_attesa
+        motivazione:
+          type: string
+          maxLength: 500
+          description: Motivazione facoltativa della richiesta
+          example: Gestiamo questo museo da 10 anni e vorremmo essere associati ufficialmente.
+        dataRichiesta:
+          type: string
+          format: date-time
+          example: '2026-05-23T10:30:00Z'
     GestoreRegistrationInput:
       type: object
       required:
