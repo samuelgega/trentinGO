@@ -20,55 +20,32 @@ const visualizzaRichieste = async (req,res) => {
 const creaRichiesta = async (req,res) => {
     try{   
     
-        const { idGestore, idPDI } = req.body;
+        const { idGestore, idPDI, motivazione } = req.body;
 
-        //controllo dati mancanti
-        if(!idGestore || !idPDI){
-            return res.status(400).json({ 
-                error: "ID Gestore e ID PDI sono campi obbligatori." 
+        if (!idGestore || !idPDI) {
+            return res.status(400).json({
+                error: "ID Gestore e ID PDI sono campi obbligatori."
             });
         }
 
-        //Controllo se il Gestore esiste
-        const gestoreEsistente = await Gestore.findById(idGestore);
-        if (!gestoreEsistente) {
-            return res.status(404).json({ error: "Gestore non trovato." });
-        }
-
-        //Controllo se il PDI esiste
+        // Verifica che il PDI esista
         const pdiEsistente = await PDI.findById(idPDI);
         if (!pdiEsistente) {
             return res.status(404).json({ error: "PDI non trovato." });
         }
 
-        //controllo se il Gestore ha questo PDI associato
-        if (gestoreEsistente.pdiCollegati.includes(idPDI)) {
-            return res.status(400).json({ 
-                error: "Questo PDI è già associato al tuo account." 
-            });
-        }
+        // TODO: quando il login sarà implementato, aggiungere qui i controlli su gestore
+        //       (esistenza, PDI già associato, richiesta duplicata)
 
-        //conrollo se esiste già una richiesta uguale
-        const richiestaEsistente = await RichAssPDI.findOne({
-            idGestore: idGestore,
-            idPDI: idPDI,
-            stato: 'in_attesa'
-        });
-
-        if (richiestaEsistente) {
-            return res.status(409).json({ 
-                error: "Hai già una richiesta in attesa per questo PDI." 
-            });
-        }
-
-        //Creazione richiesta
         const nuovaRichiesta = new RichAssPDI({
-            idGestore: idGestore,
-            idPDI: idPDI,
+            idGestore,
+            idPDI,
+            ...(motivazione && { motivazione }),
             dataRichiesta: new Date()
         });
 
         await nuovaRichiesta.save();
+        await nuovaRichiesta.populate('idPDI');
 
         res.status(201).json({
             message: "Richiesta di associazione inviata con successo. In attesa di approvazione.",

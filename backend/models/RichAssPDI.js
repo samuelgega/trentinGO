@@ -16,8 +16,11 @@ const schemaRichAssPDI = new mongoose.Schema({
         enum: ['in_attesa', 'approvata', 'rifiutata'],
         default: 'in_attesa'
     },
+    motivazione: {
+        type: String,
+        required: false
+    },
     dataRichiesta: Date
-
 })
 
 module.exports = mongoose.model('RichAssPDIPDI', schemaRichAssPDI, 'RichAssPDI')
