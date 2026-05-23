@@ -35,13 +35,13 @@ const creaRichiesta = async (req,res) => {
             return res.status(404).json({ error: "Gestore non trovato." });
         }
 
-        //Controllo se il PDI esiste (se hai il modello PDI)
+        //Controllo se il PDI esiste
         const pdiEsistente = await PDI.findById(idPDI);
         if (!pdiEsistente) {
             return res.status(404).json({ error: "PDI non trovato." });
         }
 
-        //Controllo se il Gestore ha GIA' questo PDI associato
+        //controllo se il Gestore ha questo PDI associato
         if (gestoreEsistente.pdiCollegati.includes(idPDI)) {
             return res.status(400).json({ 
                 error: "Questo PDI è già associato al tuo account." 
@@ -100,4 +100,61 @@ const visualizzaRichiesta = async (req,res) =>{
     }
 }
 
-module.exports = { visualizzaRichieste, creaRichiesta, visualizzaRichiesta }
+
+const gestisciRichiesta = async (req,res) => {
+
+    try{
+        const { id } = req.params;
+        const { statoRichiesta } = req.body;
+
+        //controllo che lo stato sia valido
+        if (!['approvata', 'rifiutata'].includes(statoRichiesta)) {
+            return res.status(400).json({ 
+                error: "Stato non valido. Scegli 'approvata' o 'rifiutata'." 
+            });
+        }
+
+        const richiesta = await RichAssPDI.findById(id);
+
+        if (!richiesta) {
+            return res.status(404).json({ error: "Richiesta non trovata." });
+        }
+
+        //se la richiesta era già stata modificata allora blocco la richiesta
+        if (richiesta.stato !== 'in_attesa') {
+            return res.status(400).json({ 
+                error: `Impossibile procedere: questa richiesta è già stata ${richiesta.stato}.` 
+            });
+        }
+
+        //verifico se la richiesta è da approvare o da rifiutare
+        if (statoRichiesta === 'approvata') {
+            const gestore = await Gestore.findById(richiesta.idGestore);
+            
+            if (!gestore) {
+                return res.status(404).json({ error: "Il gestore associato a questa richiesta non esiste più." });
+            }
+
+            // Aggiungo il PDI all'array del Gestore
+            if (!gestore.pdiCollegati.includes(richiesta.idPDI)) {
+                gestore.pdiCollegati.push(richiesta.idPDI);
+                await gestore.save(); // Salviamo le modifiche al Gestore
+            }
+        }
+
+        richiesta.stato = statoRichiesta;
+        await richiesta.save();
+
+        res.status(200).json({
+            message: `La richiesta è stata ${statoRichiesta} con successo.`,
+            data: richiesta
+        });
+
+
+    } catch(error) {
+         console.error("Errore nel recupero della richiesta", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { visualizzaRichieste, creaRichiesta, visualizzaRichiesta, gestisciRichiesta }

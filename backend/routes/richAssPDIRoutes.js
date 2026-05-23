@@ -12,5 +12,7 @@ router.post("/", richAssPDI.creaRichiesta);
 //rotta per visualizzare una singola richiesta
 router.get("/:id", richAssPDI.visualizzaRichiesta);
 
+//rotta per gestire la richiesta
+router.put("/:id", richAssPDI.gestisciRichiesta);
 
 module.exports = router;
