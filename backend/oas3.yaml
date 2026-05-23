@@ -418,6 +418,75 @@ paths:
             type: string
           in: query
           name: idEvento
+  /gestori:
+    get:
+      summary: Ottieni la lista di tutti i gestori
+      tags:
+        - gestori
+      responses:
+        '200':
+          description: Lista dei gestori recuperata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Lista dei gestori
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Gestore'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: visualizzaGestori
+    post:
+      summary: Registra un nuovo gestore
+      tags:
+        - gestori
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GestoreRegistrationInput'
+      responses:
+        '201':
+          description: Gestore registrato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Gestore registrato con successo
+                  data:
+                    $ref: '#/components/schemas/Gestore'
+        '400':
+          description: Campi obbligatori mancanti
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: nome, email, password e partitaIva sono obbligatori
+        '409':
+          description: Nome, email o partita IVA già esistente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Partita IVA già esistente
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: registrazioneGestore
   /giocatori:
     get:
       summary: Ottieni la lista di tutti i giocatori
@@ -492,6 +561,47 @@ components:
                 maxLength: 255
                 example: Errore interno del server
   schemas:
+    GestoreRegistrationInput:
+      type: object
+      required:
+        - nome
+        - email
+        - password
+        - partitaIva
+      properties:
+        nome:
+          type: string
+          example: MUSE Trento
+        email:
+          type: string
+          format: email
+          example: muse@email.com
+        password:
+          type: string
+          format: password
+          example: PasswordSicura123!
+        partitaIva:
+          type: string
+          example: "00264570226"
+    Gestore:
+      type: object
+      properties:
+        _id:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        nome:
+          type: string
+          example: MUSE Trento
+        email:
+          type: string
+          format: email
+          example: muse@email.com
+        partitaIva:
+          type: string
+          example: "00264570226"
+        abilitato:
+          type: boolean
+          example: false
     GiocatoreRegistrationInput:
       type: object
       required:
