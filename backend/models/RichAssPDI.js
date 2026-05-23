@@ -17,7 +17,6 @@ const schemaRichAssPDI = new mongoose.Schema({
         default: 'in_attesa'
     },
     dataRichiesta: Date
-
 })
 
 module.exports = mongoose.model('RichAssPDIPDI', schemaRichAssPDI, 'RichAssPDI')
