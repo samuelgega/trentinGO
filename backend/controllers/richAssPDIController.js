@@ -20,7 +20,7 @@ const visualizzaRichieste = async (req,res) => {
 const creaRichiesta = async (req,res) => {
     try{   
     
-        const { idGestore, idPDI } = req.body;
+        const { idGestore, idPDI, motivazione } = req.body;
 
         if (!idGestore || !idPDI) {
             return res.status(400).json({
@@ -40,6 +40,7 @@ const creaRichiesta = async (req,res) => {
         const nuovaRichiesta = new RichAssPDI({
             idGestore,
             idPDI,
+            ...(motivazione && { motivazione }),
             dataRichiesta: new Date()
         });
 

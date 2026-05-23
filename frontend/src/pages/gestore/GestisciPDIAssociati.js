@@ -54,7 +54,7 @@ const GestisciPDIAssociati = () => {
             const response = await fetch('http://localhost:3001/api/v1/richAssPDI', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idGestore: GESTORE_ID_PLACEHOLDER, idPDI: pdiSelezionato })
+                body: JSON.stringify({ idGestore: GESTORE_ID_PLACEHOLDER, idPDI: pdiSelezionato, ...(motivazione && { motivazione }) })
             })
             const json = await response.json()
             if (response.status === 201) {
