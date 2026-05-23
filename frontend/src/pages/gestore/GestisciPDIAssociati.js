@@ -8,24 +8,17 @@ const GestisciPDIAssociati = () => {
     const navigate = useNavigate()
     const { showAlert } = useAlert()
 
-    const [listaPDI, setListaPDI] = useState([
-        { _id: '1', properties: { nome: 'PDI 1', categoria: 'Museo' } },
-        { _id: '2', properties: { nome: 'PDI 2', categoria: 'Parco' } },
-        { _id: '3', properties: { nome: 'PDI 3', categoria: 'Ristorante' } }
-    ])
+    // TODO: sostituire con l'ID reale del gestore loggato quando il login sarà implementato
+    const GESTORE_ID_PLACEHOLDER = '000000000000000000000000'
 
+    const [listaPDI, setListaPDI] = useState([])
     const [tuttiPDI, setTuttiPDI] = useState([])
     const [pdiSelezionato, setPdiSelezionato] = useState('')
     const [motivazione, setMotivazione] = useState('')
 
     const [nuovoPDI, setNuovoPDI] = useState({ nome: '', categoria: '', descrizione: '', latitudine: '', longitudine: '' })
 
-    // TODO: recuperare dal backend GET /api/v1/richieste-associazione?gestore=<id>
-    const [listaRichieste, setListaRichieste] = useState([
-        { _id: 'r1', tipo: 'associazione', nomePDI: 'Castello del Buonconsiglio', stato: 'in_attesa', dataRichiesta: '2026-05-20' },
-        { _id: 'r2', tipo: 'associazione', nomePDI: 'Parco Naturale Adamello', stato: 'approvata', dataRichiesta: '2026-05-10' },
-        { _id: 'r3', tipo: 'creazione', nomePDI: 'Rifugio Monte Baldo', stato: 'rifiutata', dataRichiesta: '2026-05-05' },
-    ])
+    const [listaRichieste, setListaRichieste] = useState([])
 
     useEffect(() => {
         const recuperaPDI = async () => {
@@ -38,22 +31,48 @@ const GestisciPDIAssociati = () => {
                 console.error("Errore nel recupero PDI:", e)
             }
         }
+
+        const recuperaRichieste = async () => {
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/richAssPDI')
+                if (!response.ok) return
+                const json = await response.json()
+                setListaRichieste(json.data)
+            } catch (e) {
+                console.error("Errore nel recupero richieste:", e)
+            }
+        }
+
         recuperaPDI()
+        recuperaRichieste()
     }, [])
 
-    const handleRichiestaAssociazione = (e) => {
+    const handleRichiestaAssociazione = async (e) => {
         e.preventDefault()
         if (!pdiSelezionato) return
-        // TODO: collegare al backend POST /api/v1/richieste-associazione
-        showAlert("Richiesta inviata.", "La tua richiesta di associazione è in attesa di approvazione", "success")
-        setPdiSelezionato('')
-        setMotivazione('')
+        try {
+            const response = await fetch('http://localhost:3001/api/v1/richAssPDI', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ idGestore: GESTORE_ID_PLACEHOLDER, idPDI: pdiSelezionato })
+            })
+            const json = await response.json()
+            if (response.status === 201) {
+                showAlert("Richiesta inviata.", "La tua richiesta di associazione è in attesa di approvazione", "success")
+                setListaRichieste(prev => [...prev, json.data])
+                setPdiSelezionato('')
+                setMotivazione('')
+            } else {
+                showAlert("Errore.", json.error || "Impossibile inviare la richiesta", "danger")
+            }
+        } catch (e) {
+            console.error("Errore nell'invio della richiesta:", e)
+            showAlert("Errore di connessione.", "Riprovare più tardi", "danger")
+        }
     }
 
     const handleRichiestaCreazione = (e) => {
         e.preventDefault()
-        // TODO: collegare al backend POST /api/v1/richieste-creazione-pdi
-        showAlert("Richiesta inviata.", "La tua richiesta di creazione PDI è in attesa di approvazione", "success")
         setNuovoPDI({ nome: '', categoria: '', descrizione: '', latitudine: '', longitudine: '' })
     }
 
@@ -210,7 +229,7 @@ const GestisciPDIAssociati = () => {
                         <div className="col-12 col-lg-8">
                             <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '14px', overflow: 'hidden' }}>
                                 {cardHeader('Andamento richieste', '#212529')}
-                                <div className="card-body p-0">
+                                <div className="card-body p-0" style={{ maxHeight: '260px', overflowY: 'auto' }}>
                                     <div className="table-responsive">
                                         <table className="table table-hover align-middle mb-0">
                                             <thead style={{ backgroundColor: '#f8f9fa' }}>
@@ -228,13 +247,11 @@ const GestisciPDIAssociati = () => {
                                                     </tr>
                                                 ) : listaRichieste.map(r => (
                                                     <tr key={r._id}>
-                                                        <td className="px-4 fw-semibold">{r.nomePDI}</td>
+                                                        <td className="px-4 fw-semibold">{r.idPDI?.properties?.nome ?? '—'}</td>
                                                         <td>
-                                                            <span className={`badge rounded-pill ${r.tipo === 'associazione' ? 'text-bg-success' : 'text-bg-primary'}`}>
-                                                                {r.tipo === 'associazione' ? 'Associazione' : 'Creazione'}
-                                                            </span>
+                                                            <span className="badge rounded-pill text-bg-success">Associazione</span>
                                                         </td>
-                                                        <td className="text-muted small">{new Date(r.dataRichiesta).toLocaleDateString('it-IT')}</td>
+                                                        <td className="text-muted small">{r.dataRichiesta ? new Date(r.dataRichiesta).toLocaleDateString('it-IT') : '—'}</td>
                                                         <td>
                                                             {r.stato === 'in_attesa' && <span className="badge rounded-pill text-bg-warning">In attesa</span>}
                                                             {r.stato === 'approvata' && <span className="badge rounded-pill text-bg-success">Approvata</span>}
@@ -253,7 +270,7 @@ const GestisciPDIAssociati = () => {
                         <div className="col-12 col-lg-4">
                             <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '14px', overflow: 'hidden' }}>
                                 {cardHeader('PDI associati', '#212529')}
-                                <div className="card-body p-0">
+                                <div className="card-body p-0" style={{ maxHeight: '260px', overflowY: 'auto' }}>
                                     <ul className="list-group list-group-flush">
                                         {listaPDI.length === 0 ? (
                                             <li className="list-group-item text-center text-muted py-5">Nessun PDI associato.</li>
