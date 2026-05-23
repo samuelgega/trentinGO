@@ -44,7 +44,7 @@ const creaPDI = async (req, res) => {
             properties: {
                 nome,
                 descrizione,
-                categoria,
+                categoria: categoria.toLowerCase(),
                 prezzo: prezzo || 0,
                 punteggio: punteggio || 0,
                 immagine: arrayImmagini
@@ -135,7 +135,7 @@ const modificaPDI = async (req, res) => {
         //aggiorno il PDI nel database
         pdiEsistente.properties.nome = nome || pdiEsistente.properties.nome;
         pdiEsistente.properties.descrizione = descrizione || pdiEsistente.properties.descrizione;
-        pdiEsistente.properties.categoria = categoria || pdiEsistente.properties.categoria;
+        pdiEsistente.properties.categoria = categoria ? categoria.toLowerCase() : pdiEsistente.properties.categoria;
         pdiEsistente.properties.prezzo = prezzo !== undefined ? Number(prezzo) : pdiEsistente.properties.prezzo;
         pdiEsistente.properties.punteggio = punteggio !== undefined ? Number(punteggio) : pdiEsistente.properties.punteggio;
         pdiEsistente.properties.immagine = arrayImmaginiAggiornato;

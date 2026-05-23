@@ -51,7 +51,7 @@ const Homepage = () => {
 
   // Ricava le categorie uniche dalla lista PDI per popolare i chip filtro
   const categorie = useMemo(() => {
-    const uniche = [...new Set(listaPDI.map(p => p.properties.categoria).filter(Boolean))];
+    const uniche = [...new Set(listaPDI.map(p => p.properties.categoria?.toLowerCase()).filter(Boolean))];
     return uniche.sort();
   }, [listaPDI]);
 
