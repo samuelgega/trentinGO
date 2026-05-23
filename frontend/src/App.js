@@ -10,6 +10,7 @@ import Error404 from './pages/Error/NotFound';
 import InfoPDI from './pages/pdi/InfoPDI'
 import InfoEvento from './pages/eventi/InfoEvento'
 import AuthGiocatore from './pages/auth/giocatore'
+import AuthGestore from './pages/auth/gestore'
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
           <Route path="/gestore-home/gestisci-eventi-creati" element={<GestisciEventiCreati />} />
           <Route path="/modifica-pdi/:id" element={<ModificaPDI />} />
           <Route path="/auth/giocatore" element={<AuthGiocatore />} />
+          <Route path="/auth/gestore" element={<AuthGestore />} />
           <Route path="*" element={<Error404 />} />
           <Route path="/modifica-evento/:id" element={<ModificaEvento />} />
         </Routes>

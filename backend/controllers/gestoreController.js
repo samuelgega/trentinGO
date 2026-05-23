@@ -20,6 +20,11 @@ const registrazioneGestore = async (req, res) => {
             return res.status(409).json({ error: "Email già esistente" })
         }
 
+        const partitaIvaEsistente = await Gestore.findOne({ partitaIva: partitaIva })
+        if (partitaIvaEsistente) {
+            return res.status(409).json({ error: "Partita IVA già esistente" })
+        }
+
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
 
