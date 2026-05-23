@@ -39,6 +39,10 @@ app.use("/api/v1/giocatori", giocatoreRoutes);
 const gestoreRoutes = require("./routes/gestoreRoutes");
 app.use("/api/v1/gestori", gestoreRoutes);
 
+//rotta per richiedere associazione ad un pdi da parte di un gestore
+const richAssPDI = require("./routes/richAssPDIRoutes");
+app.use("/api/v1/richAssPDI", richAssPDI);
+
 //handler per errori 404
 app.use((req, res) => {
     res.status(404).json({ error: "Risorsa non trovata" });
