@@ -4,10 +4,11 @@ import { useAlert } from '../../contexts/AlertController'
 import '../../assets/home.css'
 
 const statoInizialeForm = {
-    username: '',
+    nome: '',
     email: '',
     password: '',
     confermaPassword: '',
+    partitaIva: '',
 }
 
 const AuthGestore = () => {
@@ -20,8 +21,8 @@ const AuthGestore = () => {
     const validazioneDati = (dati) => {
         const error = {}
 
-        if (!dati.username.trim()) error.username = "Il nome della struttura è obbligatorio"
-        else if (dati.username.trim().length < 3) error.username = "Il nome della struttura deve avere almeno 3 caratteri"
+        if (!dati.nome.trim()) error.nome = "Il nome della struttura è obbligatorio"
+        else if (dati.nome.trim().length < 3) error.nome = "Il nome della struttura deve avere almeno 3 caratteri"
 
         if (!dati.email.trim()) error.email = "L'email è obbligatoria"
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dati.email)) error.email = "Inserisci un'email valida"
@@ -31,6 +32,9 @@ const AuthGestore = () => {
 
         if (!dati.confermaPassword) error.confermaPassword = "Conferma la password"
         else if (dati.password !== dati.confermaPassword) error.confermaPassword = "Le password non coincidono"
+
+        if (!dati.partitaIva.trim()) error.partitaIva = "La partita IVA è obbligatoria"
+        else if (!/^\d{11}$/.test(dati.partitaIva.trim())) error.partitaIva = "La partita IVA deve essere di 11 cifre"
 
         return error
     }
@@ -58,9 +62,10 @@ const AuthGestore = () => {
         if (Object.keys(nuoviErrori).length > 0) return
 
         const body = {
-            username: formData.username,
+            nome: formData.nome,
             email: formData.email,
             password: formData.password,
+            partitaIva: formData.partitaIva,
         }
 
         try {
@@ -74,7 +79,12 @@ const AuthGestore = () => {
                 showAlert("Registrazione completata.", "Account creato con successo", "success")
                 navigate('/')
             } else if (response.status === 409) {
-                showAlert("Registrazione non riuscita.", "Username o email già in uso", "danger")
+                const data = await response.json()
+                if (data.error === "Partita IVA già esistente") {
+                    showAlert("Registrazione non riuscita.", "Partita IVA già presente nel database", "danger")
+                } else {
+                    showAlert("Registrazione non riuscita.", "Nome o email già in uso", "danger")
+                }
             } else {
                 showAlert("Registrazione non riuscita.", "Controllare i dati inseriti o riprovare", "danger")
             }
@@ -101,14 +111,14 @@ const AuthGestore = () => {
                                 <label className="form-label fw-semibold text-secondary small">NOME STRUTTURA</label>
                                 <input
                                     type="text"
-                                    name="username"
-                                    value={formData.username}
-                                    className={`form-control ${errori.username ? 'is-invalid' : ''}`}
+                                    name="nome"
+                                    value={formData.nome}
+                                    className={`form-control ${errori.nome ? 'is-invalid' : ''}`}
                                     placeholder=""
                                     onChange={handleInput}
                                     style={{ borderRadius: '10px' }}
                                 />
-                                {errori.username && <div className="invalid-feedback">{errori.username}</div>}
+                                {errori.nome && <div className="invalid-feedback">{errori.nome}</div>}
                             </div>
 
                             <div className="mb-3">
@@ -123,6 +133,21 @@ const AuthGestore = () => {
                                     style={{ borderRadius: '10px' }}
                                 />
                                 {errori.email && <div className="invalid-feedback">{errori.email}</div>}
+                            </div>
+
+                            <div className="mb-3">
+                                <label className="form-label fw-semibold text-secondary small">PARTITA IVA</label>
+                                <input
+                                    type="text"
+                                    name="partitaIva"
+                                    value={formData.partitaIva}
+                                    className={`form-control ${errori.partitaIva ? 'is-invalid' : ''}`}
+                                    placeholder="11 cifre"
+                                    onChange={handleInput}
+                                    maxLength={11}
+                                    style={{ borderRadius: '10px' }}
+                                />
+                                {errori.partitaIva && <div className="invalid-feedback">{errori.partitaIva}</div>}
                             </div>
 
                             <div className="mb-3">
