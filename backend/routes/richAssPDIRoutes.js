@@ -9,5 +9,8 @@ router.get("/", richAssPDI.visualizzaRichieste);
 //rotta per creare una nuova richiesta
 router.post("/", richAssPDI.creaRichiesta);
 
+//rotta per visualizzare una singola richiesta
+router.get("/:id", richAssPDI.visualizzaRichiesta);
+
 
 module.exports = router;

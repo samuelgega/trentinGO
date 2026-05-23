@@ -81,4 +81,23 @@ const creaRichiesta = async (req,res) => {
     }
 }
 
-module.exports = { visualizzaRichieste, creaRichiesta }
+const visualizzaRichiesta = async (req,res) =>{
+
+    try{
+        const richiesta = await RichAssPDI.findById(req.params.id).populate('idGestore').populate('idPDI');
+
+        if(!richiesta){
+            return res.status(404).json({ error: "Richiesta non trovata" });
+        }
+
+        res.status(200).json({
+            data: richiesta
+        })
+
+    } catch(error){
+        console.error("Errore nel recupero della richiesta", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { visualizzaRichieste, creaRichiesta, visualizzaRichiesta }
