@@ -15,6 +15,10 @@ const AdminHome = () => {
         navigate('/admin-home/gestisci-eventi')
     }
 
+    const goToGestioneUtenti = () => {
+        navigate('/admin-home/gestisci-utenti')
+    }
+
     return (
         <>
             <AdminNav />
@@ -66,7 +70,10 @@ const AdminHome = () => {
                                 <p className="card-text text-muted mb-4">
                                     Visualizza la lista degli utenti registrati e gestisci i loro permessi.
                                 </p>
-                                <button className="btn btn-outline-secondary mt-auto">
+                                <button 
+                                    className="btn btn-primary mt-auto"
+                                    onClick={goToGestioneUtenti}
+                                >
                                     Gestisci Utenti
                                 </button>
                             </div>
