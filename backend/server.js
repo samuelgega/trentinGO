@@ -39,6 +39,10 @@ app.use("/api/v1/giocatori", giocatoreRoutes);
 const gestoreRoutes = require("./routes/gestoreRoutes");
 app.use("/api/v1/gestori", gestoreRoutes);
 
+//rotta per gli amministratori
+const amministratoreRoutes = require('./routes/amministratoreRoutes')
+app.use('/api/v1/amministratori', amministratoreRoutes)
+
 //rotta per richiedere associazione ad un pdi da parte di un gestore
 const richAssPDI = require("./routes/richAssPDIRoutes");
 app.use("/api/v1/richAssPDI", richAssPDI);
