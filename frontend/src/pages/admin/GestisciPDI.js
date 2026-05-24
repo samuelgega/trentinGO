@@ -85,67 +85,80 @@ const GestisciPDI = () => {
     return (
         <>
             <AdminNav />
-            <div className="container">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>Gestione Punti di Interesse (PDI)</h2>
-                    <div>
-                        <button className="btn btn-primary me-2" onClick={goToCreaPdi}>
-                            + Aggiungi Nuovo PDI
-                        </button>
-                        <button
-                            className="btn btn-secondary"
-                            onClick={goToHome}
-                        >
-                            &larr; Torna alla Home
-                        </button>
+
+            <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }} className="pb-5">
+                <div className="container pt-4">
+
+                    {/* Header di pagina */}
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 className="fw-bold mb-0">Gestione Punti di Interesse</h4>
+                            <p className="text-muted small mb-0">Aggiungi, modifica o elimina i PDI dalla mappa</p>
+                        </div>
+                        <div className="d-flex align-items-center gap-2">
+                            <button className="btn btn-trentingo btn-sm fw-semibold px-3" onClick={goToCreaPdi}>
+                                + Nuovo PDI
+                            </button>
+                            <button className="btn btn-outline-secondary btn-sm" onClick={goToHome}>
+                                &larr; Torna alla Home
+                            </button>
+                        </div>
                     </div>
-                </div>
 
-                <div className="card shadow-sm p-4 text-center text-muted">
-                    <h4>Interfaccia in costruzione</h4>
-                    <p>Qui verrà inserita la tabella o la mappa per gestire i PDI</p>
-
-                    <div className="card shadow-sm">
+                    {/*tabella*/}
+                    <div className="card border-0 shadow-sm pdi-card" style={{ borderRadius: '14px', overflow: 'hidden' }}>
                         <div className="card-body p-0">
                             <div className="table-responsive">
-                                <table className="table table-hover table-striped align-middle mb-0">
-                                    <thead className="table-dark">
+                                <table className="table table-hover align-middle mb-0">
+                                    <thead style={{ backgroundColor: '#f8f9fa' }}>
                                         <tr>
-                                            <th>Nome</th>
-                                            <th>Tipo</th>
-                                            <th className="text-end" style={{ width: '200px' }}>Azioni</th>
+                                            <th className="px-4 py-3 text-secondary fw-semibold small">NOME</th>
+                                            <th className="py-3 text-secondary fw-semibold small">CATEGORIA</th>
+                                            <th className="py-3 text-secondary fw-semibold small text-end px-4" style={{ width: '200px' }}>AZIONI</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {listaPDI.map((pdi) => (
-                                            <tr key={pdi._id}>
-                                                <td className="fw">{pdi.properties.nome}</td>
-                                                <td>
-                                                    <span className="badge bg-info text-dark">{pdi.properties.categoria}</span>
-                                                </td>
-                                                <td className="text-end">
-                                                    <button
-                                                        className="btn btn-sm btn-secondary me-2"
-                                                        onClick={() => gestisciModifica(pdi)}
-                                                    >
-                                                        Modifica
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-sm btn-danger"
-                                                        onClick={() => apriPopupElimina(pdi)}
-                                                    >
-                                                        Elimina
-                                                    </button>
+                                        {listaPDI.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={3} className="text-center text-muted py-5">
+                                                    Nessun PDI trovato nel database.
                                                 </td>
                                             </tr>
-                                        ))}
+                                        ) : (
+                                            listaPDI.map((pdi) => (
+                                                <tr key={pdi._id}>
+                                                    <td className="px-4 fw-semibold">{pdi.properties.nome}</td>
+                                                    <td>
+                                                        <span className="pdi-badge-categoria">
+                                                            {pdi.properties.categoria}
+                                                        </span>
+                                                    </td>
+                                                    <td className="text-end px-4">
+                                                        <button
+                                                            className="btn btn-sm btn-trentingo-outline me-2"
+                                                            onClick={() => gestisciModifica(pdi)}
+                                                        >
+                                                            Modifica
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-sm btn-outline-danger"
+                                                            onClick={() => apriPopupElimina(pdi)}
+                                                        >
+                                                            Elimina
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
+
             <PopUpElimina
                 isOpen={popupAperto}
                 onClose={chiudiPopupElimina}
