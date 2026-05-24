@@ -18,13 +18,14 @@ const visualizzaRichieste = async (req,res) => {
 }
 
 const creaRichiesta = async (req,res) => {
-    try{   
-    
-        const { idGestore, idPDI, motivazione } = req.body;
+    try{
 
-        if (!idGestore || !idPDI) {
+        const { idPDI, motivazione } = req.body;
+        const idGestore = req.utente.id;
+
+        if (!idPDI) {
             return res.status(400).json({
-                error: "ID Gestore e ID PDI sono campi obbligatori."
+                error: "ID PDI è un campo obbligatorio."
             });
         }
 
@@ -33,9 +34,6 @@ const creaRichiesta = async (req,res) => {
         if (!pdiEsistente) {
             return res.status(404).json({ error: "PDI non trovato." });
         }
-
-        // TODO: quando il login sarà implementato, aggiungere qui i controlli su gestore
-        //       (esistenza, PDI già associato, richiesta duplicata)
 
         const nuovaRichiesta = new RichAssPDI({
             idGestore,

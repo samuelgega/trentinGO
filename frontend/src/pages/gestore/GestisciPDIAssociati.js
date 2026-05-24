@@ -8,8 +8,7 @@ const GestisciPDIAssociati = () => {
     const navigate = useNavigate()
     const { showAlert } = useAlert()
 
-    // TODO: sostituire con l'ID reale del gestore loggato quando il login sarà implementato
-    const GESTORE_ID_PLACEHOLDER = '000000000000000000000000'
+    const token = localStorage.getItem('token')
 
     const [listaPDI, setListaPDI] = useState([])
     const [tuttiPDI, setTuttiPDI] = useState([])
@@ -34,7 +33,9 @@ const GestisciPDIAssociati = () => {
 
         const recuperaRichieste = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/richAssPDI')
+                const response = await fetch('http://localhost:3001/api/v1/richAssPDI', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
                 if (!response.ok) return
                 const json = await response.json()
                 setListaRichieste(json.data)
@@ -53,8 +54,11 @@ const GestisciPDIAssociati = () => {
         try {
             const response = await fetch('http://localhost:3001/api/v1/richAssPDI', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idGestore: GESTORE_ID_PLACEHOLDER, idPDI: pdiSelezionato, ...(motivazione && { motivazione }) })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ idPDI: pdiSelezionato, ...(motivazione && { motivazione }) })
             })
             const json = await response.json()
             if (response.status === 201) {
