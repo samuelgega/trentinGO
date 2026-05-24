@@ -63,7 +63,23 @@ const AuthAdmin = () => {
         }
         console.log("JSON inviato:", body)
 
-        //aggiungere chiamata api
+        //chiamata api
+        try {
+            const response = await fetch('http://localhost:3001/api/v1/amministratori/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
+
+            if (response.status === 201) {
+                showAlert("Registrazione completata.", "Account creato con successo", "success")
+                navigate(-1)
+            } else {
+                showAlert("Registrazione non riuscita.", "Controllare i dati inseriti o riprovare", "danger")
+            }
+        } catch (error) {
+            showAlert("Errore di connessione.", "Controllare la connessione o riprovare più tardi", "danger")
+        }
     }
 
     return (

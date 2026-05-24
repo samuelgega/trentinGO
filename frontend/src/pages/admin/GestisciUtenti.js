@@ -13,10 +13,7 @@ const GestisciUtenti = () => {
     const [listaGestori, setListaGestori] = useState([]);
     
     //lista admin provvisoria
-    const [listaAdmin, setListaAdmin] = useState([
-        { _id: '6', username: 'AdminPrincipale', email: 'admin@trentingo.it' },
-        { _id: '7', username: 'AdminSupport', email: 'support@trentingo.it' }
-    ]);
+    const [listaAdmin, setListaAdmin] = useState([]);
 
     useEffect(() => {
         const recuperoGiocatori = async () =>{
@@ -41,10 +38,9 @@ const GestisciUtenti = () => {
             }
         }
 
-        /*decommentare quando viene implementato
         const recuperoAdmin = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/admin')
+                const response = await fetch('http://localhost:3001/api/v1/amministratori')
                 if (!response.ok) return
                 const json = await response.json()
                 setListaAdmin(json.data)
@@ -52,12 +48,10 @@ const GestisciUtenti = () => {
                 console.error("Errore nel recupero Admin:", error)
             }
         }
-        */
 
         recuperoGiocatori();
         recuperoGestori();
-
-        //decommentare quando viene implementato
+        recuperoAdmin();
         
     }, [])
 

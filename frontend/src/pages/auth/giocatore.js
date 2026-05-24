@@ -75,7 +75,7 @@ const AuthGiocatore = () => {
 
             if (response.status === 201) {
                 showAlert("Registrazione completata.", "Account creato con successo", "success")
-                navigate('/')
+                navigate(-1)
             } else if (response.status === 409) {
                 showAlert("Registrazione non riuscita.", "Username o email già in uso", "danger")
             } else {

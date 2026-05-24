@@ -77,7 +77,7 @@ const AuthGestore = () => {
 
             if (response.status === 201) {
                 showAlert("Registrazione completata.", "Account creato con successo", "success")
-                navigate('/')
+                navigate(-1)
             } else if (response.status === 409) {
                 const data = await response.json()
                 if (data.error === "Partita IVA già esistente") {

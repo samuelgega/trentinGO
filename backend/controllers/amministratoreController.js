@@ -43,4 +43,20 @@ const creaAmministratore = async (req, res) => {
     }
 }
 
-module.exports = { creaAmministratore }
+const visualizzaAmministratori = async (req,res) => {
+
+    try {
+            const amministratori = await Amministratore.find({}).select('-password')
+    
+            res.status(200).json({
+                message: "Lista degli Amministratori",
+                data: amministratori
+            });
+        } catch (error) {
+            console.error("Errore nel recupero degli Amministratori", error);
+            res.status(500).json({ error: "Errore interno del server" });
+        }
+
+}
+
+module.exports = { creaAmministratore, visualizzaAmministratori }
