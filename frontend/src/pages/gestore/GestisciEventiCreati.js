@@ -86,62 +86,72 @@ const GestisciEventiCreati = () => {
     return (
         <>
             <GestoreNav />
-            <div className="container">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>Gestione Eventi</h2>
-                    <div>   
-                        <button className="btn btn-primary me-2" onClick={goToCreaEvento}>
-                            + Aggiungi Nuovo Evento
-                        </button>
-                        <button className="btn btn-secondary" onClick={goToHome}>
-                            &larr; Torna alla Home
-                        </button>
+            <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }} className="pb-5">
+                <div className="container pt-4">
+                    
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h4 className="fw-bold mb-0">Gestione Eventi</h4>
+                            <p className="text-muted small mb-0">Aggiungi, modifica o elimina eventi</p>
+                        </div>
+                        <div className="d-flex align-items-center gap-2">
+                            <button className="btn btn-trentingo btn-sm fw-semibold px-3" onClick={goToCreaEvento}>
+                                + Nuovo Evento
+                            </button>
+                            <button className="btn btn-outline-secondary btn-sm" onClick={goToHome}>
+                                &larr; Torna alla Home
+                            </button>
+                        </div>
                     </div>
-                </div>
-                
 
-                <div className="card shadow-sm p-4 text-center text-muted">
-                    <h4>Interfaccia in costruzione</h4>
-                    <p>Qui verrà inserita la tabella o la mappa per gestire gli eventi</p>
-
-                    <div className="card shadow-sm">
+                    <div className="card border-0 shadow-sm evento-card" style={{ borderRadius: '14px', overflow: 'hidden' }}>
                         <div className="card-body p-0">
                             <div className="table-responsive">
-                                <table className="table table-hover table-striped align-middle mb-0">
-                                    <thead className="table-dark">
+                                <table className="table table-hover align-middle mb-0">
+                                    <thead style={{ backgroundColor: '#f8f9fa' }}>
                                         <tr>
-                                            <th>Nome</th>
-                                            <th>Tipo</th>
-                                            <th>Stato</th>
-                                            <th className="text-end" style={{ width: '200px' }}>Azioni</th>
+                                            <th className="px-4 py-3 text-secondary fw-semibold small">NOME</th>
+                                            <th className="py-3 text-secondary fw-semibold small">TIPO</th>
+                                            <th className="py-3 text-secondary fw-semibold small">STATO</th>
+                                            <th className="py-3 text-secondary fw-semibold small text-end px-4" style={{ width: '200px' }}>AZIONI</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {listaEventi.map((evento) => (
-                                            <tr key={evento._id}>
-                                                <td className="fw-body">{evento.properties.nome}</td>
-                                                <td>
-                                                    <span className="badge bg-info text-dark">{evento.properties.categoria}</span>
-                                                </td>
-                                                <td>
-                                                    {getStatoEvento(evento.properties.dataInizio, evento.properties.dataFine)}
-                                                </td>
-                                                <td className="text-end">
-                                                    <button
-                                                        className="btn btn-sm btn-secondary me-2"
-                                                        onClick={() => gestisciModifica(evento)}
-                                                    >
-                                                        Modifica
-                                                    </button>
-                                                    <button
-                                                        className="btn btn-sm btn-danger"
-                                                        onClick={() => gestisciElimina(evento)}
-                                                    >
-                                                        Elimina
-                                                    </button>
+                                        {listaEventi.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={4} className="text-center text-muted py-5">
+                                                    Nessun evento trovato.
                                                 </td>
                                             </tr>
-                                        ))}
+                                        ) : (
+                                            listaEventi.map((evento) => (
+                                                <tr key={evento._id}>
+                                                    <td className="px-4 fw-semibold">{evento.properties.nome}</td>
+                                                    <td>
+                                                        <span className="pdi-badge-categoria">
+                                                            {evento.properties.categoria}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        {getStatoEvento(evento.properties.dataInizio, evento.properties.dataFine)}
+                                                    </td>
+                                                    <td className="text-end px-4">
+                                                        <button
+                                                            className="btn btn-sm btn-trentingo-outline me-2"
+                                                            onClick={() => gestisciModifica(evento)}
+                                                        >
+                                                            Modifica
+                                                        </button>
+                                                        <button
+                                                            className="btn btn-sm btn-outline-danger"
+                                                            onClick={() => gestisciElimina(evento)}
+                                                        >
+                                                            Elimina
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
                                     </tbody>
                                 </table>
                             </div>
