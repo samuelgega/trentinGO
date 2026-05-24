@@ -657,6 +657,54 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
       operationId: registrazioneGestore
+  /amministratori:
+    post:
+      summary: Crea un nuovo amministratore
+      tags:
+        - amministratori
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AmministratoreRegistrationInput'
+      responses:
+        '201':
+          description: Amministratore creato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Amministratore creato con successo
+                  data:
+                    $ref: '#/components/schemas/Amministratore'
+        '400':
+          description: Campi obbligatori mancanti
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Username, email e password sono obbligatori
+        '409':
+          description: Username o email già esistente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Username già esistente
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: creaAmministratore
   /giocatori:
     get:
       summary: Ottieni la lista di tutti i giocatori
@@ -828,6 +876,39 @@ components:
         abilitato:
           type: boolean
           example: false
+    AmministratoreRegistrationInput:
+      type: object
+      additionalProperties: false
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          example: admin1
+        email:
+          type: string
+          format: email
+          example: admin@trentingo.it
+        password:
+          type: string
+          format: password
+          example: PasswordSicura123!
+    Amministratore:
+      type: object
+      additionalProperties: false
+      properties:
+        _id:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        username:
+          type: string
+          example: admin1
+        email:
+          type: string
+          format: email
+          example: admin@trentingo.it
     GiocatoreRegistrationInput:
       type: object
       required:
