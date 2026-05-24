@@ -197,22 +197,23 @@ const CreaEvento = () => {
 
    return (
         <>
-            <div className="container mt-4 mb-5">
+            <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }} className="pb-5">
+                <div className="container pt-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Crea nuovo evento</h2>
                     <button
-                        className="btn btn-outline-secondary"
+                        className="btn btn-trentingo-outline"
                         onClick={() => navigate(-1)}
                     >
                         &larr; Annulla e torna indietro
                     </button>
                 </div>
                 
-                <div className="card shadow border-0">
+                <div className="card evento-card shadow border-0">
                     <div className="card-body p-4">
                         <form onSubmit={handleSubmit} onReset={handleReset}>
                             {/* Informazioni base */}
-                            <h5 className="text-primary mb-3">1. Informazioni Generali</h5>
+                            <h5 className="text-trentingo mb-3">1. Informazioni Generali</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-8">
                                     <label className="form-label fw-bold">Nome dell'evento*</label>
@@ -247,21 +248,23 @@ const CreaEvento = () => {
                                 </div>
                             </div>
                             <div className="row g-3 mb-4">
-                                <label className="form-label fw-bold">Descrizione Estesa</label>
-                                <textarea
-                                    name="descrizione"
-                                    value={formData.descrizione}
-                                    className="form-control"
-                                    rows="4"
-                                    placeholder="Inserisci una descrizione dettagliata..."
-                                    onChange={handleInput}
-                                ></textarea>
-                                <small className="text-danger">{errori.descrizione}</small>
+                                <div className="col-12">
+                                    <label className="form-label fw-bold">Descrizione Estesa</label>
+                                    <textarea
+                                        name="descrizione"
+                                        value={formData.descrizione}
+                                        className="form-control"
+                                        rows="4"
+                                        placeholder="Inserisci una descrizione dettagliata..."
+                                        onChange={handleInput}
+                                    ></textarea>
+                                    <small className="text-danger">{errori.descrizione}</small>
+                                </div>
                             </div>
                             <hr />
 
                             {/* Dettagli */}
-                            <h5 className="text-primary mb-3">2. Dettagli</h5>
+                            <h5 className="text-trentingo mb-3">2. Dettagli</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Prezzo</label>
@@ -304,7 +307,7 @@ const CreaEvento = () => {
                             </div>
                             <hr />
                             {/* Date */}
-                            <h5 className="text-primary mb-3">3. Date</h5>
+                            <h5 className="text-trentingo mb-3">3. Date</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Data di Inizio*</label>
@@ -331,14 +334,14 @@ const CreaEvento = () => {
                             </div>
                             <hr />
                             {/* Posizione */}
-                            <h5 className="text-primary mb-3">4. Posizione Geografica</h5>
+                            <h5 className="text-trentingo mb-3">4. Posizione Geografica</h5>
                             <div className="row g-3 mb-3">
                                 <div className="col-12 position-relative">
                                     <label className="form-label fw-bold">Collega a un PDI esistente</label>
                                     <div 
-                                        className="form-select border-primary shadow-sm" 
+                                        className="form-select shadow-sm" 
                                         onClick={() => setMenuPdiAperto(!menuPdiAperto)}
-                                        style={{ cursor: 'pointer' }}
+                                        style={{ cursor: 'pointer', borderColor: 'var(--primary)' }}
                                     >
                                         {formData.pdiCollegato 
                                             ? listaPDI.find(p => p._id === formData.pdiCollegato)?.properties.nome 
@@ -346,13 +349,13 @@ const CreaEvento = () => {
                                     </div>
                                     {menuPdiAperto && (
                                         <div 
-                                            className="card position-absolute w-100 shadow mt-1 border-primary" 
-                                            style={{ top: '100%', left: 0, zIndex: 1000 }}
+                                            className="card evento-card position-absolute w-100 shadow mt-1" 
+                                            style={{ top: '100%', left: 0, zIndex: 1000, border: '1px solid var(--primary)' }}
                                         >
                                             <div className="card-body p-2">
                                                 <input 
                                                     type="text" 
-                                                    className="form-control mb-2" 
+                                                    className="evento-search-input mb-2" 
                                                     placeholder="Cerca PDI per nome"
                                                     value={ricercaPDI}
                                                     onChange={(e) => setRicercaPDI(e.target.value)}
@@ -361,7 +364,7 @@ const CreaEvento = () => {
                                                 
                                                 <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                                                     <div 
-                                                        className="p-2 border-bottom text-primary fw-bold" 
+                                                        className="p-2 border-bottom text-trentingo fw-bold" 
                                                         style={{ cursor: 'pointer' }}
                                                         onClick={() => { 
                                                             handlePdiChange({ target: { value: '' } }); 
@@ -428,14 +431,15 @@ const CreaEvento = () => {
                             {/* Tasti azione */}
                             <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                                 <button type="reset" className="btn btn-light me-md-2">Svuota Campi</button>
-                                <button type="button" 
-                                className="btn btn-primary px-5" 
+                                <button type="submit" 
+                                className="btn btn-trentingo px-5" 
                                 onClick={handleSubmit}>
                                     Salva Evento</button>
                             </div>
                         </form>
                         
                     </div>
+                </div>
                 </div>
             </div>
         </>

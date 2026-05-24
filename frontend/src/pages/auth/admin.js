@@ -6,12 +6,10 @@ import '../../assets/home.css'
 const statoInizialeForm = {
     username: '',
     email: '',
-    password: '',
-    confermaPassword: '',
-    iscrittoNewsletter: false,
+    password: ''
 }
 
-const AuthGiocatore = () => {
+const AuthAdmin = () => {
 
     const navigate = useNavigate()
     const { showAlert } = useAlert()
@@ -61,13 +59,13 @@ const AuthGiocatore = () => {
         const body = {
             username: formData.username,
             email: formData.email,
-            password: formData.password,
-            iscrittoNewsletter: formData.iscrittoNewsletter,
+            password: formData.password
         }
         console.log("JSON inviato:", body)
 
+        //chiamata api
         try {
-            const response = await fetch('http://localhost:3001/api/v1/giocatori/registrazione', {
+            const response = await fetch('http://localhost:3001/api/v1/amministratori/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -76,8 +74,6 @@ const AuthGiocatore = () => {
             if (response.status === 201) {
                 showAlert("Registrazione completata.", "Account creato con successo", "success")
                 navigate(-1)
-            } else if (response.status === 409) {
-                showAlert("Registrazione non riuscita.", "Username o email già in uso", "danger")
             } else {
                 showAlert("Registrazione non riuscita.", "Controllare i dati inseriti o riprovare", "danger")
             }
@@ -93,7 +89,7 @@ const AuthGiocatore = () => {
                 {/* Header */}
                 <div className="text-center mb-4">
                     <span className="nav-logo" style={{ fontSize: '2rem' }}>TrentinGO</span>
-                    <p className="text-muted mt-2 mb-0">Crea il tuo account giocatore</p>
+                    <p className="text-muted mt-2 mb-0">Crea account Admin</p>
                 </div>
 
                 <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
@@ -156,24 +152,6 @@ const AuthGiocatore = () => {
                                 {errori.confermaPassword && <div className="invalid-feedback">{errori.confermaPassword}</div>}
                             </div>
 
-                            <div className="mb-4 p-3 rounded-3" style={{ backgroundColor: '#f0fdf4', border: '1px solid #bbf7d0' }}>
-                                <div className="form-check mb-0">
-                                    <input
-                                        type="checkbox"
-                                        name="iscrittoNewsletter"
-                                        id="iscrittoNewsletter"
-                                        checked={formData.iscrittoNewsletter}
-                                        className="form-check-input"
-                                        onChange={handleInput}
-                                        style={{ borderColor: '#037149' }}
-                                    />
-                                    <label className="form-check-label" htmlFor="iscrittoNewsletter">
-                                        Iscrivimi alla newsletter
-                                        <small className="d-block text-muted">Ricevi aggiornamenti su eventi e novità di TrentinGO</small>
-                                    </label>
-                                </div>
-                            </div>
-
                             <button
                                 type="submit"
                                 className="btn w-100 fw-semibold py-2 mb-2"
@@ -190,16 +168,6 @@ const AuthGiocatore = () => {
                             </button>
                         </form>
 
-                        <hr />
-                        <p className="text-center text-muted small mb-2">Sei un gestore di eventi?</p>
-                        <button
-                            className="btn btn-outline-secondary w-100 py-2"
-                            style={{ borderRadius: '10px' }}
-                            onClick={() => navigate('/auth/gestore')}
-                        >
-                            Registrati come Gestore
-                        </button>
-
                     </div>
                 </div>
             </div>
@@ -207,4 +175,4 @@ const AuthGiocatore = () => {
     )
 }
 
-export default AuthGiocatore
+export default AuthAdmin

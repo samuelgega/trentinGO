@@ -142,22 +142,23 @@ const ModificaPDI = () => {
 
     return (
         <>
-            <div className="container mt-4 mb-5">
+            <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }} className="pb-5">
+                <div className="container pt-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Modifica PDI: {formData.nome}</h2>
                     <button
-                        className="btn btn-outline-secondary"
+                        className="btn btn-trentingo-outline"
                         onClick={() => navigate(-1)}
                     >
                         &larr; Torna indietro
                     </button>
                 </div>
 
-                <div className="card shadow border-0 border-top border-primary border-4">
+                <div className="card shadow pdi-card border-0">
                     <div className="card-body p-4">
                         <form onSubmit={handleSubmit} noValidate>
-
-                            <h5 className="text-primary mb-3">1. Informazioni Generali</h5>
+                            {/*Nome */}
+                            <h5 className="text-trentingo mb-3">1. Informazioni Generali</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-8">
                                     <label className="form-label fw-bold">Nome del punto di interesse*</label>
@@ -170,6 +171,7 @@ const ModificaPDI = () => {
                                     />
                                     <small className="text-danger">{errori.nome}</small>
                                 </div>
+                                {/*Tipologia */}
                                 <div className="col-md-4">
                                     <label className="form-label fw-bold">Tipologia*</label>
                                     <select
@@ -192,6 +194,7 @@ const ModificaPDI = () => {
                                     <small className="text-danger">{errori.categoria}</small>
                                 </div>
                             </div>
+                            {/*Descrizione */}
                             <div className="row g-3 mb-4">
                                 <label className="form-label fw-bold">Descrizione Estesa</label>
                                 <textarea
@@ -205,8 +208,8 @@ const ModificaPDI = () => {
                             </div>
 
                             <hr />
-
-                            <h5 className="text-primary mb-3">2. Posizione Geografica</h5>
+                            {/*Posizione */}
+                            <h5 className="text-trentingo mb-3">2. Posizione Geografica</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Latitudine*</label>
@@ -235,8 +238,8 @@ const ModificaPDI = () => {
                             </div>
 
                             <hr />
-
-                            <h5 className="text-primary mb-3">3. Dettagli e Immagini aggiuntive</h5>
+                            {/*Punteggio */}
+                            <h5 className="text-trentingo mb-3">3. Dettagli e Immagini aggiuntive</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Punteggio*</label>
@@ -250,6 +253,7 @@ const ModificaPDI = () => {
                                     />
                                     <small className="text-danger">{errori.punteggio}</small>
                                 </div>
+                                {/*Prezzo */}
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Prezzo</label>
                                     <input
@@ -262,6 +266,7 @@ const ModificaPDI = () => {
                                     />
                                     <small className="text-danger">{errori.prezzo}</small>
                                 </div>
+                                {/*Immagini */}
                                 <div className="col-md-12 mt-4">
                                     <label className="form-label fw-bold">Aggiungi nuove foto a quelle esistenti</label>
                                     <div className="input-group">
@@ -291,7 +296,7 @@ const ModificaPDI = () => {
                             {/* Tasti azione */}
                             <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                                 {datiModificati ? (
-                                    <button type="submit" className="btn btn-success px-5 fw-bold">
+                                    <button type="submit" className="btn btn-trentingo px-5 fw-bold">
                                         Salva Modifiche
                                     </button>
                                 ) : (
@@ -302,6 +307,7 @@ const ModificaPDI = () => {
                             </div>
                         </form>
                     </div>
+                </div>
                 </div>
             </div>
         </>

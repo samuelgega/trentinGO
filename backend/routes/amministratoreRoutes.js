@@ -3,6 +3,9 @@ const router = express.Router()
 
 const Amministratore = require('../controllers/amministratoreController')
 
+//rotta per la vizzazione degli amministratori
+router.get('/', Amministratore.visualizzaAmministratori);
+
 // route per la creazione di un nuovo amministratore
 router.post('/', Amministratore.creaAmministratore)
 

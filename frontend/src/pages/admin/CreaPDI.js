@@ -119,23 +119,24 @@ const CreaPDI = () => {
 
     return (
         <>
-            <div className="container mt-4 mb-5">
+            <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }} className="pb-5">
+                <div className="container pt-4">
                 <div className="d-flex justify-content-between align-items-center mb-4">
                     <h2>Crea nuovo punto di interesse</h2>
                     <button
-                        className="btn btn-outline-secondary"
+                        className="btn btn-trentingo-outline"
                         onClick={() => navigate(-1)}
                     >
                         &larr; Annulla e torna indietro
                     </button>
                 </div>
 
-                <div className="card shadow border-0">
+                <div className="card shadow pdi-card border-0">
                     <div className="card-body p-4">
                         <form onSubmit={handleSubmit} onReset={handleReset}>
 
                             {/* Informazioni base */}
-                            <h5 className="text-primary mb-3">1. Informazioni Generali</h5>
+                            <h5 className="text-trentingo mb-3">1. Informazioni Generali</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-8">
                                     <label className="form-label fw-bold">Nome del punto di interesse*</label>
@@ -187,7 +188,7 @@ const CreaPDI = () => {
                             <hr />
 
                             {/* Posizione */}
-                            <h5 className="text-primary mb-3">2. Posizione Geografica</h5>
+                            <h5 className="text-trentingo mb-3">2. Posizione Geografica</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Latitudine*</label>
@@ -220,7 +221,7 @@ const CreaPDI = () => {
                             <hr />
 
                             {/* Dettagli */}
-                            <h5 className="text-primary mb-3">3. Dettagli</h5>
+                            <h5 className="text-trentingo mb-3">3. Dettagli</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
                                     <label className="form-label fw-bold">Punteggio*</label>
@@ -278,10 +279,11 @@ const CreaPDI = () => {
                             {/* Tasti azione */}
                             <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                                 <button type="reset" className="btn btn-light me-md-2">Svuota Campi</button>
-                                <button type="submit" className="btn btn-primary px-5">Salva PDI</button>
+                                <button type="submit" className="btn btn-trentingo px-5">Salva PDI</button>
                             </div>
                         </form>
                     </div>
+                </div>
                 </div>
             </div>
         </>
