@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Form } from 'react-router-dom';
 
 import { AlertProvider } from '../src/contexts/AlertController';
 import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento, GestisciUtenti } from './pages/admin';
@@ -9,8 +9,7 @@ import HomeProfilo from './pages/profilo/HomeProfilo';
 import Error404 from './pages/Error/NotFound';
 import InfoPDI from './pages/pdi/InfoPDI'
 import InfoEvento from './pages/eventi/InfoEvento'
-import AuthGiocatore from './pages/auth/giocatore'
-import AuthGestore from './pages/auth/gestore'
+import { AuthGiocatore, AuthGestore, AuthAdmim} from './pages/auth'
 
 const App = () => {
   return (
@@ -36,6 +35,7 @@ const App = () => {
           <Route path="/modifica-evento/:id" element={<ModificaEvento />} />
           <Route path="/auth/giocatore" element={<AuthGiocatore />} />
           <Route path="/auth/gestore" element={<AuthGestore />} />
+          <Route path="/auth/admin" element={<AuthAdmim />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
       </Router>
