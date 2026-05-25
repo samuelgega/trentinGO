@@ -195,14 +195,26 @@ const AuthGestore = () => {
                         </form>
 
                         <hr />
-                        <p className="text-center text-muted small mb-2">Sei un giocatore?</p>
-                        <button
-                            className="btn btn-outline-secondary w-100 py-2"
-                            style={{ borderRadius: '10px' }}
-                            onClick={() => navigate('/auth/giocatore')}
-                        >
-                            Registrati come Giocatore
-                        </button>
+                        <div className="mb-4">
+                            <p className="text-center text-muted small mb-2">Sei un giocatore?</p>
+                            <button
+                                className="btn btn-outline-secondary w-100 py-2"
+                                style={{ borderRadius: '10px' }}
+                                onClick={() => navigate('/auth/giocatore')}
+                            >
+                                Registrati come Gestore
+                            </button>
+                        </div>
+                        <div className="mb-4">
+                            <p className="text-center text-muted small mb-2">Hai già un account?</p>
+                            <button
+                                className="btn btn-outline-secondary w-100 py-2"
+                                style={{ borderRadius: '10px' }}
+                                onClick={() => navigate('/auth/login')}
+                            >
+                                Accedi
+                            </button>
+                        </div>
 
                     </div>
                 </div>

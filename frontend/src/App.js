@@ -1,6 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+
 import { AlertProvider } from '../src/contexts/AlertController';
+
 import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento, GestisciUtenti } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
 import { Homepage, HomeEventi } from './pages/home';
@@ -8,33 +10,113 @@ import HomeProfilo from './pages/profilo/HomeProfilo';
 import Error404 from './pages/Error/NotFound';
 import InfoPDI from './pages/pdi/InfoPDI'
 import InfoEvento from './pages/eventi/InfoEvento'
-import { AuthGiocatore, AuthGestore, AuthAdmim} from './pages/auth'
+import { AuthGiocatore, AuthGestore, AuthAdmim, AuthLogin } from './pages/auth'
+
+import RottaProtetta from './components/auth/RottaProtetta';
+import RottaOspite from './components/auth/RottaOspite';
 
 const App = () => {
   return (
     <AlertProvider>
       <Router>
         <Routes>
+          {/* Rotte pubbliche */}
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Homepage />} />
           <Route path="/home/eventi" element={<HomeEventi />} />
-          <Route path="/profilo" element={<HomeProfilo />} />
           <Route path='/dettagli/:id' element={<InfoPDI />} />
           <Route path='/dettagli-evento/:id' element={<InfoEvento />} />
-          <Route path="/admin-home" element={<AdminHome />} />
-          <Route path="/admin-home/gestisci-pdi" element={<GestisciPDI />} />
-          <Route path="/admin-home/gestisci-eventi" element={<GestisciEventi />} />
-          <Route path="/admin-home/gestisci-utenti" element={<GestisciUtenti />} />
-          <Route path="/crea-pdi" element={<CreaPDI />} />
-          <Route path="/crea-evento" element={<CreaEvento />} />
-          <Route path="/gestore-home" element={<GestoreHome />} />
-          <Route path="/gestore-home/gestisci-pdi-associati" element={<GestisciPDIAssociati />} />
-          <Route path="/gestore-home/gestisci-eventi-creati" element={<GestisciEventiCreati />} />
-          <Route path="/modifica-pdi/:id" element={<ModificaPDI />} />
-          <Route path="/modifica-evento/:id" element={<ModificaEvento />} />
-          <Route path="/auth/giocatore" element={<AuthGiocatore />} />
-          <Route path="/auth/gestore" element={<AuthGestore />} />
-          <Route path="/auth/admin" element={<AuthAdmim />} />
+
+          {/* Rotte per utenti loggati */}
+          <Route path="/profilo" element={
+            <RottaProtetta ruoliAmmessi={['giocatore', 'gestore', 'admin']}>
+              <HomeProfilo />
+            </RottaProtetta>
+          } />
+
+          {/* Rotte per l'osservatore */}
+          <Route path="/auth/giocatore" element={
+            <RottaOspite>
+              <AuthGiocatore />
+            </RottaOspite>
+          } />
+          <Route path="/auth/gestore" element={
+            <RottaOspite>
+              <AuthGestore />
+            </RottaOspite>
+          } />
+          <Route path="/auth/login" element={
+            <RottaOspite>
+              <AuthLogin />
+            </RottaOspite>
+          } />
+
+          {/* Rotte protette per l'admin */}
+          <Route path="/admin-home" element={
+            <RottaProtetta ruoliAmmessi={['admin']}>
+              <AdminHome />
+            </RottaProtetta>
+          } />
+          <Route path="/admin-home/gestisci-pdi" element={
+            <RottaProtetta ruoliAmmessi={['admin']}>
+              <GestisciPDI />
+            </RottaProtetta>
+          } />
+          <Route path="/admin-home/gestisci-eventi" element={
+            <RottaProtetta ruoliAmmessi={['admin']}>
+              <GestisciEventi />
+            </RottaProtetta>
+          } />
+          <Route path="/admin-home/gestisci-utenti" element={
+            <RottaProtetta ruoliAmmessi={['admin']}>
+              <GestisciUtenti />
+            </RottaProtetta>
+          } />
+          <Route path="/crea-pdi" element={
+            <RottaProtetta ruoliAmmessi={['admin']}>
+              <CreaPDI />
+            </RottaProtetta>
+          } />
+          <Route path="/modifica-pdi/:id" element={
+            <RottaProtetta ruoliAmmessi={['admin']}>
+              <ModificaPDI />
+            </RottaProtetta>
+          } />
+          <Route path="/auth/admin" element={
+            <RottaProtetta ruoliAmmessi={['admin']}>
+              <AuthAdmim />
+            </RottaProtetta>
+          } />
+
+          {/* Rotte protette per il gestore */}
+          <Route path="/gestore-home" element={
+            <RottaProtetta ruoliAmmessi={['gestore']}>
+              <GestoreHome />
+            </RottaProtetta>
+          } />
+          <Route path="/gestore-home/gestisci-pdi-associati" element={
+            <RottaProtetta ruoliAmmessi={['gestore']}>
+              <GestisciPDIAssociati />
+            </RottaProtetta>
+          } />
+          <Route path="/gestore-home/gestisci-eventi-creati" element={
+            <RottaProtetta ruoliAmmessi={['gestore']}>
+              <GestisciEventiCreati />
+            </RottaProtetta>
+          } />
+
+          {/* Rotte per admin e gestori */}
+          <Route path="/modifica-evento/:id" element={
+            <RottaProtetta ruoliAmmessi={['gestore', 'admin']}>
+              <ModificaEvento />
+            </RottaProtetta>
+          } />
+          <Route path="/crea-evento" element={
+            <RottaProtetta ruoliAmmessi={['gestore', 'admin']}>
+              <CreaEvento />
+            </RottaProtetta>
+          } />
+
           <Route path="*" element={<Error404 />} />
         </Routes>
       </Router>
