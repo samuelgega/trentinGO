@@ -87,8 +87,8 @@ const HomeNav = () => {
                                 <button
                                     className="dropdown-item custom-item-logout text-danger d-flex align-items-center gap-2 py-2"
                                     onClick={() => {
-                                        setLoggato(false)
-                                        setTendina(false)
+                                        localStorage.clear()
+                                        navigate('auth/login')
                                     }}
                                 >
                                     <span className="material-symbols-outlined fs-5">logout</span>
