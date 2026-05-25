@@ -1,5 +1,6 @@
 const Amministratore = require('../models/Amministratore')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const creaAmministratore = async (req, res) => {
     try {
@@ -59,4 +60,49 @@ const visualizzaAmministratori = async (req,res) => {
 
 }
 
-module.exports = { creaAmministratore, visualizzaAmministratori }
+const loginAmministratore = async (req, res) => {
+    try {
+        const { credenziale, password } = req.body
+
+        if (!credenziale || !password) {
+            return res.status(400).json({ error: "Credenziale e password sono obbligatorie" })
+        }
+
+        const isEmail = credenziale.includes('@')
+        const amministratore = await Amministratore.findOne(
+            isEmail ? { email: credenziale.toLowerCase() } : { username: credenziale }
+        )
+
+        if (!amministratore) {
+            return res.status(401).json({ error: "Credenziali non valide" })
+        }
+
+        const passwordCorretta = await bcrypt.compare(password, amministratore.password)
+        if (!passwordCorretta) {
+            return res.status(401).json({ error: "Credenziali non valide" })
+        }
+
+        const token = jwt.sign(
+            { id: amministratore._id, ruolo: 'amministratore' },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        )
+
+        res.status(200).json({
+            message: "Login effettuato con successo",
+            token,
+            data: {
+                id: amministratore._id,
+                username: amministratore.username,
+                email: amministratore.email,
+                ruolo: 'amministratore'
+            }
+        })
+
+    } catch (error) {
+        console.error("Errore nel login dell'amministratore", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { creaAmministratore, visualizzaAmministratori, loginAmministratore }

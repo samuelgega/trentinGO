@@ -1,5 +1,6 @@
 const Gestore = require("../models/Gestore")
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const registrazioneGestore = async (req, res) => {
     try {
@@ -65,4 +66,45 @@ const visualizzaGestori = async (req, res) => {
     }
 }
 
-module.exports = { registrazioneGestore, visualizzaGestori }
+const loginGestore = async (req, res) => {
+    try {
+        const { email, password } = req.body
+
+        if (!email || !password) {
+            return res.status(400).json({ error: "Email e password sono obbligatorie" })
+        }
+
+        const gestore = await Gestore.findOne({ email: email.toLowerCase() }).select('+password')
+        if (!gestore) {
+            return res.status(401).json({ error: "Credenziali non valide" })
+        }
+
+        const passwordCorretta = await bcrypt.compare(password, gestore.password)
+        if (!passwordCorretta) {
+            return res.status(401).json({ error: "Credenziali non valide" })
+        }
+
+        const token = jwt.sign(
+            { id: gestore._id, ruolo: 'gestore' },
+            process.env.JWT_SECRET,
+            { expiresIn: '7d' }
+        )
+
+        res.status(200).json({
+            message: "Login effettuato con successo",
+            token,
+            data: {
+                id: gestore._id,
+                nome: gestore.nome,
+                email: gestore.email,
+                ruolo: 'gestore'
+            }
+        })
+
+    } catch (error) {
+        console.error("Errore nel login del gestore", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { registrazioneGestore, visualizzaGestori, loginGestore }

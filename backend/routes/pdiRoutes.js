@@ -6,6 +6,7 @@ const PDI = require("../controllers/pdiController");
 
 //importare il middleware per l'upload delle immagini
 const upload = require("../middlewares/upload");
+const { verificaToken, requireRuolo } = require("../middlewares/authMiddleware");
 
 //route per visualizzare tutti i PDI
 router.get("/", PDI.visualizzaTuttiPDI);
@@ -14,13 +15,13 @@ router.get("/", PDI.visualizzaTuttiPDI);
 router.get("/:id", PDI.visualizzaPDI);
 
 //Route per creare un nuovo PDI
-router.post("/", upload.array("immagine",10), PDI.creaPDI);
+router.post("/", verificaToken, requireRuolo('amministratore'), upload.array("immagine",10), PDI.creaPDI);
 
 //route per modificare un PDI esistente
-router.put("/:id", upload.array("immagine",10), PDI.modificaPDI);
+router.put("/:id", verificaToken, requireRuolo('amministratore'), upload.array("immagine",10), PDI.modificaPDI);
 
 //route per eliminare un PDI esistente
-router.delete("/:id", PDI.eliminaPDI);
+router.delete("/:id", verificaToken, requireRuolo('amministratore'), PDI.eliminaPDI);
 
 
 module.exports = router;
