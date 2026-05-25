@@ -48,20 +48,22 @@ const AuthLogin = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             })
+            const resJson = await response.json()
 
+            console.log(resJson)
             if (response.status === 200) {
-                localStorage.setItem('token', response.token)
-                localStorage.setItem('ruolo', response.data.ruolo)
-                localStorage.setItem('userId', response.data.id)
+                localStorage.setItem('token', resJson.token)
+                localStorage.setItem('ruolo', resJson.data.ruolo)
+                localStorage.setItem('userId', resJson.data.id)
                 showAlert("Registrazione completata.", "Account creato con successo", "success")
                 navigate(-1)
-            } else if (response.status === 400) {
+            } else if (resJson.status === 400) {
                 showAlert("Login fallito", "Username o password mancanti", "danger")
             } else {
                 showAlert("Login fallito", "Username o password errati", "danger")
             }
         } catch (error) {
-            showAlert("Errore di connessione.", "Controllare la connessione o riprovare più tardi", "danger")
+            showAlert("Errore di connessione.", error.message, "danger")
         }
     }
 
