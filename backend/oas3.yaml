@@ -657,7 +657,62 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
       operationId: registrazioneGestore
+  /login:
+    post:
+      summary: Login unificato per giocatore e gestore
+      tags:
+        - autenticazione
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredenzialeLoginInput'
+      responses:
+        '200':
+          description: Login effettuato con successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '401':
+          description: Credenziali non valide
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Credenziali non valide
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: login
   /amministratori:
+    get:
+      summary: Ottieni la lista di tutti gli amministratori
+      tags:
+        - amministratori
+      responses:
+        '200':
+          description: Lista degli amministratori recuperata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Lista degli Amministratori
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Amministratore'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: visualizzaAmministratori
     post:
       summary: Crea un nuovo amministratore
       tags:
@@ -705,6 +760,39 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
       operationId: creaAmministratore
+  /amministratori/login:
+    post:
+      summary: Login di un amministratore
+      tags:
+        - amministratori
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CredenzialeLoginInput'
+      responses:
+        '200':
+          description: Login effettuato con successo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseAdmin'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '401':
+          description: Credenziali non valide
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Credenziali non valide
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: loginAmministratore
   /giocatori:
     get:
       summary: Ottieni la lista di tutti i giocatori
@@ -835,6 +923,21 @@ components:
           type: string
           format: date-time
           example: '2026-05-23T10:30:00Z'
+    GestoreLoginInput:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: muse@email.com
+        password:
+          type: string
+          format: password
+          example: PasswordSicura123!
     GestoreRegistrationInput:
       type: object
       required:
@@ -909,6 +1012,79 @@ components:
           type: string
           format: email
           example: admin@trentingo.it
+    CredenzialeLoginInput:
+      type: object
+      additionalProperties: false
+      required:
+        - credenziale
+        - password
+      properties:
+        credenziale:
+          type: string
+          description: Email o username dell'utente
+          example: mario_rossi
+        password:
+          type: string
+          format: password
+          example: PasswordSicura123!
+    LoginResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+          example: Login effettuato con successo
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              pattern: '^[a-fA-F0-9]{24}$'
+            nome:
+              type: string
+              description: Username del giocatore o nome del gestore
+              example: mario_rossi
+            email:
+              type: string
+              format: email
+              example: mario@example.com
+            ruolo:
+              type: string
+              enum:
+                - giocatore
+                - gestore
+              example: giocatore
+    LoginResponseAdmin:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+          example: Login effettuato con successo
+        token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              pattern: '^[a-fA-F0-9]{24}$'
+            username:
+              type: string
+              example: admin1
+            email:
+              type: string
+              format: email
+              example: admin@trentingo.it
+            ruolo:
+              type: string
+              enum:
+                - amministratore
+              example: amministratore
     GiocatoreRegistrationInput:
       type: object
       required:
