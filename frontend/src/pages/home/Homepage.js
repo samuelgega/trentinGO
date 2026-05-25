@@ -65,38 +65,41 @@ const Homepage = () => {
   }, [listaPDI, ricerca, categoriaSelezionata]);
 
   return (
-      <div className='vh-100 d-flex flex-column overflow-hidden'>
-      <HomeNav />
-        <div className='container-fluid p-0 w-100 flex-grow-1 overflow-hidden'>
-          <div className='row g-0 h-100'>
+    <div className='vh-100 d-flex flex-column overflow-hidden'>
+      <div className='container-fluid'>
+        <HomeNav />
+      </div>
 
-            {/* Colonna sinistra: mappa con i marker filtrati */}
-            <div className="col-12 col-lg-8 col-mappa position-relative p-0">
-              <MappaTrentino
-                pdiFiltrati={pdiFiltrati}
-                pdiSelezionatoLista={pdiSelezionato}
-                PdiSelezionatoMappa={setPdiSelezionato}
-                resetMappaKey={resetMappaKey}
-              />
-            </div>
+      <div className='container-fluid p-0 w-100 flex-grow-1 overflow-hidden'>
+        <div className='row g-0 h-100'>
 
-            {/* Colonna destra: barra di ricerca, chip filtro e lista PDI */}
-            <div className="col-12 col-lg-4 bg-light overflow-hidden border-start col-lista p-0">
-              <ListaPDI
-                pdiFiltrati={pdiFiltrati}
-                categorie={categorie}
-                ricerca={ricerca}
-                setRicerca={setRicerca}
-                categoriaSelezionata={categoriaSelezionata}
-                setCategoriaSelezionata={handleSetCategoria}
-                PdiSelezionatoLista={togglePdiSelezionato}
-                pdiSelezionatoMappa={pdiSelezionato}
-              />
-            </div>
-
+          {/* Colonna sinistra: mappa con i marker filtrati */}
+          <div className="col-12 col-lg-8 col-mappa position-relative p-0">
+            <MappaTrentino
+              pdiFiltrati={pdiFiltrati}
+              pdiSelezionatoLista={pdiSelezionato}
+              PdiSelezionatoMappa={setPdiSelezionato}
+              resetMappaKey={resetMappaKey}
+            />
           </div>
+
+          {/* Colonna destra: barra di ricerca, chip filtro e lista PDI */}
+          <div className="col-12 col-lg-4 bg-light overflow-hidden border-start col-lista p-0">
+            <ListaPDI
+              pdiFiltrati={pdiFiltrati}
+              categorie={categorie}
+              ricerca={ricerca}
+              setRicerca={setRicerca}
+              categoriaSelezionata={categoriaSelezionata}
+              setCategoriaSelezionata={handleSetCategoria}
+              PdiSelezionatoLista={togglePdiSelezionato}
+              pdiSelezionatoMappa={pdiSelezionato}
+            />
+          </div>
+
         </div>
       </div>
+    </div>
   );
 };
 

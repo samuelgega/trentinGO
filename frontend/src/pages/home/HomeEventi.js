@@ -74,7 +74,10 @@ const HomeEventi = () => {
     return (
         <>
             <div className='vh-100 d-flex flex-column overflow-hidden'>
-                <HomeNav />
+                <div className="container-fluid">
+                    <HomeNav />
+                </div>
+
                 <div className="container-fluid py-5 px-4 px-md-5 bg-light flex-grow-1" style={{ overflowY: 'auto' }}>
                     <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
                         <div>
