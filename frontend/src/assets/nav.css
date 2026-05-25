@@ -1,0 +1,26 @@
+.dropdown-menu .custom-item:hover,
+.dropdown-menu .custom-item:active {
+    background-color: #037149 !important;
+    color: white !important;
+}
+
+.dropdown-menu .custom-item-logout:hover,
+.dropdown-menu .custom-item-logout:active {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.profile-btn,
+.login-btn {
+    transition: filter 0.2s ease-in-out, transform 0.1s;
+}
+
+.profile-btn:hover,
+.login-btn:hover {
+    filter: brightness(0.9);
+}
+
+.profile-btn:active,
+.login-btn:active {
+    transform: scale(0.95);
+}

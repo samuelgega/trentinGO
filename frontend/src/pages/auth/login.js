@@ -37,34 +37,32 @@ const AuthLogin = () => {
 
         if (Object.keys(nuoviErrori).length > 0) return
 
-        // try {
-        //     const body = {
-        //         email: credenziali.email,
-        //         password: credenziali.password,
-        //     }
+        try {
+            const body = {
+                credenziale: credenziali.email,
+                password: credenziali.password,
+            }
 
-        //     const response = await fetch('http://localhost:3001/api/v1/login', {
-        //         method: 'POST',
-        //         headers: { 'Content-Type': 'application/json' },
-        //         body: JSON.stringify(body)
-        //     })
+            const response = await fetch('http://localhost:3001/api/v1/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            })
 
-        //     if (response.status === 201) {
-        //         localStorage.setItem('token', response.token)
-        //         localStorage.setItem('ruolo', response.ruolo)
-        //         localStorage.setItem('userId', response.userId)
-        //         showAlert("Registrazione completata.", "Account creato con successo", "success")
-        //         navigate(-1)
-        //     } else {
-        //         showAlert("Login fallito", "Username o password errati", "danger")
-        //     }
-        // } catch (error) {
-        //     showAlert("Errore di connessione.", "Controllare la connessione o riprovare più tardi", "danger")
-        // }
-        localStorage.setItem('token', 'token-di-esempio')
-        localStorage.setItem('ruolo', 'giocatore')
-        localStorage.setItem('userId', '1')
-        navigate('/')
+            if (response.status === 200) {
+                localStorage.setItem('token', response.token)
+                localStorage.setItem('ruolo', response.data.ruolo)
+                localStorage.setItem('userId', response.data.id)
+                showAlert("Registrazione completata.", "Account creato con successo", "success")
+                navigate(-1)
+            } else if (response.status === 400) {
+                showAlert("Login fallito", "Username o password mancanti", "danger")
+            } else {
+                showAlert("Login fallito", "Username o password errati", "danger")
+            }
+        } catch (error) {
+            showAlert("Errore di connessione.", "Controllare la connessione o riprovare più tardi", "danger")
+        }
     }
 
     return (
@@ -125,15 +123,25 @@ const AuthLogin = () => {
                         </form>
 
                         <hr />
-                        <p className="text-center text-muted small mb-2">Non sei registrato?</p>
-                        <button
-                            className="btn btn-outline-secondary w-100 py-2"
-                            style={{ borderRadius: '10px' }}
-                            onClick={() => navigate('/auth/giocatore')}
-                        >
-                            Registrati
-                        </button>
-
+                        <div className="mb-4">
+                            <p className="text-center text-muted small mb-2">Non sei registrato?</p>
+                            <button
+                                className="btn btn-outline-secondary w-100 py-2"
+                                style={{ borderRadius: '10px' }}
+                                onClick={() => navigate('/auth/giocatore')}
+                            >
+                                Registrati
+                            </button>
+                        </div>
+                        <div className="mb-4">
+                            <button
+                                className="btn btn-outline-secondary btn-sn w-30 py-2"
+                                style={{ borderRadius: '10px' }}
+                                onClick={() => navigate(-1)}
+                            >
+                                ← Torna indietro
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
