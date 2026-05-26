@@ -17,7 +17,6 @@ const HomeNav = () => {
             setLoggato(true)
             setRuolo(localStorage.getItem('ruolo'))
         }
-
     }, [])
 
     const navigate = useNavigate();

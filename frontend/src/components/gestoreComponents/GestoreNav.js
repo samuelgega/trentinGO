@@ -15,7 +15,6 @@ const GestoreNav = () => {
             setLoggato(true)
             setRuolo(localStorage.getItem('ruolo'))
         }
-
     }, [])
 
     return (

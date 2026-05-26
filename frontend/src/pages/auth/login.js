@@ -12,8 +12,7 @@ const AuthLogin = () => {
     const validazioneDati = (dati) => {
         const error = {}
 
-        if (!dati.email.trim()) error.email = "L'email è obbligatoria"
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dati.email)) error.email = "Inserisci un'email valida"
+        if (!dati.email.trim()) error.email = "Email o username obbligatori"
 
         if (!dati.password) error.password = "La password è obbligatoria"
 
@@ -54,6 +53,7 @@ const AuthLogin = () => {
                 localStorage.setItem('token', resJson.token)
                 localStorage.setItem('ruolo', resJson.data.ruolo)
                 localStorage.setItem('userId', resJson.data.id)
+                localStorage.setItem('nome', resJson.data.nome)
                 showAlert("Log-in completato.", "Account creato con successo", "success")
                 navigate(-1)
             } else if (resJson.status === 400) {

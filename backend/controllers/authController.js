@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Giocatore = require('../models/Giocatore')
 const Gestore = require('../models/Gestore')
+const Amministratore = require('../models/Amministratore')
 
 const login = async (req, res) => {
     try {
@@ -21,11 +22,21 @@ const login = async (req, res) => {
                 ruolo = 'giocatore'
             } else {
                 utente = await Gestore.findOne({ email: credenziale.toLowerCase() }).select('+password')
-                if (utente) ruolo = 'gestore'
+                if (utente) {
+                    ruolo = 'gestore'
+                } else {
+                    utente = await Amministratore.findOne({ email: credenziale.toLowerCase() })
+                    if (utente) ruolo = 'amministratore'
+                }
             }
         } else {
             utente = await Giocatore.findOne({ username: credenziale })
-            if (utente) ruolo = 'giocatore'
+            if (utente) {
+                ruolo = 'giocatore'
+            } else {
+                utente = await Amministratore.findOne({ username: credenziale })
+                if (utente) ruolo = 'amministratore'
+            }
         }
 
         if (!utente) {
