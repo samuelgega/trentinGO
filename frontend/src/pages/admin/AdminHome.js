@@ -19,6 +19,10 @@ const AdminHome = () => {
         navigate('/admin-home/gestisci-utenti')
     }
 
+    const goToGestioneGestori = () => {
+        navigate('/admin-home/gestisci-gestori')
+    }
+
     return (
         <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
             <AdminNav />
@@ -79,6 +83,24 @@ const AdminHome = () => {
                                     onClick={goToGestioneUtenti}
                                 >
                                     Gestisci Utenti
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Card: Gestione Gestori */}
+                    <div className="col-12 col-md-6 col-lg-4">
+                        <div className="card pdi-card h-100">
+                            <div className="card-body d-flex flex-column p-4">
+                                <h5 className="card-title fw-bold">Gestione Gestori</h5>
+                                <p className="card-text text-muted mb-4">
+                                    Visualizza i gestori registrati, abilitali o disabilitali per l'accesso alla piattaforma.
+                                </p>
+                                <button
+                                    className="btn btn-trentingo mt-auto fw-semibold"
+                                    onClick={goToGestioneGestori}
+                                >
+                                    Gestisci Gestori
                                 </button>
                             </div>
                         </div>

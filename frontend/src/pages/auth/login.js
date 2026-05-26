@@ -12,8 +12,7 @@ const AuthLogin = () => {
     const validazioneDati = (dati) => {
         const error = {}
 
-        if (!dati.email.trim()) error.email = "L'email è obbligatoria"
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dati.email)) error.email = "Inserisci un'email valida"
+        if (!dati.email.trim()) error.email = "Email o username obbligatori"
 
         if (!dati.password) error.password = "La password è obbligatoria"
 
