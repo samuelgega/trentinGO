@@ -249,7 +249,7 @@ paths:
               $ref: '#/components/schemas/EventoUploadInput'
       description: ''
     parameters: []
-  /eventi/idEvento:
+  /eventi/{idEvento}:
     get:
       summary: Visualizza un evento specifico
       tags: []
@@ -496,7 +496,7 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
       operationId: creaRichiestaAssociazione
-  '/richieste-associazione/{id}':
+  /richieste-associazione/{id}:
     parameters:
       - in: path
         name: id
@@ -657,6 +657,75 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
       operationId: registrazioneGestore
+  
+  /gestori/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        description: L'ID univoco del gestore
+    get:
+      summary: Visualizza un gestore specifico
+      tags:
+        - gestori
+      responses:
+        '200':
+          description: Gestore recuperato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Gestore'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: visualizzaGestore
+
+  /gestori/abilitato/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          pattern: '^[a-fA-F0-9]{24}$'
+        description: L'ID univoco del gestore
+    put:
+      summary: Abilita o disabilita un gestore
+      tags:
+        - gestori
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AbilitaGestoreInput'
+      responses:
+        '200':
+          description: Gestore abilitato/disabilitato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Gestore abilitato con successo
+                  data:
+                    $ref: '#/components/schemas/Gestore'
+        '400':
+          $ref: '#/components/responses/ErrorResponse'
+        '404':
+          $ref: '#/components/responses/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: abilitaGestore
   /login:
     post:
       summary: Login unificato per giocatore e gestore
@@ -960,6 +1029,16 @@ components:
         partitaIva:
           type: string
           example: "00264570226"
+    AbilitaGestoreInput:
+      type: object
+      additionalProperties: false
+      required:
+        - abilitato
+      properties:
+        abilitato:
+          type: boolean
+          example: true
+          description: True per approvare, false per sospendere il gestore
     Gestore:
       type: object
       properties:
@@ -1238,7 +1317,6 @@ components:
               type: array
               items:
                 type: string
-                maxLength: null
     Evento:
       type: object
       additionalProperties: false
@@ -1312,11 +1390,9 @@ components:
             dataInizio:
               x-stoplight:
                 id: rwwlax6gunbip
-              enum: []
             dataFine:
               x-stoplight:
                 id: sflmdkrpw2bux
-              enum: []
             gestore:
               type: string
               x-stoplight:
@@ -1396,3 +1472,4 @@ components:
               id: yw8r9h3yor73l
             type: string
             format: binary
+   
