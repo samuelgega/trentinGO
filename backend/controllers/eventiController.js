@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
 const Evento = require('../models/Evento')
 const PDI = require('../models/PDI')
-//const Gestore = require('../models/Gestore')
+const Gestore = require('../models/Gestore')
 
 const baseUrl = process.env.API_URL || 'http://localhost:3001'
 
 const validaDati = (dati) => {
     //implementare idGestore vando verrà aggiunta la sua collection
-    const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento } = dati
+    const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento, idGestore } = dati
     //controllo se il nome è valido
     if (nome.trim() === "" || nome.trim().length < 2 || nome.trim().length > 100) {
         return {
@@ -62,14 +62,12 @@ const validaDati = (dati) => {
             errore: 'Id evento non valido'
         }
 
-    // decommentare quando verrà aggiunta la collection
-    /*
     if (idGestore && !mongoose.Types.ObjectId.isValid(idGestore))
         return {
             datiValidi: false,
             errore: 'Id gestore non valido'
         }
-    */
+
     return { datiValidi: true }
 }
 const fs = require('fs')
@@ -106,8 +104,7 @@ const creaEvento = async (req, res) => {
         if (!validazione.datiValidi)
             return res.status(400).json({ error: validazione.errore })
 
-        //aggiungere idGestore quando verrà aggiunta la collection
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato } = req.body
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato, idGestore } = req.body
 
         if (!nome || !dataInizio || !dataFine || !latitudine || !longitudine)
             return res.status(400).json({ error: "Dati mancanti" })
@@ -143,6 +140,7 @@ const creaEvento = async (req, res) => {
                 dataFine,
                 dataCreazione: new Date(),
                 pdiCollegato: refPdi,
+                idGestore
             }
         })
 

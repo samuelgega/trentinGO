@@ -50,12 +50,11 @@ const AuthLogin = () => {
             })
             const resJson = await response.json()
 
-            console.log(resJson)
             if (response.status === 200) {
                 localStorage.setItem('token', resJson.token)
                 localStorage.setItem('ruolo', resJson.data.ruolo)
                 localStorage.setItem('userId', resJson.data.id)
-                showAlert("Registrazione completata.", "Account creato con successo", "success")
+                showAlert("Log-in completato.", "Account creato con successo", "success")
                 navigate(-1)
             } else if (resJson.status === 400) {
                 showAlert("Login fallito", "Username o password mancanti", "danger")
