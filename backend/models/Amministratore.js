@@ -15,6 +15,14 @@ const schemaAmministratore = new mongoose.Schema({
         type: String,
         required: true,
     },
+    resetToken: {
+        type: String,
+        required: false,
+    },
+    scadenzaResetToken: {
+        type: Date,
+        required: false,
+    }
 })
 
 module.exports = mongoose.model('Amministratore', schemaAmministratore, 'Amministratori')
