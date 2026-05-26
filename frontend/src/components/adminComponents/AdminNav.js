@@ -6,13 +6,17 @@ import '../../assets/nav.css'
 const AdminNav = () => {
     const [isLoggato, setLoggato] = useState(false)
     const [isTendinaAperta, setTendina] = useState(false)
+    const [ruolo, setRuolo] = useState('')
 
     const navigate = useNavigate()
 
     useEffect(() => {
         const tk = localStorage.getItem('token')
-        if (tk)
+        if (tk) {
             setLoggato(true)
+            setRuolo(localStorage.getItem('ruolo'))
+        }
+
     }, [])
 
     return (
@@ -54,6 +58,20 @@ const AdminNav = () => {
                                 borderRadius: '10px'
                             }}
                         >
+                            {(ruolo === 'gestore' || ruolo === 'amministratore') && (
+                                <li>
+                                    <button
+                                        className="dropdown-item custom-item d-flex align-items-center gap-2 py-2"
+                                        onClick={() => {
+                                            if (ruolo === 'gestore') navigate('/gestore-home')
+                                            else if (ruolo === 'amministratore') navigate('/admin-home')
+                                        }}
+                                    >
+                                        <span className="material-symbols-outlined fs-5">dashboard</span>
+                                        Vai alla dashboard
+                                    </button>
+                                </li>
+                            )}
                             <li>
                                 <button
                                     className="dropdown-item custom-item d-flex align-items-center gap-2 py-2"

@@ -1,20 +1,21 @@
 const mongoose = require('mongoose');
 
 const schemaRichAssPDI = new mongoose.Schema({
-    idGestore:{
+    idGestore: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Gestore',
         required: true
-    }, 
-    idPDI:{
+    },
+    idPDI: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'PDI',
         required: true
     },
-    stato:{
+    stato: {
         type: String,
         enum: ['in_attesa', 'approvata', 'rifiutata'],
-        default: 'in_attesa'
+        default: 'in_attesa',
+        required: true
     },
     motivazione: {
         type: String,
