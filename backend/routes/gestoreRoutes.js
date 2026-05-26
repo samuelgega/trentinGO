@@ -14,11 +14,11 @@ router.post("/registrazione", Gestore.registrazioneGestore);
 router.post("/login", Gestore.loginGestore);
 
 //rotta per visualizzare un gestore
-router.get("/:id", Gestore.visualizzaGestore);
+router.get("/:id",verificaToken, requireRuolo('amministratore'), Gestore.visualizzaGestore);
 
 //rotta per abilitare un gestore
-router.put("/abilitato/:id", Gestore.abilitaGestore);
+router.put("/abilitato/:id",verificaToken, requireRuolo('amministratore'), Gestore.abilitaGestore);
 
-//verificaToken, requireRuolo('amministratore')
+
 
 module.exports = router;
