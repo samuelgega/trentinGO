@@ -5,12 +5,20 @@ const Gestore = require("../controllers/gestoreController");
 const { verificaToken, requireRuolo } = require("../middlewares/authMiddleware");
 
 //route per la visualizzazione di tutti i gestori
-router.get("/", verificaToken, requireRuolo('amministratore'), Gestore.visualizzaGestori);
+router.get("/",Gestore.visualizzaGestori);
 
 //route per la registrazione di un nuovo gestore
 router.post("/registrazione", Gestore.registrazioneGestore);
 
 //route per il login di un gestore
 router.post("/login", Gestore.loginGestore);
+
+//rotta per visualizzare un gestore
+router.get("/:id",verificaToken, requireRuolo('amministratore'), Gestore.visualizzaGestore);
+
+//rotta per abilitare un gestore
+router.put("/abilitato/:id",verificaToken, requireRuolo('amministratore'), Gestore.abilitaGestore);
+
+
 
 module.exports = router;

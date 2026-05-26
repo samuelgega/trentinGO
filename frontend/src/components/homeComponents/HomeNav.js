@@ -107,7 +107,7 @@ const HomeNav = () => {
                                     className="dropdown-item custom-item-logout text-danger d-flex align-items-center gap-2 py-2"
                                     onClick={() => {
                                         localStorage.clear()
-                                        navigate('/auth/login')
+                                        navigate('/')
                                     }}
                                 >
                                     <span className="material-symbols-outlined fs-5">logout</span>
