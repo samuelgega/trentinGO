@@ -53,6 +53,7 @@ const AuthLogin = () => {
                 localStorage.setItem('token', resJson.token)
                 localStorage.setItem('ruolo', resJson.data.ruolo)
                 localStorage.setItem('userId', resJson.data.id)
+                localStorage.setItem('nome', resJson.data.nome)
                 showAlert("Log-in completato.", "Account creato con successo", "success")
                 navigate(-1)
             } else if (resJson.status === 400) {

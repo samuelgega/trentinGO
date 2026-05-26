@@ -16,7 +16,6 @@ const AdminNav = () => {
             setLoggato(true)
             setRuolo(localStorage.getItem('ruolo'))
         }
-
     }, [])
 
     return (

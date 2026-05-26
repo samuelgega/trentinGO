@@ -12,7 +12,7 @@ const GestisciGestori = () => {
 
 const toggleAbilitazione = async (id, abilitatoAttuale) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/v1/gestori/${id}/abilitazione`, {
+            const response = await fetch(`http://localhost:3001/api/v1/gestori/abilitato/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

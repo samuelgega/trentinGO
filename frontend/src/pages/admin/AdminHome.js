@@ -94,7 +94,7 @@ const AdminHome = () => {
                             <div className="card-body d-flex flex-column p-4">
                                 <h5 className="card-title fw-bold">Gestione Gestori</h5>
                                 <p className="card-text text-muted mb-4">
-                                    Visualizza i gestori registrati, abilitali o disabilitali per l'accesso alla piattaforma.
+                                    Visualizza i gestori registrati e gestisci le loro autorizzazioni.
                                 </p>
                                 <button
                                     className="btn btn-trentingo mt-auto fw-semibold"
