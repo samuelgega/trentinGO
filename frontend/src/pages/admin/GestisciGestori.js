@@ -9,6 +9,24 @@ const GestisciGestori = () => {
 
     const token = localStorage.getItem('token')
 
+const toggleAbilitazione = async (id, abilitatoAttuale) => {
+        try {
+            const response = await fetch(`http://localhost:3001/api/v1/gestori/${id}/abilitazione`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ abilitato: !abilitatoAttuale })
+            })
+            if (!response.ok) return
+            const json = await response.json()
+            setListaGestori(prev => prev.map(g => g._id === id ? { ...g, abilitato: json.data.abilitato } : g))
+        } catch (error) {
+            console.error("Errore nell'aggiornamento del gestore", error)
+        }
+    }
+
     useEffect(() => {
         const recuperaGestori = async () => {
             try {
@@ -86,19 +104,27 @@ const GestisciGestori = () => {
                                         {listaGestori.length === 0 ? (
                                             <li className="list-group-item text-center text-muted py-4">Nessun gestore</li>
                                         ) : listaGestori.map(g => (
-                                            <li key={g._id} className="list-group-item p-3">
-                                                <div className="d-flex justify-content-between align-items-start">
+                                            <li key={g._id} className="list-group-item px-3 py-3">
+                                                <div className="d-flex justify-content-between align-items-center">
                                                     <div>
                                                         <div className="fw-bold">{g.nome}</div>
                                                         <div className="text-muted small">{g.email}</div>
                                                         <div className="text-muted small">P.IVA: {g.partitaIva}</div>
                                                         <div className="text-muted small">PDI collegati: {g.pdiCollegati?.length ?? 0}</div>
                                                     </div>
-                                                    <div>
-                                                        {g.abilitato
-                                                            ? <span className="badge text-bg-success">Abilitato</span>
-                                                            : <span className="badge text-bg-warning">Non abilitato</span>
-                                                        }
+                                                    <div className="btn-group btn-group-sm">
+                                                        <button
+                                                            className={`btn fw-semibold ${g.abilitato ? 'btn-success' : 'btn-outline-secondary'}`}
+                                                            onClick={() => toggleAbilitazione(g._id, false)}
+                                                        >
+                                                            Abilitato
+                                                        </button>
+                                                        <button
+                                                            className={`btn fw-semibold ${!g.abilitato ? 'btn-danger' : 'btn-outline-secondary'}`}
+                                                            onClick={() => toggleAbilitazione(g._id, true)}
+                                                        >
+                                                            Non abilitato
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </li>
@@ -153,7 +179,7 @@ const GestisciGestori = () => {
                     </div>
                 </div>
             </div>
-        </>
+</>
     )
 }
 
