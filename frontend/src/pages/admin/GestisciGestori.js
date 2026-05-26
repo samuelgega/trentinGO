@@ -6,6 +6,7 @@ const GestisciGestori = () => {
     const navigate = useNavigate()
     const [listaGestori, setListaGestori] = useState([])
     const [richiesteAssociazione, setRichiesteAssociazione] = useState([])
+    const [filtroStato, setFiltroStato] = useState('in_attesa')
 
     const token = localStorage.getItem('token')
 
@@ -57,6 +58,23 @@ const toggleAbilitazione = async (id, abilitatoAttuale) => {
         recuperaGestori()
         recuperaRichiesteAssociazione()
     }, [])
+
+    const gestisciRichiesta = async (id, statoRichiesta) => {
+        try {
+            const response = await fetch(`http://localhost:3001/api/v1/richAssPDI/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ statoRichiesta })
+            })
+            if (!response.ok) return
+            setRichiesteAssociazione(prev => prev.filter(r => r._id !== id))
+        } catch (error) {
+            console.error("Errore nella gestione della richiesta", error)
+        }
+    }
 
     const cardHeader = (label, color) => (
         <div
@@ -110,7 +128,16 @@ const toggleAbilitazione = async (id, abilitatoAttuale) => {
                                                         <div className="fw-bold">{g.nome}</div>
                                                         <div className="text-muted small">{g.email}</div>
                                                         <div className="text-muted small">P.IVA: {g.partitaIva}</div>
-                                                        <div className="text-muted small">PDI collegati: {g.pdiCollegati?.length ?? 0}</div>
+                                                        <div className="text-muted small">
+                                                            PDI collegati: {g.pdiCollegati?.length ?? 0}
+                                                            {g.pdiCollegati?.length > 0 && (
+                                                                <ul className="mb-0 ps-3 mt-1">
+                                                                    {g.pdiCollegati.map(pdi => (
+                                                                        <li key={pdi._id}>{pdi.properties?.nome ?? pdi._id}</li>
+                                                                    ))}
+                                                                </ul>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                     <div className="btn-group btn-group-sm">
                                                         <button
@@ -140,21 +167,64 @@ const toggleAbilitazione = async (id, abilitatoAttuale) => {
                             {/* Richieste Associazione PDI */}
                             <div className="card border-0 shadow-sm" style={{ borderRadius: '14px', overflow: 'hidden' }}>
                                 {cardHeader('Richieste Associazione PDI', '#037149')}
-                                <div className="card-body p-0" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                                <div className="px-3 pt-3">
+                                    <div className="btn-group btn-group-sm w-100">
+                                        {[
+                                            { val: 'tutti', label: 'Tutti' },
+                                            { val: 'in_attesa', label: 'In attesa' },
+                                            { val: 'approvata', label: 'Approvate' },
+                                            { val: 'rifiutata', label: 'Rifiutate' },
+                                        ].map(f => (
+                                            <button
+                                                key={f.val}
+                                                onClick={() => setFiltroStato(f.val)}
+                                                className={`btn btn-sm fw-semibold ${filtroStato === f.val ? 'btn-dark' : 'btn-outline-secondary'}`}
+                                            >
+                                                {f.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="card-body p-0 mt-2" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                                     <ul className="list-group list-group-flush">
-                                        {richiesteAssociazione.length === 0 ? (
+                                        {richiesteAssociazione.filter(r => filtroStato === 'tutti' || r.stato === filtroStato).length === 0 ? (
                                             <li className="list-group-item text-center text-muted py-4">Nessuna richiesta</li>
-                                        ) : richiesteAssociazione.map(r => (
+                                        ) : richiesteAssociazione.filter(r => filtroStato === 'tutti' || r.stato === filtroStato).map(r => (
                                             <li key={r._id} className="list-group-item p-3">
-                                                <div className="d-flex justify-content-between align-items-start">
-                                                    <div>
-                                                        <div className="fw-bold">{r.idPDI?.properties?.nome ?? r.idPDI}</div>
-                                                        <div className="text-muted small">{r.idGestore?.nome ?? r.idGestore}</div>
+                                                <div className="d-flex justify-content-between align-items-center gap-3">
+                                                    <div className="flex-grow-1">
+                                                        <div className="d-flex align-items-center gap-2 mb-1">
+                                                            <span className="fw-bold">{r.idPDI?.properties?.nome ?? '—'}</span>
+                                                            {badgeStato(r.stato)}
+                                                        </div>
+                                                        <div className="text-muted small">
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '14px', verticalAlign: 'middle' }}>home</span>
+                                                            {' '}{r.idGestore?.nome ?? r.idGestore ?? '—'}
+                                                        </div>
+                                                        <div className="text-muted small">
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '14px', verticalAlign: 'middle' }}>schedule</span>
+                                                            {' '}{r.dataRichiesta ? new Date(r.dataRichiesta).toLocaleString('it-IT') : '—'}
+                                                        </div>
                                                         {r.motivazione && (
                                                             <div className="text-muted small fst-italic mt-1">"{r.motivazione}"</div>
                                                         )}
                                                     </div>
-                                                    <div>{badgeStato(r.stato)}</div>
+                                                    {r.stato === 'in_attesa' && (
+                                                        <div className="d-flex flex-column gap-2">
+                                                            <button
+                                                                className="btn btn-sm btn-success fw-semibold"
+                                                                onClick={() => gestisciRichiesta(r._id, 'approvata')}
+                                                            >
+                                                                Approva
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm btn-danger fw-semibold"
+                                                                onClick={() => gestisciRichiesta(r._id, 'rifiutata')}
+                                                            >
+                                                                Rifiuta
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </li>
                                         ))}
@@ -168,7 +238,7 @@ const toggleAbilitazione = async (id, abilitatoAttuale) => {
                                 <div className="card-body p-0" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                                     <ul className="list-group list-group-flush">
                                         <li className="list-group-item text-center text-muted py-4">
-                                            Funzionalità non ancora disponibile
+                                            In arrivo
                                         </li>
                                     </ul>
                                 </div>
