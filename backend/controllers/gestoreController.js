@@ -107,4 +107,62 @@ const loginGestore = async (req, res) => {
     }
 }
 
-module.exports = { registrazioneGestore, visualizzaGestori, loginGestore }
+const abilitaGestore = async (req,res) => {
+
+    try{
+
+        const { id } = req.params;
+        const { abilitato } = req.body;
+
+        //controllo che lo stato sia valido
+        if (![true, false].includes(abilitato)) {
+            return res.status(400).json({ 
+                error: "Stato non valido. Scegli 'true' o 'false'." 
+            });
+        }
+
+        //controllo se il gestore esiste
+        const gestore = await Gestore.findById(id);
+
+        if (!gestore) {
+            return res.status(404).json({ error: "Gestore non trovato." });
+        }
+
+        //modifico l'abilitazione del gestore
+        gestore.abilitato = abilitato;
+        await gestore.save();
+
+        res.status(200).json({
+            message: `Gestore ${abilitato ? 'abilitato' : 'disabilitato'} con successo`,
+            data: gestore
+        });
+
+    } catch(error) {
+         console.error("Errore nel recupero del gestore ", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+
+
+}
+
+const visualizzaGestore = async (req,res) => {
+
+    try{
+        const gestore = await Gestore.findById(req.params.id)
+    
+        if(!gestore){
+            return res.status(404).json({ error: "Gestore non trovato" });
+        }
+    
+        res.status(200).json({
+            data: gestore
+        })
+    
+    } catch(error){
+        console.error("Errore nel recupero del gestore", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+
+}
+
+module.exports = { registrazioneGestore, visualizzaGestori, loginGestore, abilitaGestore, visualizzaGestore }
