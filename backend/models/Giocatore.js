@@ -19,6 +19,14 @@ const schemaGiocatore = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    resetToken: {
+        type: String,
+        required: false,
+    },
+    scadenzaResetToken: {
+        type: Date,
+        required: false,
+    }
 })
 
 module.exports = mongoose.model('Giocatore', schemaGiocatore, 'Giocatori')

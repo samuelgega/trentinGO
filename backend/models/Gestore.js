@@ -6,29 +6,37 @@ const schemaGestore = new mongoose.Schema({
         required: true,
         unique: true
     },
-    email:{
+    email: {
         type: String,
         required: true,
         unique: true
     },
-    password:{
+    password: {
         type: String,
         required: true,
         select: false
     },
-    partitaIva:{
+    partitaIva: {
         type: Number,
         required: true
     },
-    abilitato:{
+    abilitato: {
         type: Boolean,
         default: false
     },
-    pdiCollegati:[{
+    pdiCollegati: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'PDI'
-    }]
+    }],
+    resetToken: {
+        type: String,
+        required: false,
+    },
+    scadenzaResetToken: {
+        type: Date,
+        required: false,
+    }
 
 })
 
-module.exports = mongoose.model('Gestore', schemaGestore, 'Gestori' );
+module.exports = mongoose.model('Gestore', schemaGestore, 'Gestori');

@@ -1,7 +1,9 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 const Giocatore = require('../models/Giocatore')
 const Gestore = require('../models/Gestore')
+const inviaEmail = require('../services/testEmail')
 const Amministratore = require('../models/Amministratore')
 
 const login = async (req, res) => {
@@ -17,7 +19,7 @@ const login = async (req, res) => {
         let ruolo = null
 
         if (isEmail) {
-            utente = await Giocatore.findOne({ email: credenziale.toLowerCase() })
+            utente = await Giocatore.findOne({ email: (String(credenziale)).toLowerCase() })
             if (utente) {
                 ruolo = 'giocatore'
             } else {
@@ -71,4 +73,68 @@ const login = async (req, res) => {
     }
 }
 
-module.exports = { login }
+const richiestaResetPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+
+        const utente = await Giocatore.findOne({ email: (String(email)).toLowerCase() })
+            || await Gestore.findOne({ email: (String(email)).toLowerCase() })
+            || await Giocatore.findOne({ username: email })
+            || await Gestore.findOne({ nome: email })
+
+        if (!utente) {
+            return res.status(200).json({ message: "E' stata mandata una mail con le istruzioni per il recupero password" }) //anche se non è vero, per motivi di sicurezza 
+        }
+
+        const tk = crypto.randomBytes(32).toString('hex')
+        const resetToken = crypto.createHash('sha256').update(tk).digest('hex')
+        const scadenzaResetToken = Date.now() + 3600000 //1h
+
+        utente.resetToken = resetToken
+        utente.scadenzaResetToken = scadenzaResetToken
+        await utente.save()
+
+        inviaEmail(utente.email, "Istruzioni per il reset della password", `Ciao ${utente.username ?? utente.nome},\n\nHai richiesto di resettare la tua password. Clicca sul link qui sotto per impostare una nuova password:\n\nhttp://localhost:3001/resetPassword?token=${tk}<\n\nSe non hai richiesto questo reset, ignora questa email.\n`)
+        return res.status(200).json({ message: "E' stata mandata una mail con le istruzioni per il recupero password" })
+    } catch (error) {
+        console.error("Errore nel reset password", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+        const { nuovaPassword } = req.body
+        const { token } = req.params
+
+        if (!nuovaPassword) {
+            return res.status(400).json({ error: "La nuova password è obbligatoria" })
+        }
+        const regex = /(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_+\-\[\]\\\/])/ //almeno un numero e un carattere speciale
+        if (nuovaPassword.length < 8 || !regex.test(nuovaPassword)) {
+            return res.status(400).json({ error: "La password deve essere lunga almeno 8 caratteri e contenere almeno un numero e un carattere speciale" })
+        }
+
+        const resetToken = crypto.createHash('sha256').update(token).digest('hex')
+        let utente = await Giocatore.findOne({ resetToken, scadenzaResetToken: { $gt: Date.now() } }) || await Gestore.findOne({ resetToken, scadenzaResetToken: { $gt: Date.now() } })
+
+        if (!utente) {
+            return res.status(400).json({ error: "Token non valido o scaduto" })
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(nuovaPassword, salt)
+        utente.password = hashedPassword
+        utente.resetToken = undefined
+        utente.scadenzaResetToken = undefined
+        await utente.save()
+
+        res.status(200).json({ message: "Password resettata con successo" })
+    }
+    catch (error) {
+        console.error("Errore nel reset password", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { login, richiestaResetPassword, resetPassword }

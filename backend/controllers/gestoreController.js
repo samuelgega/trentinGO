@@ -54,7 +54,7 @@ const registrazioneGestore = async (req, res) => {
 
 const visualizzaGestori = async (req, res) => {
     try {
-        const gestori = await Gestore.find({}).select('-password').populate('pdiCollegati')
+        const gestori = await Gestore.find({}).select('-password -resetToken -scadenzaResetToken').populate('pdiCollegati')
 
         res.status(200).json({
             message: "Lista dei gestori",
