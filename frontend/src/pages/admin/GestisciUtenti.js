@@ -10,15 +10,16 @@ const GestisciUtenti = () => {
 
 
     const [listaGiocatori, setListaGiocatori] = useState([])
-    const [listaGestori, setListaGestori] = useState([]);
-    
-    //lista admin provvisoria
+    const [listaGestori, setListaGestori] = useState([]);    
     const [listaAdmin, setListaAdmin] = useState([]);
+    const token = localStorage.getItem('token')
 
     useEffect(() => {
         const recuperoGiocatori = async () =>{
             try {
-                const response = await fetch('http://localhost:3001/api/v1/giocatori')
+                const response = await fetch('http://localhost:3001/api/v1/giocatori' , { 
+                    headers: { 'Authorization': `Bearer ${token}`} 
+                })
                 if (!response.ok) return
                 const json = await response.json()
                 setListaGiocatori(json.data)
@@ -29,7 +30,9 @@ const GestisciUtenti = () => {
         
         const recuperoGestori = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/gestori')
+                const response = await fetch('http://localhost:3001/api/v1/gestori',{ 
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
                 if (!response.ok) return
                 const json = await response.json()
                 setListaGestori(json.data)
@@ -40,7 +43,9 @@ const GestisciUtenti = () => {
 
         const recuperoAdmin = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/amministratori')
+                const response = await fetch('http://localhost:3001/api/v1/amministratori',{ 
+                    headers: { 'Authorization': `Bearer ${token}`} 
+                })
                 if (!response.ok) return
                 const json = await response.json()
                 setListaAdmin(json.data)
