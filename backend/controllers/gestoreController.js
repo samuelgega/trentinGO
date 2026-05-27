@@ -165,4 +165,25 @@ const visualizzaGestore = async (req,res) => {
 
 }
 
-module.exports = { registrazioneGestore, visualizzaGestori, loginGestore, abilitaGestore, visualizzaGestore }
+const visualizzaMieiPdi = async (req, res) => {
+    try {
+        const gestoreId = req.utente.id; 
+
+        const gestore = await Gestore.findById(gestoreId).populate('pdiCollegati');
+
+        if (!gestore) {
+            return res.status(404).json({ error: "Gestore non trovato" });
+        }
+
+        res.status(200).json({
+            message: "PDI associati recuperati con successo",
+            data: gestore.pdiCollegati
+        });
+
+    } catch (error) {
+        console.error("Errore nel recupero dei PDI associati:", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+}
+
+module.exports = { registrazioneGestore, visualizzaGestori, loginGestore, abilitaGestore, visualizzaGestore, visualizzaMieiPdi }

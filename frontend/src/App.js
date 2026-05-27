@@ -10,7 +10,7 @@ import HomeProfilo from './pages/profilo/HomeProfilo';
 import Error404 from './pages/Error/NotFound';
 import InfoPDI from './pages/pdi/InfoPDI'
 import InfoEvento from './pages/eventi/InfoEvento'
-import { AuthGiocatore, AuthGestore, AuthAdmim, AuthLogin } from './pages/auth'
+import { AuthGiocatore, AuthGestore, AuthAdmim, AuthLogin, RecuperoPassword, ReimpostaPassword } from './pages/auth'
 
 import RottaProtetta from './components/auth/RottaProtetta';
 import RottaOspite from './components/auth/RottaOspite';
@@ -50,6 +50,16 @@ const App = () => {
               <AuthLogin />
             </RottaOspite>
           } />
+          <Route path="/auth/recupero-password" element={
+            <RottaOspite>
+              <RecuperoPassword />
+            </RottaOspite>
+          } />
+          <Route path="/auth/reimposta-password/:token" element={
+            <RottaOspite>
+              <ReimpostaPassword />
+            </RottaOspite>
+          }/>
 
           {/* Rotte protette per l'admin */}
           <Route path="/admin-home" element={

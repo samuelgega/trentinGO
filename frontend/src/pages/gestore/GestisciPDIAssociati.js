@@ -44,9 +44,23 @@ const GestisciPDIAssociati = () => {
             }
         }
 
+        const recuperaPDIAssociati = async () => {
+            try {
+                const response = await fetch('http://localhost:3001/api/v1/gestori/pdiGestore', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+                if (!response.ok) return
+                const json = await response.json()
+                setListaPDI(json.data)
+            } catch (e) {
+                console.error("Errore nel recupero PDI associati:", e)
+            }
+        }
+
         recuperaPDI()
         recuperaRichieste()
-    }, [])
+        recuperaPDIAssociati()
+    }, [token])
 
     const handleRichiestaAssociazione = async (e) => {
         e.preventDefault()

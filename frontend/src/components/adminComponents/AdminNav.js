@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import '../../assets/home.css'
-import '../../assets/nav.css'
 
 const AdminNav = () => {
     const [isLoggato, setLoggato] = useState(false)
@@ -22,7 +21,7 @@ const AdminNav = () => {
         <header className="home-navbar">
             <div className="d-flex align-items-center">
                 {/*Titolo*/}
-                <Link to='/gestore-home' className="nav-logo">
+                <Link to='/admin-home' className="nav-logo">
                     Dashboard Amministratore
                 </Link>
             </div>
