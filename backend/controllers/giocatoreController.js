@@ -9,19 +9,19 @@ const registrazioneGiocatore = async (req, res) => {
         const { username, email, password, iscrittoNewsletter } = req.body
 
         //controllo se mancano dati
-        if( !username || !email || !password ){
+        if (!username || !email || !password) {
             return res.status(400).json({ error: "username, email e password sono obbligatori" });
         }
 
         //controllo se username esiste gia
         const usernameEsistente = await Giocatore.findOne({ username: username })
-        if(usernameEsistente){
+        if (usernameEsistente) {
             return res.status(409).json({ error: "Username gia esistente" });
         }
 
         //controllo se l'email esiste gia
         const emailEsistente = await Giocatore.findOne({ email: email.toLowerCase() })
-        if(emailEsistente){
+        if (emailEsistente) {
             return res.status(409).json({ error: "Email gia esistente" });
         }
 
@@ -55,7 +55,7 @@ const registrazioneGiocatore = async (req, res) => {
 
 const visualizzaGiocatori = async (req, res) => {
     try {
-        const giocatori = await Giocatore.find({}).select('-password')
+        const giocatori = await Giocatore.find({}).select('-password -resetToken -scadenzaResetToken');
 
         res.status(200).json({
             message: "Lista dei giocatori",

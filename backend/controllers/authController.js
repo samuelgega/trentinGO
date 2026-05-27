@@ -1,10 +1,9 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const crypto = require('crypto')
-const bcrypt = require('bcrypt')
-
 const Giocatore = require('../models/Giocatore')
 const Gestore = require('../models/Gestore')
+const inviaEmail = require('../services/testEmail')
 
 const login = async (req, res) => {
     try {
@@ -19,11 +18,11 @@ const login = async (req, res) => {
         let ruolo = null
 
         if (isEmail) {
-            utente = await Giocatore.findOne({ email: credenziale.toLowerCase() })
+            utente = await Giocatore.findOne({ email: (String(credenziale)).toLowerCase() })
             if (utente) {
                 ruolo = 'giocatore'
             } else {
-                utente = await Gestore.findOne({ email: credenziale.toLowerCase() }).select('+password')
+                utente = await Gestore.findOne({ email: (String(credenziale)).toLowerCase() }).select('+password')
                 if (utente) ruolo = 'gestore'
             }
         } else {
@@ -67,8 +66,8 @@ const richiestaResetPassword = async (req, res) => {
     try {
         const { email } = req.body
 
-        const utente = await Giocatore.findOne({ email: email.toLowerCase() })
-            || await Gestore.findOne({ email: email.toLowerCase() })
+        const utente = await Giocatore.findOne({ email: (String(email)).toLowerCase() })
+            || await Gestore.findOne({ email: (String(email)).toLowerCase() })
             || await Giocatore.findOne({ username: email })
             || await Gestore.findOne({ nome: email })
 
@@ -78,13 +77,13 @@ const richiestaResetPassword = async (req, res) => {
 
         const tk = crypto.randomBytes(32).toString('hex')
         const resetToken = crypto.createHash('sha256').update(tk).digest('hex')
-        const scadenzaResetToken = Date.now() + 3600000
+        const scadenzaResetToken = Date.now() + 3600000 //1h
 
         utente.resetToken = resetToken
         utente.scadenzaResetToken = scadenzaResetToken
         await utente.save()
 
-        console.log("http://localhost:3001/resetPassword?token=" + tk) //TODO: inviare mail con questo link
+        inviaEmail(utente.email, "Istruzioni per il reset della password", `Ciao ${utente.username ?? utente.nome},\n\nHai richiesto di resettare la tua password. Clicca sul link qui sotto per impostare una nuova password:\n\nhttp://localhost:3001/resetPassword?token=${tk}<\n\nSe non hai richiesto questo reset, ignora questa email.\n`)
         return res.status(200).json({ message: "E' stata mandata una mail con le istruzioni per il recupero password" })
     } catch (error) {
         console.error("Errore nel reset password", error)

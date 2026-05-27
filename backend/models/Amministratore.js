@@ -14,14 +14,6 @@ const schemaAmministratore = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-    },
-    resetToken: {
-        type: String,
-        required: false,
-    },
-    scadenzaResetToken: {
-        type: Date,
-        required: false,
     }
 })
 
