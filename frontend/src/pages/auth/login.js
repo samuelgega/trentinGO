@@ -80,7 +80,7 @@ const AuthLogin = () => {
                     <div className="card-body p-4">
                         <form onSubmit={handleSubmit}>
                             <div className="mb-3">
-                                <label className="form-label fw-semibold text-secondary small">MAIL O USERNAME</label>
+                                <label className="form-label fw-semibold text-secondary small">E-MAIL O USERNAME</label>
                                 <input
                                     type="text"
                                     name="email"
