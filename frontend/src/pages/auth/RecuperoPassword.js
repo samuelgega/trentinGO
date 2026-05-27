@@ -39,6 +39,17 @@ const RecuperoPassword = () => {
         setErrori(nuoviErrori)
 
         if (Object.keys(nuoviErrori).length > 0) return
+
+        //backend da implementare
+        try{
+
+            //Simulazione successo
+            showAlert("Operazione completata", "Se l'email esiste, ti abbiamo inviato un link di recupero.", "success")
+            setEmail('')
+            
+        } catch (error) {
+            showAlert("Errore di connessione", "Impossibile collegarsi al server.", "danger")
+        }
     
     }
 
