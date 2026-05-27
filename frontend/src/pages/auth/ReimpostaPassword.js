@@ -13,11 +13,12 @@ const ReimpostaPassword = () => {
 
     const validazioneDati = (dati) => {
         const err = {};
+        const regex = /(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_+\-\[\]\\\/])/;
 
         if (!dati.password) {
             err.password = "La password è obbligatoria";
-        } else if (dati.password.length < 6) {
-            err.password = "La nuova password deve contenere almeno 8 caratteri";
+        } else if (dati.password.length < 8 || !regex.test(dati.password)) {
+            err.password = "Deve contenere almeno 8 caratteri, un numero e un simbolo";
         }
 
         if (!dati.confermaPassword) {
@@ -46,22 +47,25 @@ const ReimpostaPassword = () => {
 
         if (Object.keys(nuoviErrori).length > 0) return;
 
-        //backend da implementare
+        //chiamata api
         try {
-            /* const response = await fetch(`http://localhost:3001/api/v1/resetPassword?token=${token}`, {
+            const response = await fetch(`http://localhost:3001/api/v1/resetPassword/${token}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nuovaPassword: formData.password })
             });
-            */
             
-            //Simulazione successo dell'operazione
-            showAlert("Operazione completata", "Password aggiornata con successo! Ti stiamo reindirizzando...", "success");
-            
-            //Reindirizza l'utente al login
-            setTimeout(() => {
-                navigate('/auth/login');
-            }, 2500);
+            const json = await response.json();
+
+            if (response.ok) {
+                showAlert("Operazione completata", "Password aggiornata con successo! Ti stiamo reindirizzando...", "success");
+                setTimeout(() => navigate('/auth/login'), 2500);
+            } else {
+                showAlert("Errore", json.error || "Impossibile aggiornare la password.", "danger");
+            }
 
         } catch (error) {
-            showAlert("Errore", "Si è verificato un errore di connessione. Riprova più tardi.", "danger");
+            showAlert("Errore di connessione", "Impossibile comunicare con il server. Riprova più tardi.", "danger");
         }
     };
 

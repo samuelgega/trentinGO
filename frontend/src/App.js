@@ -55,8 +55,7 @@ const App = () => {
               <RecuperoPassword />
             </RottaOspite>
           } />
-          {/*Aggiungere /:token qaundo è stato implementato il backend*/}
-          <Route path="/auth/reimposta-password/" element={
+          <Route path="/auth/reimposta-password/:token" element={
             <RottaOspite>
               <ReimpostaPassword />
             </RottaOspite>
