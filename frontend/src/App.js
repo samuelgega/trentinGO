@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 
 import { AlertProvider } from '../src/contexts/AlertController';
 
-import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento, GestisciUtenti } from './pages/admin';
+import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento, GestisciUtenti, GestisciGestori } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
 import { Homepage, HomeEventi } from './pages/home';
 import HomeProfilo from './pages/profilo/HomeProfilo';
@@ -29,7 +29,7 @@ const App = () => {
 
           {/* Rotte per utenti loggati */}
           <Route path="/profilo" element={
-            <RottaProtetta ruoliAmmessi={['giocatore', 'gestore', 'admin']}>
+            <RottaProtetta ruoliAmmessi={['giocatore', 'gestore', 'amministratore']}>
               <HomeProfilo />
             </RottaProtetta>
           } />
@@ -53,37 +53,42 @@ const App = () => {
 
           {/* Rotte protette per l'admin */}
           <Route path="/admin-home" element={
-            <RottaProtetta ruoliAmmessi={['admin']}>
+            <RottaProtetta ruoliAmmessi={['amministratore']}>
               <AdminHome />
             </RottaProtetta>
           } />
           <Route path="/admin-home/gestisci-pdi" element={
-            <RottaProtetta ruoliAmmessi={['admin']}>
+            <RottaProtetta ruoliAmmessi={['amministratore']}>
               <GestisciPDI />
             </RottaProtetta>
           } />
           <Route path="/admin-home/gestisci-eventi" element={
-            <RottaProtetta ruoliAmmessi={['admin']}>
+            <RottaProtetta ruoliAmmessi={['amministratore']}>
               <GestisciEventi />
             </RottaProtetta>
           } />
           <Route path="/admin-home/gestisci-utenti" element={
-            <RottaProtetta ruoliAmmessi={['admin']}>
+            <RottaProtetta ruoliAmmessi={['amministratore']}>
               <GestisciUtenti />
             </RottaProtetta>
           } />
+          <Route path="/admin-home/gestisci-gestori" element={
+            <RottaProtetta ruoliAmmessi={['amministratore']}>
+              <GestisciGestori />
+            </RottaProtetta>
+          } />
           <Route path="/crea-pdi" element={
-            <RottaProtetta ruoliAmmessi={['admin']}>
+            <RottaProtetta ruoliAmmessi={['amministratore']}>
               <CreaPDI />
             </RottaProtetta>
           } />
           <Route path="/modifica-pdi/:id" element={
-            <RottaProtetta ruoliAmmessi={['admin']}>
+            <RottaProtetta ruoliAmmessi={['amministratore']}>
               <ModificaPDI />
             </RottaProtetta>
           } />
           <Route path="/auth/admin" element={
-            <RottaProtetta ruoliAmmessi={['admin']}>
+            <RottaProtetta ruoliAmmessi={['amministratore']}>
               <AuthAdmim />
             </RottaProtetta>
           } />
@@ -107,12 +112,12 @@ const App = () => {
 
           {/* Rotte per admin e gestori */}
           <Route path="/modifica-evento/:id" element={
-            <RottaProtetta ruoliAmmessi={['gestore', 'admin']}>
+            <RottaProtetta ruoliAmmessi={['gestore', 'amministratore']}>
               <ModificaEvento />
             </RottaProtetta>
           } />
           <Route path="/crea-evento" element={
-            <RottaProtetta ruoliAmmessi={['gestore', 'admin']}>
+            <RottaProtetta ruoliAmmessi={['gestore', 'amministratore']}>
               <CreaEvento />
             </RottaProtetta>
           } />
