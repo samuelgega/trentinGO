@@ -137,4 +137,38 @@ const resetPassword = async (req, res) => {
     }
 }
 
-module.exports = { login, richiestaResetPassword, resetPassword }
+const visualizzaProfilo = async (req,res) => {
+
+    try{
+        const userId = req.utente.id;
+        const ruolo = req.utente.ruolo;
+        let utente = null;
+
+        //cerco nel db il ruolo corretto
+        switch(ruolo){
+            case 'giocatore':
+                utente = await Giocatore.findById(userId).select('-password -resetToken -scadenzaResetToken'); break;
+            case 'gestore':
+                utente = await Gestore.findById(userId).select('-password -resetToken -scadenzaResetToken').populate('pdiCollegati'); break;
+            case 'amministratore':
+                utente = await Amministratore.findById(userId).select('-password');break;
+            default:
+                return res.status(400).json({ error: "Ruolo non riconosciuto" });
+        }
+
+        if(!utente){
+            return res.status(404).json({ error: "Utente non trovato" });
+        }
+
+        res.status(200).json({
+            message: "Profilo recuperato con successo",
+            data: { ...utente.toObject(), ruolo}
+        })
+
+    } catch (error) {
+        console.error("Errore nel recupero profilo:", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+}
+
+module.exports = { login, richiestaResetPassword, resetPassword, visualizzaProfilo }
