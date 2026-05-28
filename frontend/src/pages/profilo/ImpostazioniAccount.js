@@ -15,9 +15,10 @@ const ImpostazioniAccount = () =>{
     //dati da eliminare
     const mockGiocatore = {
         _id: "111",
-        username: "mario_rossi99",
-        email: "mario.rossi@email.com",
-        ruolo: "giocatore"
+        username: "Gino",
+        email: "gino@email.com",
+        ruolo: "giocatore",
+        iscrittoNewsletter: false
     };
 
     const mockGestore = {
@@ -43,6 +44,32 @@ const ImpostazioniAccount = () =>{
         //setProfilo(mockGestore);
         //setProfilo(mockAdmin);
     },[]);
+
+    //funzione per il cambio password
+    const handleCambiaPassword = async () => {
+
+        showAlert("Elaborazione in corso...", "Stiamo preparando l'email per te.", "info");
+
+        try {
+            // Chiamata api
+            const response = await fetch('http://localhost:3001/api/v1/resetPassword', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: profilo.email })
+            });
+            
+            if (response.ok) {
+                showAlert("Email Inviata!", `Controlla la casella ${profilo.email} per il link di ripristino.`, "success");
+            } else {
+                const json = await response.json();
+                showAlert("Errore", json.error || "Impossibile inviare l'email", "warning");
+            }
+
+        } catch (error) {
+            showAlert("Errore di connessione", "Impossibile collegarsi al server.", "danger");
+        }
+    };
+
 
     if(!profilo) return null;
 
@@ -80,6 +107,22 @@ const ImpostazioniAccount = () =>{
                                             <span className="fw-medium text-muted">{profilo.email}</span>
                                         </li>
 
+                                        {/*dati solo per i giocatori */}
+                                        {profilo.ruolo === 'giocatore' && (
+                                            <li className="list-group-item d-flex flex-column flex-sm-row justify-content-between px-0 py-3">
+                                                <span className="text-secondary fw-semibold mb-1 mb-sm-0">Newsletter</span>
+                                                {profilo.iscrittoNewsletter ? (
+                                                    <span className="text-success fw-bold align-self-start align-self-sm-center">
+                                                        <i className="bi bi-envelope-check-fill me-1"></i>Iscritto
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-secondary fw-bold align-self-start align-self-sm-center">
+                                                        <i className="bi bi-envelope-x-fill me-1"></i>Non Iscritto
+                                                    </span>
+                                                )}
+                                            </li>
+                                        )}
+
                                         {/*dati solo per i gestori */}
                                         {profilo.ruolo === 'gestore' && (
                                             <>
@@ -98,6 +141,26 @@ const ImpostazioniAccount = () =>{
                                             </>
                                         )}
                                     </ul>
+                                </div>
+                            </div>
+                            
+                            {/* Sicurezza*/}
+                            <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: '14px' }}>
+                                <div className="card-body p-4">
+                                    <h6 className="text-muted fw-bold mb-3 small">SICUREZZA E ACCESSO</h6>
+                                    <div className="d-grid gap-2">
+                                        {/*da implementare */}
+                                        <button 
+                                            className="btn btn-light border text-start py-3 fw-semibold text-dark"
+                                            onClick={handleCambiaPassword}
+                                        >
+                                            <i className="bi bi-key-fill me-2 text-warning"></i>Cambia Password
+                                        </button>
+                                        {/*da implementare */}
+                                        <button className="btn btn-outline-danger py-3 fw-semibold" >
+                                            <i className="bi bi-box-arrow-right me-2"></i>Elimina dall'account
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
 
