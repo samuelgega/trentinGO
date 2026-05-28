@@ -61,9 +61,7 @@ const App = () => {
             </RottaOspite>
           } />
           <Route path="/auth/reimposta-password/:token" element={
-            <RottaOspite>
               <ReimpostaPassword />
-            </RottaOspite>
           }/>
 
           {/* Rotte protette per l'admin */}

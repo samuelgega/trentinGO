@@ -12,38 +12,38 @@ const ImpostazioniAccount = () =>{
     const { showAlert } = useAlert();
     const [profilo, setProfilo] = useState(null);
 
-    //dati da eliminare
-    const mockGiocatore = {
-        _id: "111",
-        username: "Gino",
-        email: "gino@email.com",
-        ruolo: "giocatore",
-        iscrittoNewsletter: false
-    };
-
-    const mockGestore = {
-        _id: "222",
-        nome: "Museo MUSE",
-        email: "info@muse.it",
-        partitaIva: "00264570226",
-        abilitato: true,
-        ruolo: "gestore"
-    };
-
-    const mockAdmin = {
-        _id: "333",
-        username: "admin_master",
-        email: "admin@trentingo.it",
-        ruolo: "amministratore"
-    };
 
     useEffect(() => {
+        const recuperaDati = async () => {
+            const token = localStorage.getItem('token');
 
-        //decommentare per vedere la visualizzazione dei vari utenti
-        setProfilo(mockGiocatore);
-        //setProfilo(mockGestore);
-        //setProfilo(mockAdmin);
-    },[]);
+            if(!token){
+                navigate('/auth/login');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3001/api/v1/datiUtente`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    const json = await response.json();
+                    setProfilo(json.data);
+                } else {
+                    showAlert("Errore", "Impossibile recuperare i dati", "danger");
+                }
+            } catch (error) {
+                console.error("Errore di rete:", error);
+                showAlert("Errore", "Server non raggiungibile", "danger");
+            }
+        };
+
+        recuperaDati();
+    }, [navigate, showAlert]);
 
     //funzione per il cambio password
     const handleCambiaPassword = async () => {
