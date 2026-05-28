@@ -60,7 +60,7 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
       operationId: creaPdi
-  '/pdi/{id}':
+  /pdi/{id}:
     parameters:
       - in: path
         name: id
@@ -759,6 +759,44 @@ paths:
         '500':
           $ref: '#/components/responses/ErrorResponse'
       operationId: login
+  /datiUtente:
+    get:
+      summary: Ottieni i dati unificati dell'utente loggato
+      tags:
+        - autenticazione
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profilo recuperato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Profilo recuperato con successo
+                  data:
+                    type: object
+                    description: Dati dinamici (variano se è Giocatore, Gestore o Admin)
+                    properties:
+                      _id:
+                        type: string
+                        example: 6641a2f3e4b0c12d3f456789
+                      email:
+                        type: string
+                        example: utente@email.com
+                      ruolo:
+                        type: string
+                        example: giocatore
+        '400':
+          description: Ruolo non riconosciuto
+        '404':
+          description: Utente non trovato
+        '500':
+          $ref: '#/components/responses/ErrorResponse'
+      operationId: visualizzaProfilo
   /amministratori:
     get:
       summary: Ottieni la lista di tutti gli amministratori
