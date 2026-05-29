@@ -7,7 +7,7 @@ const RottaOspite = ({ children }) => {
 
     if (token && ruoloUtente) {
         switch (ruoloUtente) {
-            case 'admin':
+            case 'amministratore':
                 return <Navigate to="/admin-home" replace />
             case 'gestore':
                 return <Navigate to="/gestore-home" replace />

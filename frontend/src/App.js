@@ -6,7 +6,7 @@ import { AlertProvider } from '../src/contexts/AlertController';
 import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento, GestisciUtenti, GestisciGestori } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
 import { Homepage, HomeEventi } from './pages/home';
-import HomeProfilo from './pages/profilo/HomeProfilo';
+import { HomeProfilo, ImpostazioniAccount } from './pages/profilo';
 import Error404 from './pages/Error/NotFound';
 import InfoPDI from './pages/pdi/InfoPDI'
 import InfoEvento from './pages/eventi/InfoEvento'
@@ -33,6 +33,11 @@ const App = () => {
               <HomeProfilo />
             </RottaProtetta>
           } />
+          <Route path="/profilo/impostazioni" element={
+            <RottaProtetta ruoliAmmessi={['giocatore', 'gestore', 'amministratore']}>
+              <ImpostazioniAccount />
+            </RottaProtetta>
+          } />
 
           {/* Rotte per l'osservatore */}
           <Route path="/auth/giocatore" element={
@@ -56,9 +61,7 @@ const App = () => {
             </RottaOspite>
           } />
           <Route path="/auth/reimposta-password/:token" element={
-            <RottaOspite>
               <ReimpostaPassword />
-            </RottaOspite>
           }/>
 
           {/* Rotte protette per l'admin */}
