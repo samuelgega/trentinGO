@@ -1,10 +1,10 @@
 openapi: 3.0.0
 info:
-  version: '1.0'
+  version: "1.0"
   title: TrentinGO API
   description: API per la gestione di TrentinGO
 servers:
-  - url: 'http://localhost:3001/api/v1'
+  - url: "http://localhost:3001/api/v1"
     description: Localhost
 paths:
   /pdi:
@@ -13,7 +13,7 @@ paths:
       tags:
         - PDI
       responses:
-        '200':
+        "200":
           description: Lista recuperata con successo
           content:
             application/json:
@@ -27,9 +27,9 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/PDI'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                      $ref: "#/components/schemas/PDI"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaTuttiPdi
     post:
       summary: Crea un nuovo PDI
@@ -40,9 +40,9 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PDIUploadInput'
+              $ref: "#/components/schemas/PDIUploadInput"
       responses:
-        '201':
+        "201":
           description: PDI creato con successo
           content:
             application/json:
@@ -54,11 +54,11 @@ paths:
                     type: string
                     example: PDI creato con successo
                   data:
-                    $ref: '#/components/schemas/PDI'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                    $ref: "#/components/schemas/PDI"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: creaPdi
   /pdi/{id}:
     parameters:
@@ -67,14 +67,14 @@ paths:
         required: true
         schema:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         description: L'ID univoco del PDI
     get:
       summary: Visualizza un PDI specifico
       tags:
         - PDI
       responses:
-        '200':
+        "200":
           description: PDI recuperato con successo
           content:
             application/json:
@@ -82,12 +82,12 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/PDI'
-        '404':
+                    $ref: "#/components/schemas/PDI"
+        "404":
           description: PDI non trovato
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaPdi
     put:
       summary: Modifica un PDI esistente
@@ -98,9 +98,9 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PDIUpdateInput'
+              $ref: "#/components/schemas/PDIUpdateInput"
       responses:
-        '200':
+        "200":
           description: PDI aggiornato con successo
           content:
             application/json:
@@ -111,15 +111,15 @@ paths:
                     type: string
                     example: PDI aggiornato con successo
                   data:
-                    $ref: '#/components/schemas/PDI'
-        '400':
+                    $ref: "#/components/schemas/PDI"
+        "400":
           description: Errore di validazione o nome già esistente
-          $ref: '#/components/responses/ErrorResponse'
-        '404':
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
           description: PDI non trovato
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       parameters: []
       operationId: modificaPdi
     delete:
@@ -127,7 +127,7 @@ paths:
       tags:
         - PDI
       responses:
-        '200':
+        "200":
           description: PDI eliminato con successo
           content:
             application/json:
@@ -138,21 +138,21 @@ paths:
                     type: string
                     example: PDI eliminato con successo
                   data:
-                    $ref: '#/components/schemas/PDI'
-        '404':
+                    $ref: "#/components/schemas/PDI"
+        "404":
           description: PDI non trovato
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: eliminaPdi
   /eventi:
     get:
-      description: ''
+      description: ""
       tags:
         - eventi
       parameters: []
       responses:
-        '200':
+        "200":
           description: Lista eventi recuperata
           content:
             application/json:
@@ -169,8 +169,8 @@ paths:
                       id: rtlxhrsjihj4j
                     type: array
                     items:
-                      $ref: '#/components/schemas/Evento'
-        '500':
+                      $ref: "#/components/schemas/Evento"
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -187,9 +187,10 @@ paths:
       summary: Ottieni la lista di tutti gli eventi
     post:
       summary: Crea un nuovo evento
-      tags: []
+      tags:
+        - eventi
       responses:
-        '201':
+        "201":
           description: Evento creato con successo
           content:
             application/json:
@@ -202,8 +203,8 @@ paths:
                       id: fccjq4c00wtcj
                     default: Evento creato con successo
                   data:
-                    $ref: '#/components/schemas/Evento'
-        '400':
+                    $ref: "#/components/schemas/Evento"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -215,7 +216,7 @@ paths:
                     x-stoplight:
                       id: yqs8qn4r3gy3s
                     example: Dati mancanti
-        '404':
+        "404":
           description: PDI non trovato
           content:
             application/json:
@@ -227,7 +228,7 @@ paths:
                     x-stoplight:
                       id: h98zedvf5cycx
                     default: PDI non trovato
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -246,15 +247,16 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/EventoUploadInput'
-      description: ''
+              $ref: "#/components/schemas/EventoUploadInput"
+      description: ""
     parameters: []
-  /eventi/{idEvento}:
+  "/eventi/{idEvento}":
     get:
       summary: Visualizza un evento specifico
-      tags: []
+      tags:
+        - eventi
       responses:
-        '200':
+        "200":
           description: Evento trovato
           content:
             application/json:
@@ -267,8 +269,8 @@ paths:
                       id: 71j2w7pvqf3ix
                     default: Evento trovato
                   data:
-                    $ref: '#/components/schemas/Evento'
-        '404':
+                    $ref: "#/components/schemas/Evento"
+        "404":
           description: Evento non trovato
           content:
             application/json:
@@ -280,14 +282,14 @@ paths:
                     x-stoplight:
                       id: v0r3awt4qqs2u
                     default: Evento non trovato
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  '':
+                  "":
                     type: string
                     x-stoplight:
                       id: 3sgqcg6oo4wmn
@@ -300,12 +302,13 @@ paths:
             type: string
           in: query
           name: idEvento
-      description: ''
+      description: ""
     put:
       summary: Modifica un evento
-      tags: []
+      tags:
+        - eventi
       responses:
-        '200':
+        "200":
           description: Evento aggiornato
           content:
             application/json:
@@ -318,8 +321,8 @@ paths:
                       id: e5nerbrosukr5
                     default: Evento aggiornato con successo
                   data:
-                    $ref: '#/components/schemas/Evento'
-        '400':
+                    $ref: "#/components/schemas/Evento"
+        "400":
           description: Bad Request
           content:
             application/json:
@@ -331,7 +334,7 @@ paths:
                     x-stoplight:
                       id: 8rvh4o5a62twf
                     example: Dati mancanti
-        '404':
+        "404":
           description: Not Found
           content:
             application/json:
@@ -343,7 +346,7 @@ paths:
                     x-stoplight:
                       id: r5so79dqe4p6r
                     example: Evento non trovato
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -367,12 +370,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PDIUpdateInput'
+              $ref: "#/components/schemas/PDIUpdateInput"
     delete:
       summary: Elimina un evento
-      tags: []
+      tags:
+        - eventi
       responses:
-        '200':
+        "200":
           description: Evento eliminato
           content:
             application/json:
@@ -385,8 +389,8 @@ paths:
                       id: f2jlkdhiqfg43
                     default: Evento eliminato con successo
                   data:
-                    $ref: '#/components/schemas/Evento'
-        '404':
+                    $ref: "#/components/schemas/Evento"
+        "404":
           description: Evento non trovato
           content:
             application/json:
@@ -398,7 +402,7 @@ paths:
                     x-stoplight:
                       id: at87h7g5votju
                     default: Evento non trovato
-        '500':
+        "500":
           description: Internal Server Error
           content:
             application/json:
@@ -428,10 +432,10 @@ paths:
           name: gestore
           schema:
             type: string
-            pattern: '^[a-fA-F0-9]{24}$'
+            pattern: "^[a-fA-F0-9]{24}$"
           description: Filtra le richieste per ID gestore
       responses:
-        '200':
+        "200":
           description: Lista recuperata con successo
           content:
             application/json:
@@ -445,9 +449,9 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/RichiestaAssociazionePDI'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                      $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaRichiesteAssociazione
     post:
       summary: Invia una nuova richiesta di associazione a un PDI
@@ -458,9 +462,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RichiestaAssociazionePDIInput'
+              $ref: "#/components/schemas/RichiestaAssociazionePDIInput"
       responses:
-        '201':
+        "201":
           description: Richiesta inviata con successo
           content:
             application/json:
@@ -472,8 +476,8 @@ paths:
                     type: string
                     example: Richiesta di associazione inviata con successo
                   data:
-                    $ref: '#/components/schemas/RichiestaAssociazionePDI'
-        '400':
+                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "400":
           description: Campi obbligatori mancanti o richiesta già esistente
           content:
             application/json:
@@ -483,7 +487,7 @@ paths:
                   error:
                     type: string
                     example: Esiste già una richiesta pendente per questo PDI
-        '404':
+        "404":
           description: PDI non trovato
           content:
             application/json:
@@ -493,24 +497,24 @@ paths:
                   error:
                     type: string
                     example: PDI non trovato
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: creaRichiestaAssociazione
-  /richieste-associazione/{id}:
+  "/richieste-associazione/{id}":
     parameters:
       - in: path
         name: id
         required: true
         schema:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         description: L'ID univoco della richiesta di associazione
     get:
       summary: Visualizza una richiesta di associazione specifica
       tags:
         - richieste-associazione
       responses:
-        '200':
+        "200":
           description: Richiesta recuperata con successo
           content:
             application/json:
@@ -518,11 +522,11 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/RichiestaAssociazionePDI'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaRichiestaAssociazione
     put:
       summary: Aggiorna lo stato di una richiesta (approva o rifiuta)
@@ -545,7 +549,7 @@ paths:
                     - rifiutata
                   example: approvata
       responses:
-        '200':
+        "200":
           description: Stato aggiornato con successo
           content:
             application/json:
@@ -557,20 +561,20 @@ paths:
                     type: string
                     example: Richiesta approvata con successo
                   data:
-                    $ref: '#/components/schemas/RichiestaAssociazionePDI'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: aggiornaStatoRichiesta
     delete:
       summary: Elimina una richiesta di associazione
       tags:
         - richieste-associazione
       responses:
-        '200':
+        "200":
           description: Richiesta eliminata con successo
           content:
             application/json:
@@ -582,11 +586,11 @@ paths:
                     type: string
                     example: Richiesta eliminata con successo
                   data:
-                    $ref: '#/components/schemas/RichiestaAssociazionePDI'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: eliminaRichiestaAssociazione
   /gestori:
     get:
@@ -594,7 +598,7 @@ paths:
       tags:
         - gestori
       responses:
-        '200':
+        "200":
           description: Lista dei gestori recuperata con successo
           content:
             application/json:
@@ -607,9 +611,9 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Gestore'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                      $ref: "#/components/schemas/Gestore"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaGestori
     post:
       summary: Registra un nuovo gestore
@@ -620,9 +624,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GestoreRegistrationInput'
+              $ref: "#/components/schemas/GestoreRegistrationInput"
       responses:
-        '201':
+        "201":
           description: Gestore registrato con successo
           content:
             application/json:
@@ -633,8 +637,8 @@ paths:
                     type: string
                     example: Gestore registrato con successo
                   data:
-                    $ref: '#/components/schemas/Gestore'
-        '400':
+                    $ref: "#/components/schemas/Gestore"
+        "400":
           description: Campi obbligatori mancanti
           content:
             application/json:
@@ -643,9 +647,9 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: nome, email, password e partitaIva sono obbligatori
-        '409':
-          description: Nome, email o partita IVA già esistente
+                    example: "nome, email, password e partitaIva sono obbligatori"
+        "409":
+          description: "Nome, email o partita IVA già esistente"
           content:
             application/json:
               schema:
@@ -654,25 +658,24 @@ paths:
                   error:
                     type: string
                     example: Partita IVA già esistente
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: registrazioneGestore
-  
-  /gestori/{id}:
+  "/gestori/{id}":
     parameters:
       - in: path
         name: id
         required: true
         schema:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         description: L'ID univoco del gestore
     get:
       summary: Visualizza un gestore specifico
       tags:
         - gestori
       responses:
-        '200':
+        "200":
           description: Gestore recuperato con successo
           content:
             application/json:
@@ -680,21 +683,20 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Gestore'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                    $ref: "#/components/schemas/Gestore"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaGestore
-
-  /gestori/abilitato/{id}:
+  "/gestori/abilitato/{id}":
     parameters:
       - in: path
         name: id
         required: true
         schema:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         description: L'ID univoco del gestore
     put:
       summary: Abilita o disabilita un gestore
@@ -705,9 +707,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AbilitaGestoreInput'
+              $ref: "#/components/schemas/AbilitaGestoreInput"
       responses:
-        '200':
+        "200":
           description: Gestore abilitato/disabilitato con successo
           content:
             application/json:
@@ -718,17 +720,17 @@ paths:
                     type: string
                     example: Gestore abilitato con successo
                   data:
-                    $ref: '#/components/schemas/Gestore'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '404':
-          $ref: '#/components/responses/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                    $ref: "#/components/schemas/Gestore"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: abilitaGestore
   /login:
     post:
-      summary: Login unificato per giocatore e gestore
+      summary: Login unificato per gli utenti
       tags:
         - autenticazione
       requestBody:
@@ -736,17 +738,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CredenzialeLoginInput'
+              $ref: "#/components/schemas/CredenzialeLoginInput"
       responses:
-        '200':
+        "200":
           description: Login effettuato con successo
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginResponse'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
           description: Credenziali non valide
           content:
             application/json:
@@ -756,8 +758,8 @@ paths:
                   error:
                     type: string
                     example: Credenziali non valide
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: login
   /datiUtente:
     get:
@@ -803,7 +805,7 @@ paths:
       tags:
         - amministratori
       responses:
-        '200':
+        "200":
           description: Lista degli amministratori recuperata con successo
           content:
             application/json:
@@ -816,9 +818,9 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Amministratore'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                      $ref: "#/components/schemas/Amministratore"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaAmministratori
     post:
       summary: Crea un nuovo amministratore
@@ -829,9 +831,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AmministratoreRegistrationInput'
+              $ref: "#/components/schemas/AmministratoreRegistrationInput"
       responses:
-        '201':
+        "201":
           description: Amministratore creato con successo
           content:
             application/json:
@@ -843,8 +845,8 @@ paths:
                     type: string
                     example: Amministratore creato con successo
                   data:
-                    $ref: '#/components/schemas/Amministratore'
-        '400':
+                    $ref: "#/components/schemas/Amministratore"
+        "400":
           description: Campi obbligatori mancanti
           content:
             application/json:
@@ -853,8 +855,8 @@ paths:
                 properties:
                   error:
                     type: string
-                    example: Username, email e password sono obbligatori
-        '409':
+                    example: "Username, email e password sono obbligatori"
+        "409":
           description: Username o email già esistente
           content:
             application/json:
@@ -864,8 +866,8 @@ paths:
                   error:
                     type: string
                     example: Username già esistente
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: creaAmministratore
   /amministratori/login:
     post:
@@ -877,17 +879,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CredenzialeLoginInput'
+              $ref: "#/components/schemas/CredenzialeLoginInput"
       responses:
-        '200':
+        "200":
           description: Login effettuato con successo
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginResponseAdmin'
-        '400':
-          $ref: '#/components/responses/ErrorResponse'
-        '401':
+                $ref: "#/components/schemas/LoginResponseAdmin"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
           description: Credenziali non valide
           content:
             application/json:
@@ -897,8 +899,8 @@ paths:
                   error:
                     type: string
                     example: Credenziali non valide
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: loginAmministratore
   /giocatori:
     get:
@@ -906,7 +908,7 @@ paths:
       tags:
         - giocatori
       responses:
-        '200':
+        "200":
           description: Lista dei giocatori recuperata con successo
           content:
             application/json:
@@ -919,9 +921,9 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Giocatore'
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+                      $ref: "#/components/schemas/Giocatore"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaGiocatori
     post:
       summary: Registra un nuovo giocatore
@@ -932,9 +934,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GiocatoreRegistrationInput'
+              $ref: "#/components/schemas/GiocatoreRegistrationInput"
       responses:
-        '200':
+        "200":
           description: Giocatore registrato con successo
           content:
             application/json:
@@ -945,8 +947,8 @@ paths:
                     type: string
                     example: Giocatore registrato con successo
                   data:
-                    $ref: '#/components/schemas/Giocatore'
-        '400':
+                    $ref: "#/components/schemas/Giocatore"
+        "400":
           description: Bad Request (dati mancanti o duplicati)
           content:
             application/json:
@@ -956,9 +958,126 @@ paths:
                   error:
                     type: string
                     example: Username già esistente
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: registrazioneGiocatore
+  /resetPassword:
+    post:
+      summary: Richiesta reset password
+      tags:
+        - resetPassword
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: nn3b7eo6pz8zx
+                    example: Errore interno del server
+        2XX:
+          description: Token generato e inviato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: sw4b31gcwtfce
+                    example: E' stata mandata una mail con le istruzioni per il recupero password
+      operationId: richiestaResetPassword
+      x-stoplight:
+        id: jmkipse8p1ivi
+      description: Genera un token per il reset password e lo invia alla mail dell'utente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  x-stoplight:
+                    id: y0v8lytzscgp9
+                  example: utente@mail.com
+  "/resetPassword/{token}":
+    parameters:
+      - schema:
+          type: string
+        name: token
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: token
+        in: path
+        required: true
+    put:
+      summary: Reset password
+      tags:
+        - resetPassword
+      responses:
+        "200":
+          description: Passoword ripristinata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: kwp4cnul3x5rn
+                    example: Password resettata con successo
+        "400":
+          description: Password non valida o token insistente/scaduto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: kp1omonp5ztbv
+                    example: Token non valido o scaduto
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: qlmq1c11fjvsd
+                    example: Errore interno del server
+      operationId: resetPassword
+      x-stoplight:
+        id: yphd0z3o3l0nj
+      description: "Dato il token, reimposta la password dell'utente"
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nuovaPassword:
+                  type: string
+                  x-stoplight:
+                    id: 5wty2c7iyb3v7
 components:
   responses:
     ErrorResponse:
@@ -983,12 +1102,12 @@ components:
       properties:
         richGestore:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
           description: ID del gestore che effettua la richiesta
           example: 6641a2f3e4b0c12d3f456789
         assPDI:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
           description: ID del PDI a cui si vuole essere associati
           example: 6641a2f3e4b0c12d3f456790
         motivazione:
@@ -1002,15 +1121,15 @@ components:
       properties:
         _id:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         richGestore:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
           description: ID del gestore che ha effettuato la richiesta
           example: 6641a2f3e4b0c12d3f456789
         assPDI:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
           description: ID del PDI richiesto
           example: 6641a2f3e4b0c12d3f456790
         stato:
@@ -1029,7 +1148,7 @@ components:
         dataRichiesta:
           type: string
           format: date-time
-          example: '2026-05-23T10:30:00Z'
+          example: "2026-05-23T10:30:00Z"
     GestoreLoginInput:
       type: object
       additionalProperties: false
@@ -1076,13 +1195,13 @@ components:
         abilitato:
           type: boolean
           example: true
-          description: True per approvare, false per sospendere il gestore
+          description: "True per approvare, false per sospendere il gestore"
     Gestore:
       type: object
       properties:
         _id:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         nome:
           type: string
           example: MUSE Trento
@@ -1121,7 +1240,7 @@ components:
       properties:
         _id:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         username:
           type: string
           example: admin1
@@ -1159,7 +1278,7 @@ components:
           properties:
             id:
               type: string
-              pattern: '^[a-fA-F0-9]{24}$'
+              pattern: "^[a-fA-F0-9]{24}$"
             nome:
               type: string
               description: Username del giocatore o nome del gestore
@@ -1189,7 +1308,7 @@ components:
           properties:
             id:
               type: string
-              pattern: '^[a-fA-F0-9]{24}$'
+              pattern: "^[a-fA-F0-9]{24}$"
             username:
               type: string
               example: admin1
@@ -1225,7 +1344,7 @@ components:
       properties:
         _id:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         id:
           type: string
         username:
@@ -1313,7 +1432,7 @@ components:
       properties:
         _id:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         type:
           type: string
           example: Feature
@@ -1363,7 +1482,7 @@ components:
       properties:
         _id:
           type: string
-          pattern: '^[a-fA-F0-9]{24}$'
+          pattern: "^[a-fA-F0-9]{24}$"
         type:
           type: string
           example: Feature
@@ -1439,7 +1558,7 @@ components:
               type: string
               x-stoplight:
                 id: 2pahaw6wk1ca4
-      description: ''
+      description: ""
     EventoUploadInput:
       title: EventoUploadInput
       x-stoplight:
@@ -1510,4 +1629,3 @@ components:
               id: yw8r9h3yor73l
             type: string
             format: binary
-   
