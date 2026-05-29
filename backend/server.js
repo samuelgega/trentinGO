@@ -23,7 +23,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 //cartella updloads per le immagini
 app.use("/uploads", express.static("uploads"));
 
-//rotta per il login unificato (giocatore e gestore)
+//rotta per il login unificato
 const authRoutes = require('./routes/authRoutes')
 app.use('/api/v1', authRoutes)
 
