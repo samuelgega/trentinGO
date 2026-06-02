@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const Amministratore = require('../models/Amministratore')
 
 const verificaToken = (req, res, next) => {
     const authHeader = req.headers['authorization']
@@ -26,4 +27,35 @@ const requireRuolo = (...ruoli) => {
     }
 }
 
-module.exports = { verificaToken, requireRuolo }
+const autorizzaModifica = (tipoTarget) => {
+    return async (req, res, next) => {
+        try {
+            const idRichiedente = req.utente.id
+            const ruoloRichiedente = req.utente.ruolo
+            const targetId = req.params.idUtente
+
+            // chiunque può modificare se stesso
+            if (idRichiedente === targetId) {
+                return next()
+            }
+
+            //verifica se sei un admin
+            if (ruoloRichiedente !== 'amministratore') {
+                return res.status(403).json({ error: "Non hai i permessi per modificare i dati di altri utenti." })
+            }
+
+            //verifica se un admin vuole modificare un'altro admin
+            if (tipoTarget === 'amministratore') {
+                return res.status(403).json({ error: "Non hai i permessi per modificare i dati di altri amministratori." })
+            }
+
+            //admin che modifica de non admin passa
+            next()
+        } catch (error) {
+            console.error("Errore nel middleware di autorizzazione modifica:", error)
+            res.status(500).json({ error: "Internal Server Error" })
+        }
+    }
+}
+
+module.exports = { verificaToken, requireRuolo, autorizzaModifica }

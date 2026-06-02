@@ -1,6 +1,8 @@
 const Giocatore = require("../models/Giocatore")
 const bycrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const Gestore = require('../models/Gestore')
+const Amministratore = require('../models/Amministratore')
 
 const registrazioneGiocatore = async (req, res) => {
     try {

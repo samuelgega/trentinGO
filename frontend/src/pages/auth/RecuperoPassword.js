@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '../../contexts/AlertController'
 import '../../assets/home.css'
 
 
 const RecuperoPassword = () => {
-
     const navigate = useNavigate()
     const { showAlert } = useAlert()
     const [errori, setErrori] = useState({})
@@ -23,7 +22,6 @@ const RecuperoPassword = () => {
         return error;
 
     }
-
 
     const handleInput = (e) => {
         setEmail(e.target.value)
@@ -55,19 +53,19 @@ const RecuperoPassword = () => {
                 const json = await response.json()
                 showAlert("Attenzione", json.error || "Impossibile elaborare la richiesta", "warning")
             }
-            
+
         } catch (error) {
             showAlert("Errore di connessione", "Impossibile collegarsi al server.", "danger")
         }
-    
+
     }
 
 
 
-    return(
+    return (
         <div className="min-vh-100 d-flex align-items-center justify-content-center" style={{ background: 'linear-gradient(135deg, #f0fdf4 0%, #e6f4f1 100%)' }}>
             <div className="col-11 col-sm-8 col-md-6 col-lg-4">
-                {/*Header */}                
+                {/*Header */}
                 <div className="text-center mb-4">
                     <span className="nav-logo" style={{ fontSize: '2rem' }}>TrentinGO</span>
                     <p className="text-muted mt-2 mb-0">Recupera Password</p>
@@ -95,7 +93,7 @@ const RecuperoPassword = () => {
                                     </div>
                                 )}
                             </div>
-                            
+
                             <button type="submit" className="btn w-100 fw-semibold py-2" style={{ backgroundColor: '#037149', color: 'white', borderRadius: '10px' }}>
                                 Invia Link di Recupero
                             </button>
