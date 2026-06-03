@@ -171,4 +171,44 @@ const visualizzaProfilo = async (req, res) => {
     }
 }
 
-module.exports = { login, richiestaResetPassword, resetPassword, visualizzaProfilo }
+const cambiaPassword = async (req, res) => {
+    try {
+        const { attuale, nuova } = req.body
+
+        if (!attuale || !nuova) {
+            return res.status(400).json({ error: "Password attuale e nuova sono obbligatorie" })
+        }
+
+        const userId = req.utente.id
+        const ruolo = req.utente.ruolo
+
+        let utente = null
+        if (ruolo === 'giocatore') {
+            utente = await Giocatore.findById(userId)
+        } else if (ruolo === 'gestore') {
+            utente = await Gestore.findById(userId).select('+password')
+        } else if (ruolo === 'amministratore') {
+            utente = await Amministratore.findById(userId)
+        }
+
+        if (!utente) {
+            return res.status(404).json({ error: "Utente non trovato" })
+        }
+
+        const passwordCorretta = await bcrypt.compare(attuale, utente.password)
+        if (!passwordCorretta) {
+            return res.status(401).json({ error: "Password attuale non corretta" })
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        utente.password = await bcrypt.hash(nuova, salt)
+        await utente.save()
+
+        res.status(200).json({ message: "Password aggiornata con successo" })
+    } catch (error) {
+        console.error("Errore nel cambio password", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { login, richiestaResetPassword, resetPassword, visualizzaProfilo, cambiaPassword }

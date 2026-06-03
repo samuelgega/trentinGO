@@ -13,5 +13,6 @@ router.put('/resetPassword/:token', Auth.resetPassword)
 //rotta per la visualizzazione dei dati dell'utente
 router.get('/datiUtente', verificaToken, Auth.visualizzaProfilo)
 
+router.put('/cambiaPassword', verificaToken, Auth.cambiaPassword)
 
 module.exports = router
