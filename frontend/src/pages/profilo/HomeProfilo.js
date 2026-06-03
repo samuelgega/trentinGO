@@ -136,11 +136,43 @@ const HomeProfilo = () =>{
         const errori = {}
         if (!datiPassword.attuale) errori.attuale = "Inserisci la password attuale"
         if (!datiPassword.nuova) errori.nuova = "Inserisci la nuova password"
+        else if (datiPassword.nuova === datiPassword.attuale) errori.nuova = "La nuova password deve essere diversa da quella attuale"
         else if (datiPassword.nuova.length < 8) errori.nuova = "La password deve essere di almeno 8 caratteri"
         if (!datiPassword.conferma) errori.conferma = "Conferma la nuova password"
         else if (datiPassword.nuova && datiPassword.nuova !== datiPassword.conferma) errori.conferma = "Le password non corrispondono"
         setErroriPassword(errori)
         return Object.keys(errori).length === 0
+    }
+
+    const salvaPassword = async () => {
+        if (!validaPassword()) return
+
+        const token = localStorage.getItem('token')
+        try {
+            const response = await fetch('http://localhost:3001/api/v1/cambiaPassword', {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ attuale: datiPassword.attuale, nuova: datiPassword.nuova })
+            })
+            const json = await response.json()
+
+            if (response.ok) {
+                setModificaPassword(false)
+                setDatiPassword({ attuale: '', nuova: '', conferma: '' })
+                showAlert("Successo", "Password aggiornata con successo", "success")
+            } else {
+                if (response.status === 401) {
+                    setErroriPassword(p => ({ ...p, attuale: json.error }))
+                } else {
+                    showAlert("Errore", json.error || "Impossibile aggiornare la password", "danger")
+                }
+            }
+        } catch (error) {
+            showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+        }
     }
 
     //funzione per il cambio password
@@ -357,7 +389,7 @@ const HomeProfilo = () =>{
                                                     {erroriPassword.conferma && <div className="invalid-feedback">{erroriPassword.conferma}</div>}
                                                 </div>
                                                 <div className="d-flex gap-2">
-                                                    <button className="btn btn-sm fw-semibold" style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }} onClick={validaPassword}>
+                                                    <button className="btn btn-sm fw-semibold" style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }} onClick={salvaPassword}>
                                                         Salva
                                                     </button>
                                                     <button
