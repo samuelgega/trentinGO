@@ -14,6 +14,6 @@ router.post('/', verificaToken, requireRuolo('amministratore'), Amministratore.c
 router.post('/login', Amministratore.loginAmministratore)
 
 //modifica utente
-router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('amministratore'), Amministratore.modificaProfilo)
+router.put('/:idUtente', verificaToken, autorizzaModifica('amministratore'), Amministratore.modificaProfilo)
 
 module.exports = router

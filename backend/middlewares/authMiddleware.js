@@ -34,10 +34,6 @@ const autorizzaModifica = (tipoTarget) => {
             const ruoloRichiedente = req.utente.ruolo
             const targetId = req.params.idUtente
 
-            console.log("[DEBUG] Id richiedente: ", idRichiedente)
-            console.log("[DEBUG] Ruolo richiedente: ", ruoloRichiedente)
-            console.log("[DEBUG] Id TARGET: ", targetId)
-
             // chiunque può modificare se stesso
             if (idRichiedente === targetId) {
                 return next()

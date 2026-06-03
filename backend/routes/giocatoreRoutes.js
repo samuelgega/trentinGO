@@ -14,6 +14,6 @@ router.post("/registrazione", Giocatore.registrazioneGiocatore);
 router.post("/login", Giocatore.loginGiocatore);
 
 //modifica utente
-router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('giocatore'), Giocatore.modificaProfilo)
+router.put('/:idUtente', verificaToken, autorizzaModifica('giocatore'), Giocatore.modificaProfilo)
 
 module.exports = router;
