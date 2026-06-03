@@ -142,4 +142,18 @@ const modificaProfilo = async (req, res) => {
     }
 }
 
-module.exports = { creaAmministratore, visualizzaAmministratori, loginAmministratore, modificaProfilo }
+const eliminaProfilo = async (req,res) => {
+    try {
+        const idDaEliminare = req.params.idUtente; 
+        
+        const eliminato = await Amministratore.findByIdAndDelete(idDaEliminare);
+        
+        if (!eliminato) return res.status(404).json({ error: "Amministratore non trovato" });
+        
+        res.status(200).json({ message: "Amministratore eliminato con successo" });
+    } catch (error) {
+        res.status(500).json({ error: "Errore interno" });
+    }
+}
+
+module.exports = { creaAmministratore, visualizzaAmministratori, loginAmministratore, modificaProfilo, eliminaProfilo }

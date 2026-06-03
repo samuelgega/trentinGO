@@ -16,4 +16,7 @@ router.post("/login", Giocatore.loginGiocatore);
 //modifica utente
 router.put('/:idUtente', verificaToken, autorizzaModifica('giocatore'), Giocatore.modificaProfilo)
 
+//elimina utente
+router.delete('/eliminaUtente/:idUtente', verificaToken, autorizzaModifica('giocatore'), Giocatore.eliminaProfilo)
+
 module.exports = router;
