@@ -14,5 +14,6 @@ router.put('/resetPassword/:token', Auth.resetPassword)
 router.get('/datiUtente', verificaToken, Auth.visualizzaProfilo)
 
 router.put('/cambiaPassword', verificaToken, Auth.cambiaPassword)
+router.delete('/eliminaAccount', verificaToken, Auth.eliminaAccount)
 
 module.exports = router
