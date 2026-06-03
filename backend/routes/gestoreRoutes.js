@@ -23,6 +23,6 @@ router.get("/:id", verificaToken, requireRuolo('amministratore'), Gestore.visual
 router.put("/abilitato/:id", verificaToken, requireRuolo('amministratore'), Gestore.abilitaGestore);
 
 //modifica utente
-router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('gestore'), Gestore.modificaProfilo)
+router.put('/:idUtente', verificaToken, autorizzaModifica('gestore'), Gestore.modificaProfilo)
 
 module.exports = router;

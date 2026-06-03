@@ -60,7 +60,9 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: creaPdi
-  /pdi/{id}:
+      security:
+        - token: []
+  "/pdi/{id}":
     parameters:
       - in: path
         name: id
@@ -122,6 +124,8 @@ paths:
           $ref: "#/components/responses/ErrorResponse"
       parameters: []
       operationId: modificaPdi
+      security:
+        - token: []
     delete:
       summary: Elimina un PDI esistente
       tags:
@@ -145,6 +149,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: eliminaPdi
+      security:
+        - token: []
   /eventi:
     get:
       description: ""
@@ -249,6 +255,8 @@ paths:
             schema:
               $ref: "#/components/schemas/EventoUploadInput"
       description: ""
+      security:
+        - token: []
     parameters: []
   "/eventi/{idEvento}":
     get:
@@ -371,6 +379,8 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/PDIUpdateInput"
+      security:
+        - token: []
     delete:
       summary: Elimina un evento
       tags:
@@ -422,6 +432,8 @@ paths:
             type: string
           in: query
           name: idEvento
+      security:
+        - token: []
   /richieste-associazione:
     get:
       summary: Ottieni la lista delle richieste di associazione
@@ -453,6 +465,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaRichiesteAssociazione
+      security:
+        - token: []
     post:
       summary: Invia una nuova richiesta di associazione a un PDI
       tags:
@@ -500,6 +514,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: creaRichiestaAssociazione
+      security:
+        - token: []
   "/richieste-associazione/{id}":
     parameters:
       - in: path
@@ -528,6 +544,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaRichiestaAssociazione
+      security:
+        - token: []
     put:
       summary: Aggiorna lo stato di una richiesta (approva o rifiuta)
       tags:
@@ -569,6 +587,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: aggiornaStatoRichiesta
+      security:
+        - token: []
     delete:
       summary: Elimina una richiesta di associazione
       tags:
@@ -592,6 +612,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: eliminaRichiestaAssociazione
+      security:
+        - token: []
   /gestori:
     get:
       summary: Ottieni la lista di tutti i gestori
@@ -615,6 +637,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaGestori
+      security:
+        - token: []
     post:
       summary: Registra un nuovo gestore
       tags:
@@ -661,8 +685,15 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: registrazioneGestore
+      security:
+        - token: []
   "/gestori/{id}":
     parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
       - in: path
         name: id
         required: true
@@ -689,6 +720,110 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaGestore
+      security:
+        - token: []
+    put:
+      summary: Modifica un gestore
+      tags:
+        - gestori
+      responses:
+        "200":
+          description: Il gestore è stato aggiornato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: 9aicj4tiycdpg
+                    example: Utente aggiornato con successo
+        "401":
+          description: Errore nell'autenticazione
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: 4sto5ibs3eh1h
+                    example: Token non valido o scaduto
+        "403":
+          description: Non si hanno i permessi necessari per modificare il gestore
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ml22s0bc1kj7c
+                    example: Non hai i permessi per modificare i dati di altri utenti
+        "404":
+          description: L'utente che si vuole modificare non è stato trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ocl8ba97wl13y
+                    example: Utente non trovato
+        "409":
+          description: Username o email già in uso da qualcun'altro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: wr12npak5z5pm
+                    example: Username già in uso
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: y5p4eio8su3qv
+                    example: Errore interno del server
+      operationId: modificaGestore
+      x-stoplight:
+        id: nyh6qz9aroitz
+      description: Modifica le informazioni di un gestore
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: idUtente
+      security:
+        - token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  x-stoplight:
+                    id: 8bssrqczu0yec
+                email:
+                  type: string
+                  x-stoplight:
+                    id: 5giexn1aus5an
   "/gestori/abilitato/{id}":
     parameters:
       - in: path
@@ -728,6 +863,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: abilitaGestore
+      security:
+        - token: []
   /login:
     post:
       summary: Login unificato per gli utenti
@@ -767,9 +904,9 @@ paths:
       tags:
         - autenticazione
       security:
-        - bearerAuth: []
+        - token: []
       responses:
-        '200':
+        "200":
           description: Profilo recuperato con successo
           content:
             application/json:
@@ -781,7 +918,7 @@ paths:
                     example: Profilo recuperato con successo
                   data:
                     type: object
-                    description: Dati dinamici (variano se è Giocatore, Gestore o Admin)
+                    description: "Dati dinamici (variano se è Giocatore, Gestore o Admin)"
                     properties:
                       _id:
                         type: string
@@ -792,12 +929,12 @@ paths:
                       ruolo:
                         type: string
                         example: giocatore
-        '400':
+        "400":
           description: Ruolo non riconosciuto
-        '404':
+        "404":
           description: Utente non trovato
-        '500':
-          $ref: '#/components/responses/ErrorResponse'
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaProfilo
   /amministratori:
     get:
@@ -822,6 +959,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaAmministratori
+      security:
+        - token: []
     post:
       summary: Crea un nuovo amministratore
       tags:
@@ -869,6 +1008,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: creaAmministratore
+      security:
+        - token: []
   /amministratori/login:
     post:
       summary: Login di un amministratore
@@ -925,6 +1066,8 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: visualizzaGiocatori
+      security:
+        - token: []
     post:
       summary: Registra un nuovo giocatore
       tags:
@@ -1078,6 +1221,233 @@ paths:
                   type: string
                   x-stoplight:
                     id: 5wty2c7iyb3v7
+  "/giocatori/{id}":
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    put:
+      summary: Modifica un giocatore
+      tags:
+        - giocatori
+      responses:
+        "200":
+          description: Il giocatore è stato aggiornato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: 9aicj4tiycdpg
+                    example: Utente aggiornato con successo
+        "401":
+          description: Errore nell'autenticazione
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: 4sto5ibs3eh1h
+                    example: Token non valido o scaduto
+        "403":
+          description: Non si hanno i permessi necessari per modificare il giocatore
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ml22s0bc1kj7c
+                    example: Non hai i permessi per modificare i dati di altri utenti
+        "404":
+          description: L'utente che si vuole modificare non è stato trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ocl8ba97wl13y
+                    example: Utente non trovato
+        "409":
+          description: Username o email già in uso da qualcun'altro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: wr12npak5z5pm
+                    example: Username già in uso
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: y5p4eio8su3qv
+                    example: Errore interno del server
+      operationId: modificaGiocatore
+      x-stoplight:
+        id: azedwcd2dfzqw
+      security:
+        - token: []
+      description: Modifica le informazioni di un giocatore
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: idUtente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  x-stoplight:
+                    id: t7i2us74olht7
+                email:
+                  type: string
+                  x-stoplight:
+                    id: a7fh0x6nk3p35
+  "/amministratori/{id}":
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    put:
+      summary: Modifica un amministratore
+      tags:
+        - amministratori
+      responses:
+        "200":
+          description: L'amministratore è stato aggiornato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: 9aicj4tiycdpg
+                    example: Utente aggiornato con successo
+        "401":
+          description: Errore nell'autenticazione
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: 4sto5ibs3eh1h
+                    example: Token non valido o scaduto
+        "403":
+          description: Non si hanno i permessi necessari per modificare l'amministratore
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ml22s0bc1kj7c
+                    example: Non hai i permessi per modificare i dati di altri utenti
+        "404":
+          description: L'utente che si vuole modificare non è stato trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ocl8ba97wl13y
+                    example: Utente non trovato
+        "409":
+          description: Username o email già in uso da qualcun'altro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: wr12npak5z5pm
+                    example: Username già in uso
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: y5p4eio8su3qv
+                    example: Errore interno del server
+      operationId: modificaAmministratore
+      x-stoplight:
+        id: vvkmn8j5qvcxi
+      security:
+        - token: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: idUtente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  x-stoplight:
+                    id: 24iwcq9ytz1s9
+                email:
+                  type: string
+                  x-stoplight:
+                    id: deg9hr1uqco2u
 components:
   responses:
     ErrorResponse:
@@ -1629,3 +1999,7 @@ components:
               id: yw8r9h3yor73l
             type: string
             format: binary
+  securitySchemes:
+    token:
+      type: http
+      scheme: bearer
