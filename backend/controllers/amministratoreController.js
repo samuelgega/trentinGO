@@ -1,4 +1,6 @@
 const Amministratore = require('../models/Amministratore')
+const Giocatore = require('../models/Giocatore')
+const Gestore = require('../models/Gestore')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
@@ -44,19 +46,19 @@ const creaAmministratore = async (req, res) => {
     }
 }
 
-const visualizzaAmministratori = async (req,res) => {
+const visualizzaAmministratori = async (req, res) => {
 
     try {
-            const amministratori = await Amministratore.find({}).select('-password')
-    
-            res.status(200).json({
-                message: "Lista degli Amministratori",
-                data: amministratori
-            });
-        } catch (error) {
-            console.error("Errore nel recupero degli Amministratori", error);
-            res.status(500).json({ error: "Errore interno del server" });
-        }
+        const amministratori = await Amministratore.find({}).select('-password')
+
+        res.status(200).json({
+            message: "Lista degli Amministratori",
+            data: amministratori
+        });
+    } catch (error) {
+        console.error("Errore nel recupero degli Amministratori", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
 
 }
 
@@ -105,4 +107,39 @@ const loginAmministratore = async (req, res) => {
     }
 }
 
-module.exports = { creaAmministratore, visualizzaAmministratori, loginAmministratore }
+const modificaProfilo = async (req, res) => {
+    try {
+        const { idUtente } = req.params
+        let utente = await Amministratore.findById(idUtente).select('-password -resetToken -scadenzaResetToken')
+        if (!utente) {
+            return res.status(404).json({ error: "Utente non trovato" })
+        }
+
+        const { username, email } = req.body
+
+        if (username) {
+            const u = await Amministratore.findOne({ username: String(username).toLocaleLowerCase() }) || await Gestore.findOne({ username: String(username).toLocaleLowerCase() }) || await Amministratore.findOne({ username: String(username).toLocaleLowerCase() })
+            if (u) {
+                return res.status(409).json({ error: "Username già in uso" })
+            }
+            utente.username = username
+        }
+
+        if (email) {
+            const u = await Giocatore.findOne({ email: String(email).toLocaleLowerCase() }) || await Gestore.findOne({ email: String(email).toLocaleLowerCase() }) || await Amministratore.findOne({ email: String(email).toLocaleLowerCase() })
+            if (u) {
+                return res.status(409).json({ error: "Email già registrata" })
+            }
+            utente.email = email
+        }
+
+        utente.save()
+        return res.status(200).json({ message: "Utente aggiornato con successo", data: utente })
+    }
+    catch (error) {
+        console.error("Errore nella modifica dell'amministratore: ", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { creaAmministratore, visualizzaAmministratori, loginAmministratore, modificaProfilo }

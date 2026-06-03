@@ -94,7 +94,7 @@ const richiestaResetPassword = async (req, res) => {
         utente.scadenzaResetToken = scadenzaResetToken
         await utente.save()
 
-        inviaEmail(utente.email, "Istruzioni per il reset della password", `Ciao ${utente.username ?? utente.nome},\n\nHai richiesto di resettare la tua password. Clicca sul link qui sotto per impostare una nuova password:\n\nhttp://localhost:3000/auth/reimposta-password/${tk}<\n\nSe non hai richiesto questo reset, ignora questa email.\n`)
+        inviaEmail(utente.email, "Istruzioni per il reset della password", `Ciao ${utente.username ?? utente.nome},\n\nHai richiesto di resettare la tua password. Clicca sul link qui sotto per impostare una nuova password:\n\nhttp://localhost:3000/auth/reimposta-password/${tk}\n\nSe non hai richiesto questo reset, ignora questa email.\n`)
         return res.status(200).json({ message: "E' stata mandata una mail con le istruzioni per il recupero password" })
     } catch (error) {
         console.error("Errore nel reset password", error)
@@ -137,32 +137,32 @@ const resetPassword = async (req, res) => {
     }
 }
 
-const visualizzaProfilo = async (req,res) => {
+const visualizzaProfilo = async (req, res) => {
 
-    try{
+    try {
         const userId = req.utente.id;
         const ruolo = req.utente.ruolo;
         let utente = null;
 
         //cerco nel db il ruolo corretto
-        switch(ruolo){
+        switch (ruolo) {
             case 'giocatore':
                 utente = await Giocatore.findById(userId).select('-password -resetToken -scadenzaResetToken'); break;
             case 'gestore':
                 utente = await Gestore.findById(userId).select('-password -resetToken -scadenzaResetToken').populate('pdiCollegati'); break;
             case 'amministratore':
-                utente = await Amministratore.findById(userId).select('-password');break;
+                utente = await Amministratore.findById(userId).select('-password'); break;
             default:
                 return res.status(400).json({ error: "Ruolo non riconosciuto" });
         }
 
-        if(!utente){
+        if (!utente) {
             return res.status(404).json({ error: "Utente non trovato" });
         }
 
         res.status(200).json({
             message: "Profilo recuperato con successo",
-            data: { ...utente.toObject(), ruolo}
+            data: { ...utente.toObject(), ruolo }
         })
 
     } catch (error) {

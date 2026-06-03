@@ -10,7 +10,7 @@ const GestisciGestori = () => {
 
     const token = localStorage.getItem('token')
 
-const toggleAbilitazione = async (id, abilitatoAttuale) => {
+    const toggleAbilitazione = async (id, abilitatoAttuale) => {
         try {
             const response = await fetch(`http://localhost:3001/api/v1/gestori/abilitato/${id}`, {
                 method: 'PUT',
@@ -57,7 +57,7 @@ const toggleAbilitazione = async (id, abilitatoAttuale) => {
 
         recuperaGestori()
         recuperaRichiesteAssociazione()
-    }, [])
+    }, [token])
 
     const gestisciRichiesta = async (id, statoRichiesta) => {
         try {
@@ -249,7 +249,7 @@ const toggleAbilitazione = async (id, abilitatoAttuale) => {
                     </div>
                 </div>
             </div>
-</>
+        </>
     )
 }
 

@@ -93,9 +93,9 @@ const HomeNav = () => {
                                 </button>
                             </li>
                             <li>
-                                <button 
+                                <button
                                     className="dropdown-item custom-item d-flex align-items-center gap-2 py-2"
-                                    onClick={() => { navigate('/profilo/impostazioni')}}
+                                    onClick={() => { navigate('/profilo/impostazioni') }}
                                 >
                                     <span className="material-symbols-outlined fs-5">settings</span>
                                     Impostazioni account

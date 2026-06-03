@@ -5,15 +5,15 @@ import '../../assets/home.css';
 
 const ReimpostaPassword = () => {
     //Legge il token dall'URL
-    const { token } = useParams(); 
+    const { token } = useParams();
     const navigate = useNavigate();
     const { showAlert } = useAlert();
-    const [formData, setFormData] = useState({password: '', confermaPassword: ''});
+    const [formData, setFormData] = useState({ password: '', confermaPassword: '' });
     const [errori, setErrori] = useState({});
 
     const validazioneDati = (dati) => {
         const err = {};
-        const regex = /(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_+\-\[\]\\\/])/;
+        const regex = /(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>_+\-[\]\\/])/;
 
         if (!dati.password) {
             err.password = "La password è obbligatoria";
@@ -54,7 +54,7 @@ const ReimpostaPassword = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nuovaPassword: formData.password })
             });
-            
+
             const json = await response.json();
 
             if (response.ok) {
@@ -82,7 +82,7 @@ const ReimpostaPassword = () => {
                 <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
                     <div className="card-body p-4">
                         <form onSubmit={handleSubmit} noValidate>
-                            
+
                             {/*Nuova Password */}
                             <div className="mb-3">
                                 <label className="form-label fw-semibold text-secondary small">NUOVA PASSWORD</label>
@@ -132,7 +132,7 @@ const ReimpostaPassword = () => {
                         </form>
 
                         <hr className="my-4" />
-                        
+
                         {/*Torna indietro*/}
                         <div>
                             <button

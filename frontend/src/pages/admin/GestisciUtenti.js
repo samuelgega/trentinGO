@@ -10,15 +10,15 @@ const GestisciUtenti = () => {
 
 
     const [listaGiocatori, setListaGiocatori] = useState([])
-    const [listaGestori, setListaGestori] = useState([]);    
+    const [listaGestori, setListaGestori] = useState([]);
     const [listaAdmin, setListaAdmin] = useState([]);
     const token = localStorage.getItem('token')
 
     useEffect(() => {
-        const recuperoGiocatori = async () =>{
+        const recuperoGiocatori = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/giocatori' , { 
-                    headers: { 'Authorization': `Bearer ${token}`} 
+                const response = await fetch('http://localhost:3001/api/v1/giocatori', {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
                 const json = await response.json()
@@ -27,10 +27,10 @@ const GestisciUtenti = () => {
                 console.error("Errore nel recupero dei Giocatori:", error)
             }
         }
-        
+
         const recuperoGestori = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/gestori',{ 
+                const response = await fetch('http://localhost:3001/api/v1/gestori', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
@@ -43,8 +43,8 @@ const GestisciUtenti = () => {
 
         const recuperoAdmin = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/amministratori',{ 
-                    headers: { 'Authorization': `Bearer ${token}`} 
+                const response = await fetch('http://localhost:3001/api/v1/amministratori', {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
                 const json = await response.json()
@@ -57,8 +57,8 @@ const GestisciUtenti = () => {
         recuperoGiocatori();
         recuperoGestori();
         recuperoAdmin();
-        
-    }, [])
+
+    }, [token])
 
     // Funzione per generare l'intestazione delle Card
     const cardHeader = (label, color, bottoneExtra = null) => (
@@ -96,7 +96,7 @@ const GestisciUtenti = () => {
 
                     {/*Griglia */}
                     <div className="row g-4">
-                        
+
                         {/*Giocatori */}
                         <div className="col-12 col-lg-4">
                             <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '14px', overflow: 'hidden' }}>
@@ -149,8 +149,8 @@ const GestisciUtenti = () => {
                         {/*Amministratori */}
                         <div className="col-12 col-lg-4">
                             <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '14px', overflow: 'hidden' }}>
-                                {cardHeader('Amministratori', '#212529', 
-                                    <button 
+                                {cardHeader('Amministratori', '#212529',
+                                    <button
                                         className="btn btn-sm btn-light text-dark fw-bold"
                                         onClick={() => navigate('/auth/admin')}
                                     >
