@@ -58,4 +58,21 @@ const autorizzaModifica = (tipoTarget) => {
     }
 }
 
-module.exports = { verificaToken, requireRuolo, autorizzaModifica }
+const autorizzaVisita = (req, res, next) => {
+    try {
+        const { idGiocatore } = req.body
+        const idRichiedente = req.utente.id
+
+        if (idGiocatore !== idRichiedente) {
+            return res.status(403).json({ error: 'Non hai i permessi per registrare una visita per conto di altri utenti' })
+        }
+
+        next()
+    }
+    catch {
+        console.error("Errore nel middleware di autorizzazione registrazione visita:", error)
+        res.status(500).json({ error: "Internal Server Error" })
+    }
+}
+
+module.exports = { verificaToken, requireRuolo, autorizzaModifica, autorizzaVisita }

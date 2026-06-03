@@ -51,6 +51,10 @@ app.use('/api/v1/amministratori', amministratoreRoutes)
 const richAssPDI = require("./routes/richAssPDIRoutes");
 app.use("/api/v1/richAssPDI", richAssPDI);
 
+//rotta per le registrazioni visite
+const visitaRoutes = require('./routes/visitaRoutes')
+app.use('/api/v1/visite', visitaRoutes)
+
 //handler per errori 404
 app.use((req, res) => {
     res.status(404).json({ error: "Risorsa non trovata" });
