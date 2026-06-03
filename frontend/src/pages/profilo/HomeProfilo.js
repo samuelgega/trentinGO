@@ -163,7 +163,7 @@ const HomeProfilo = () =>{
                                             Cambia Password
                                         </button>
                                         <button className="btn btn-outline-danger py-3 fw-semibold text-start" >
-                                            Elimina dall'account
+                                            Elimina l'account
                                         </button>
                                     </div>
                                 </div>
