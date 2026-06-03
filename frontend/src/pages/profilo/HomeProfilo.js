@@ -11,6 +11,8 @@ const HomeProfilo = () =>{
     const navigate = useNavigate();
     const { showAlert } = useAlert();
     const [profilo, setProfilo] = useState(null);
+    const [modificaNome, setModificaNome] = useState(false)
+    const [nuovoNome, setNuovoNome] = useState('')
 
 
     useEffect(() => {
@@ -96,17 +98,44 @@ const HomeProfilo = () =>{
                                 <div className="card-body p-4">
                                     <div className="d-flex justify-content-between align-items-center mb-3">
                                         <h6 className="text-muted fw-bold mb-0 small">DATI REGISTRATI</h6>
-                                        <button className="btn btn-sm btn-link text-secondary p-0" title="Modifica dati">
-                                            <i className="bi bi-pencil-square fs-5"></i>
-                                        </button>
                                     </div>
-                                    
+
                                     <ul className="list-group list-group-flush mb-0">
-                                        <li className="list-group-item d-flex flex-column flex-sm-row justify-content-between px-0 py-3">
-                                            <span className="text-secondary fw-semibold mb-1 mb-sm-0">
-                                                {profilo.ruolo === 'gestore' ? 'Nome Struttura' : 'Username'}
-                                            </span>
-                                            <span className="fw-bold">{profilo.username || profilo.nome}</span>
+                                        <li className="list-group-item px-0 py-3">
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <span className="text-secondary fw-semibold">
+                                                    {profilo.ruolo === 'gestore' ? 'Nome Struttura' : 'Username'}
+                                                </span>
+                                                {!modificaNome && (
+                                                    <button
+                                                        className="btn btn-sm btn-link text-secondary p-0"
+                                                        onClick={() => { setModificaNome(true); setNuovoNome(profilo.username || profilo.nome) }}
+                                                    >
+                                                        <i className="bi bi-pencil-square fs-6"></i>
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {modificaNome ? (
+                                                <div className="mt-2">
+                                                    <input
+                                                        type="text"
+                                                        className="form-control mb-2"
+                                                        value={nuovoNome}
+                                                        onChange={e => setNuovoNome(e.target.value)}
+                                                        style={{ borderRadius: '10px' }}
+                                                    />
+                                                    <div className="d-flex gap-2">
+                                                        <button className="btn btn-sm fw-semibold" style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }}>
+                                                            Salva
+                                                        </button>
+                                                        <button className="btn btn-sm btn-outline-secondary fw-semibold" style={{ borderRadius: '8px' }} onClick={() => setModificaNome(false)}>
+                                                            Annulla
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <span className="fw-bold">{profilo.username || profilo.nome}</span>
+                                            )}
                                         </li>
 
                                         <li className="list-group-item d-flex flex-column flex-sm-row justify-content-between px-0 py-3">
