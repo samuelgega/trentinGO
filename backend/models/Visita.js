@@ -19,6 +19,11 @@ const schemaVisita = new mongoose.Schema({
     timestamp: {
         type: Date,
         default: Date.now
+    },
+    punteggio: {
+        type: Number,
+        required: true,
+        default: 0
     }
 })
 
