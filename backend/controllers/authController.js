@@ -94,7 +94,7 @@ const richiestaResetPassword = async (req, res) => {
         utente.scadenzaResetToken = scadenzaResetToken
         await utente.save()
 
-        inviaEmail(utente.email, "Istruzioni per il reset della password", `Ciao ${utente.username ?? utente.nome},\n\nHai richiesto di resettare la tua password. Clicca sul link qui sotto per impostare una nuova password:\n\nhttp://localhost:3000/auth/reimposta-password/${tk}<\n\nSe non hai richiesto questo reset, ignora questa email.\n`)
+        inviaEmail(utente.email, "Istruzioni per il reset della password", `Ciao ${utente.username ?? utente.nome},\n\nHai richiesto di resettare la tua password. Clicca sul link qui sotto per impostare una nuova password:\n\nhttp://localhost:3000/auth/reimposta-password/${tk}\n\nSe non hai richiesto questo reset, ignora questa email.\n`)
         return res.status(200).json({ message: "E' stata mandata una mail con le istruzioni per il recupero password" })
     } catch (error) {
         console.error("Errore nel reset password", error)
@@ -171,39 +171,4 @@ const visualizzaProfilo = async (req, res) => {
     }
 }
 
-const modificaProfilo = async (req, res) => {
-    try {
-        const { idUtente } = req.params
-        let utente = (await Giocatore.findById(idUtente) || await Gestore.findById(idUtente) || await Amministratore.findById(idUtente)).select('-password -resetToken -scadenzaResetToken')
-        if (!utente) {
-            return res.status(404).json({ error: "Utente non trovato" })
-        }
-
-        const { username, email } = req.body
-
-        if (username) {
-            const u = await Giocatore.findOne({ username: String(username).toLocaleLowerCase() }) || await Gestore.findOne({ username: String(username).toLocaleLowerCase() }) || await Amministratore.findOne({ username: String(username).toLocaleLowerCase() })
-            if (u) {
-                return res.status(409).json({ error: "Username già in uso" })
-            }
-            utente.username = username
-        }
-
-        if (email) {
-            const u = await Giocatore.findOne({ email: String(email).toLocaleLowerCase() }) || await Gestore.findOne({ email: String(email).toLocaleLowerCase() }) || await Amministratore.findOne({ email: String(email).toLocaleLowerCase() })
-            if (u) {
-                return res.status(409).json({ error: "Email già registrata" })
-            }
-            utente.email = email
-        }
-
-        utente.save()
-        return res.status(200).json({ message: "Utente aggiornato con successo", data: utente })
-    }
-    catch (error) {
-        console.error("Errore nella modifica del giocatore: ", error)
-        res.status(500).json({ error: "Errore interno del server" })
-    }
-}
-
-module.exports = { login, richiestaResetPassword, resetPassword, visualizzaProfilo, modificaProfilo }
+module.exports = { login, richiestaResetPassword, resetPassword, visualizzaProfilo }

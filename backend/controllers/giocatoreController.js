@@ -114,4 +114,39 @@ const loginGiocatore = async (req, res) => {
     }
 }
 
-module.exports = { registrazioneGiocatore, visualizzaGiocatori, loginGiocatore };
+const modificaProfilo = async (req, res) => {
+    try {
+        const { idUtente } = req.params
+        let utente = await Giocatore.findById(idUtente).select('-password -resetToken -scadenzaResetToken')
+        if (!utente) {
+            return res.status(404).json({ error: "Utente non trovato" })
+        }
+
+        const { username, email } = req.body
+
+        if (username) {
+            const u = await Giocatore.findOne({ username: String(username).toLocaleLowerCase() }) || await Gestore.findOne({ username: String(username).toLocaleLowerCase() }) || await Amministratore.findOne({ username: String(username).toLocaleLowerCase() })
+            if (u) {
+                return res.status(409).json({ error: "Username già in uso" })
+            }
+            utente.username = username
+        }
+
+        if (email) {
+            const u = await Giocatore.findOne({ email: String(email).toLocaleLowerCase() }) || await Gestore.findOne({ email: String(email).toLocaleLowerCase() }) || await Amministratore.findOne({ email: String(email).toLocaleLowerCase() })
+            if (u) {
+                return res.status(409).json({ error: "Email già registrata" })
+            }
+            utente.email = email
+        }
+
+        utente.save()
+        return res.status(200).json({ message: "Utente aggiornato con successo", data: utente })
+    }
+    catch (error) {
+        console.error("Errore nella modifica del giocatore: ", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { registrazioneGiocatore, visualizzaGiocatori, loginGiocatore, modificaProfilo };

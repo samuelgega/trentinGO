@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const Giocatore = require("../controllers/giocatoreController");
-const Auth = require('../controllers/authController')
 const { verificaToken, requireRuolo, autorizzaModifica } = require("../middlewares/authMiddleware");
 
 //route per la visualizzazione di tutti i giocatori
@@ -15,6 +14,6 @@ router.post("/registrazione", Giocatore.registrazioneGiocatore);
 router.post("/login", Giocatore.loginGiocatore);
 
 //modifica utente
-router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('giocatore'), Auth.modificaProfilo)
+router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('giocatore'), Giocatore.modificaProfilo)
 
 module.exports = router;

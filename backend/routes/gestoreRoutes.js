@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 
 const Gestore = require("../controllers/gestoreController");
-const Auth = require('../controllers/authController')
 const { verificaToken, requireRuolo, autorizzaModifica } = require("../middlewares/authMiddleware");
 
 //route per la visualizzazione di tutti i gestori
@@ -24,6 +23,6 @@ router.get("/:id", verificaToken, requireRuolo('amministratore'), Gestore.visual
 router.put("/abilitato/:id", verificaToken, requireRuolo('amministratore'), Gestore.abilitaGestore);
 
 //modifica utente
-router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('gestore'), Auth.modificaProfilo)
+router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('gestore'), Gestore.modificaProfilo)
 
 module.exports = router;

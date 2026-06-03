@@ -2,7 +2,6 @@ const express = require('express')
 const router = express.Router()
 
 const Amministratore = require('../controllers/amministratoreController')
-const Auth = require('../controllers/authController')
 const { verificaToken, requireRuolo, autorizzaModifica } = require('../middlewares/authMiddleware')
 
 //rotta per la visualizzazione degli amministratori
@@ -15,6 +14,6 @@ router.post('/', verificaToken, requireRuolo('amministratore'), Amministratore.c
 router.post('/login', Amministratore.loginAmministratore)
 
 //modifica utente
-router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('amministratore'), Auth.modificaProfilo)
+router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('amministratore'), Amministratore.modificaProfilo)
 
 module.exports = router
