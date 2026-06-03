@@ -176,6 +176,26 @@ const HomeProfilo = () =>{
         }
     }
 
+    const handleEliminaAccount = async () => {
+        const token = localStorage.getItem('token')
+        try {
+            const response = await fetch('http://localhost:3001/api/v1/eliminaAccount', {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+
+            if (response.ok) {
+                localStorage.clear()
+                navigate('/')
+            } else {
+                const json = await response.json()
+                showAlert("Errore", json.error || "Impossibile eliminare l'account", "danger")
+            }
+        } catch (error) {
+            showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+        }
+    }
+
     //funzione per il cambio password
     const handleCambiaPassword = async () => {
 
@@ -457,7 +477,7 @@ const HomeProfilo = () =>{
                                     style={{ borderRadius: '10px' }}
                                     onClick={() => {
                                         setMostraModaleEliminazione(false)
-                                        // handleEliminaAccount() — collegare API quando disponibile
+                                        handleEliminaAccount()
                                     }}
                                 >
                                     Elimina definitivamente

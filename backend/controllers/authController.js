@@ -211,4 +211,29 @@ const cambiaPassword = async (req, res) => {
     }
 }
 
-module.exports = { login, richiestaResetPassword, resetPassword, visualizzaProfilo, cambiaPassword }
+const eliminaAccount = async (req, res) => {
+    try {
+        const userId = req.utente.id
+        const ruolo = req.utente.ruolo
+
+        let risultato = null
+        if (ruolo === 'giocatore') {
+            risultato = await Giocatore.findByIdAndDelete(userId)
+        } else if (ruolo === 'gestore') {
+            risultato = await Gestore.findByIdAndDelete(userId)
+        } else if (ruolo === 'amministratore') {
+            risultato = await Amministratore.findByIdAndDelete(userId)
+        }
+
+        if (!risultato) {
+            return res.status(404).json({ error: "Utente non trovato" })
+        }
+
+        res.status(200).json({ message: "Account eliminato con successo" })
+    } catch (error) {
+        console.error("Errore nell'eliminazione dell'account", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { login, richiestaResetPassword, resetPassword, visualizzaProfilo, cambiaPassword, eliminaAccount }
