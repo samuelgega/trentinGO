@@ -52,6 +52,47 @@ const HomeProfilo = () =>{
         recuperaDati();
     }, [navigate, showAlert]);
 
+    const salvaNome = async () => {
+        if (!nuovoNome.trim()) {
+            showAlert("Errore", "Il nome non può essere vuoto", "warning")
+            return
+        }
+        if (nuovoNome.trim() === (profilo.username || profilo.nome)) return
+
+        const token = localStorage.getItem('token')
+        const userId = localStorage.getItem('userId')
+
+        const endpoint = profilo.ruolo === 'giocatore'
+            ? `http://localhost:3001/api/v1/giocatori/modificaUtente/${userId}`
+            : profilo.ruolo === 'gestore'
+            ? `http://localhost:3001/api/v1/gestori/modificaUtente/${userId}`
+            : `http://localhost:3001/api/v1/amministratori/modificaUtente/${userId}`
+
+        const campo = profilo.ruolo === 'gestore' ? { nome: nuovoNome } : { username: nuovoNome }
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(campo)
+            })
+            const json = await response.json()
+
+            if (response.ok) {
+                setProfilo(p => ({ ...p, ...campo }))
+                setModificaNome(false)
+                showAlert("Successo", "Nome aggiornato con successo", "success")
+            } else {
+                showAlert("Errore", json.error || "Impossibile aggiornare il nome", "danger")
+            }
+        } catch (error) {
+            showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+        }
+    }
+
     const validaPassword = () => {
         const errori = {}
         if (!datiPassword.attuale) errori.attuale = "Inserisci la password attuale"
@@ -141,7 +182,12 @@ const HomeProfilo = () =>{
                                                         style={{ borderRadius: '10px' }}
                                                     />
                                                     <div className="d-flex gap-2">
-                                                        <button className="btn btn-sm fw-semibold" style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }}>
+                                                        <button
+                                                            className="btn btn-sm fw-semibold"
+                                                            style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }}
+                                                            onClick={salvaNome}
+                                                            disabled={nuovoNome.trim() === (profilo.username || profilo.nome)}
+                                                        >
                                                             Salva
                                                         </button>
                                                         <button className="btn btn-sm btn-outline-secondary fw-semibold" style={{ borderRadius: '8px' }} onClick={() => setModificaNome(false)}>

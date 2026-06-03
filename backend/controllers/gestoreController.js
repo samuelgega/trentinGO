@@ -196,14 +196,14 @@ const modificaProfilo = async (req, res) => {
             return res.status(404).json({ error: "Utente non trovato" })
         }
 
-        const { username, email } = req.body
+        const { nome, email } = req.body
 
-        if (username) {
-            const u = await Giocatore.findOne({ username: String(username).toLocaleLowerCase() }) || await Gestore.findOne({ username: String(username).toLocaleLowerCase() }) || await Amministratore.findOne({ username: String(username).toLocaleLowerCase() })
+        if (nome) {
+            const u = await Gestore.findOne({ nome: String(nome) })
             if (u) {
-                return res.status(409).json({ error: "Username già in uso" })
+                return res.status(409).json({ error: "Nome già in uso" })
             }
-            utente.username = username
+            utente.nome = nome
         }
 
         if (email) {
