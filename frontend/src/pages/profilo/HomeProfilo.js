@@ -18,6 +18,7 @@ const HomeProfilo = () =>{
     const [modificaPassword, setModificaPassword] = useState(false)
     const [datiPassword, setDatiPassword] = useState({ attuale: '', nuova: '', conferma: '' })
     const [erroriPassword, setErroriPassword] = useState({})
+    const [mostraModaleEliminazione, setMostraModaleEliminazione] = useState(false)
 
 
     useEffect(() => {
@@ -409,7 +410,10 @@ const HomeProfilo = () =>{
                                                 Cambia Password
                                             </button>
                                         )}
-                                        <button className="btn btn-outline-danger py-3 fw-semibold text-start" >
+                                        <button
+                                            className="btn btn-outline-danger py-3 fw-semibold text-start"
+                                            onClick={() => setMostraModaleEliminazione(true)}
+                                        >
                                             Elimina l'account
                                         </button>
                                     </div>
@@ -420,6 +424,49 @@ const HomeProfilo = () =>{
                     </div>
                 </div>
             </div>
+
+            {/* Modale conferma eliminazione */}
+            {mostraModaleEliminazione && (
+                <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content border-0" style={{ borderRadius: '16px' }}>
+                            <div className="modal-body p-4">
+                                <div className="text-center mb-3">
+                                    <span className="material-symbols-outlined text-danger" style={{ fontSize: '3rem' }}>
+                                        warning
+                                    </span>
+                                </div>
+                                <h5 className="fw-bold text-center mb-2">Eliminare l'account?</h5>
+                                <p className="text-muted text-center mb-1">
+                                    Questa azione è <strong>irreversibile</strong>. Tutti i tuoi dati verranno cancellati definitivamente.
+                                </p>
+                                <p className="text-center text-danger fw-semibold small">
+                                    Perderai tutti i tuoi progressi e i punti esperienza accumulati.
+                                </p>
+                            </div>
+                            <div className="modal-footer border-0 pt-0 px-4 pb-4 d-flex gap-2">
+                                <button
+                                    className="btn btn-outline-secondary fw-semibold flex-fill"
+                                    style={{ borderRadius: '10px' }}
+                                    onClick={() => setMostraModaleEliminazione(false)}
+                                >
+                                    Annulla
+                                </button>
+                                <button
+                                    className="btn btn-danger fw-semibold flex-fill"
+                                    style={{ borderRadius: '10px' }}
+                                    onClick={() => {
+                                        setMostraModaleEliminazione(false)
+                                        // handleEliminaAccount() — collegare API quando disponibile
+                                    }}
+                                >
+                                    Elimina definitivamente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
