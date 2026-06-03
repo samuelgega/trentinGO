@@ -16,4 +16,8 @@ router.post('/login', Amministratore.loginAmministratore)
 //modifica utente
 router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('amministratore'), Amministratore.modificaProfilo)
 
+//elimina utente
+router.delete('/eliminaUtente/:idUtente', verificaToken, autorizzaModifica('amministratore'), Amministratore.eliminaProfilo)
+
+
 module.exports = router

@@ -25,4 +25,8 @@ router.put("/abilitato/:id", verificaToken, requireRuolo('amministratore'), Gest
 //modifica utente
 router.put('/modificaUtente/:idUtente', verificaToken, autorizzaModifica('gestore'), Gestore.modificaProfilo)
 
+//elimina utente
+router.delete('/eliminaUtente/:idUtente', verificaToken, autorizzaModifica('gestore'), Gestore.eliminaProfilo)
+
+
 module.exports = router;
