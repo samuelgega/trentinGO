@@ -93,6 +93,45 @@ const HomeProfilo = () =>{
         }
     }
 
+    const salvaEmail = async () => {
+        if (!nuovaEmail.trim()) {
+            showAlert("Errore", "L'email non può essere vuota", "warning")
+            return
+        }
+        if (nuovaEmail.trim() === profilo.email) return
+
+        const token = localStorage.getItem('token')
+        const userId = localStorage.getItem('userId')
+
+        const endpoint = profilo.ruolo === 'giocatore'
+            ? `http://localhost:3001/api/v1/giocatori/modificaUtente/${userId}`
+            : profilo.ruolo === 'gestore'
+            ? `http://localhost:3001/api/v1/gestori/modificaUtente/${userId}`
+            : `http://localhost:3001/api/v1/amministratori/modificaUtente/${userId}`
+
+        try {
+            const response = await fetch(endpoint, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: nuovaEmail.trim() })
+            })
+            const json = await response.json()
+
+            if (response.ok) {
+                setProfilo(p => ({ ...p, email: nuovaEmail.trim() }))
+                setModificaEmail(false)
+                showAlert("Successo", "Email aggiornata con successo", "success")
+            } else {
+                showAlert("Errore", json.error || "Impossibile aggiornare l'email", "danger")
+            }
+        } catch (error) {
+            showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+        }
+    }
+
     const validaPassword = () => {
         const errori = {}
         if (!datiPassword.attuale) errori.attuale = "Inserisci la password attuale"
@@ -222,7 +261,12 @@ const HomeProfilo = () =>{
                                                         style={{ borderRadius: '10px' }}
                                                     />
                                                     <div className="d-flex gap-2">
-                                                        <button className="btn btn-sm fw-semibold" style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }}>
+                                                        <button
+                                                            className="btn btn-sm fw-semibold"
+                                                            style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }}
+                                                            onClick={salvaEmail}
+                                                            disabled={nuovaEmail.trim() === profilo.email}
+                                                        >
                                                             Salva
                                                         </button>
                                                         <button className="btn btn-sm btn-outline-secondary fw-semibold" style={{ borderRadius: '8px' }} onClick={() => setModificaEmail(false)}>
