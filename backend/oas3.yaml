@@ -824,6 +824,41 @@ paths:
                   type: string
                   x-stoplight:
                     id: 5giexn1aus5an
+  /gestori/eliminaUtente/{idUtente}:
+    delete:
+      summary: Elimina definitivamente il profilo di un gestore
+      tags:
+        - gestori
+      security:
+        - token: []
+      parameters:
+        - in: path
+          name: idUtente
+          required: true
+          description: L'ID univoco del gestore da eliminare
+          schema:
+            type: string
+            pattern: "^[a-fA-F0-9]{24}$"
+      responses:
+        "200":
+          description: Gestore eliminato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Gestore eliminato con successo
+        "401":
+          description: Accesso negato, token mancante, scaduto o non valido
+        "403":
+          description: Permessi insufficienti (Non sei il proprietario o un amministratore)
+        "404":
+          description: Gestore non trovato
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: eliminaGestore
   "/gestori/abilitato/{id}":
     parameters:
       - in: path
@@ -1335,6 +1370,41 @@ paths:
                   type: string
                   x-stoplight:
                     id: a7fh0x6nk3p35
+  /giocatori/eliminaUtente/{idUtente}:
+    delete:
+      summary: Elimina definitivamente il profilo di un giocatore
+      tags:
+        - giocatori
+      security:
+        - token: []
+      parameters:
+        - in: path
+          name: idUtente
+          required: true
+          description: L'ID univoco del giocatore da eliminare
+          schema:
+            type: string
+            pattern: "^[a-fA-F0-9]{24}$"
+      responses:
+        "200":
+          description: Giocatore eliminato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Giocatore eliminato con successo
+        "401":
+          description: Accesso negato, token mancante, scaduto o non valido
+        "403":
+          description: Permessi insufficienti (Non sei il proprietario o un amministratore)
+        "404":
+          description: Giocatore non trovato
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: eliminaGiocatore
   "/amministratori/{id}":
     parameters:
       - schema:
@@ -1448,6 +1518,41 @@ paths:
                   type: string
                   x-stoplight:
                     id: deg9hr1uqco2u
+  /amministratori/eliminaUtente/{idUtente}:
+    delete:
+      summary: Elimina definitivamente il profilo di un amministratore
+      tags:
+        - amministratori
+      security:
+        - token: []
+      parameters:
+        - in: path
+          name: idUtente
+          required: true
+          description: L'ID univoco dell'amministratore da eliminare
+          schema:
+            type: string
+            pattern: "^[a-fA-F0-9]{24}$"
+      responses:
+        "200":
+          description: Amministratore eliminato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Amministratore eliminato con successo
+        "401":
+          description: Accesso negato, token mancante, scaduto o non valido
+        "403":
+          description: Permessi insufficienti o tentativo di eliminare un altro amministratore
+        "404":
+          description: Amministratore non trovato
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: eliminaAmministratore
 components:
   responses:
     ErrorResponse:
