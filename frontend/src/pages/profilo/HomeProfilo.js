@@ -15,6 +15,9 @@ const HomeProfilo = () =>{
     const [nuovoNome, setNuovoNome] = useState('')
     const [modificaEmail, setModificaEmail] = useState(false)
     const [nuovaEmail, setNuovaEmail] = useState('')
+    const [modificaPassword, setModificaPassword] = useState(false)
+    const [datiPassword, setDatiPassword] = useState({ attuale: '', nuova: '', conferma: '' })
+    const [erroriPassword, setErroriPassword] = useState({})
 
 
     useEffect(() => {
@@ -48,6 +51,17 @@ const HomeProfilo = () =>{
 
         recuperaDati();
     }, [navigate, showAlert]);
+
+    const validaPassword = () => {
+        const errori = {}
+        if (!datiPassword.attuale) errori.attuale = "Inserisci la password attuale"
+        if (!datiPassword.nuova) errori.nuova = "Inserisci la nuova password"
+        else if (datiPassword.nuova.length < 8) errori.nuova = "La password deve essere di almeno 8 caratteri"
+        if (!datiPassword.conferma) errori.conferma = "Conferma la nuova password"
+        else if (datiPassword.nuova && datiPassword.nuova !== datiPassword.conferma) errori.conferma = "Le password non corrispondono"
+        setErroriPassword(errori)
+        return Object.keys(errori).length === 0
+    }
 
     //funzione per il cambio password
     const handleCambiaPassword = async () => {
@@ -217,12 +231,62 @@ const HomeProfilo = () =>{
                                 <div className="card-body p-4">
                                     <h6 className="text-muted fw-bold mb-3 small">SICUREZZA E ACCESSO</h6>
                                     <div className="d-grid gap-2">
-                                        <button 
-                                            className="btn btn-light border text-start py-3 fw-semibold text-dark"
-                                            onClick={handleCambiaPassword}
-                                        >
-                                            Cambia Password
-                                        </button>
+                                        {modificaPassword ? (
+                                            <div className="border rounded p-3" style={{ borderRadius: '10px' }}>
+                                                <div className="mb-2">
+                                                    <label className="form-label small fw-semibold text-secondary">PASSWORD ATTUALE</label>
+                                                    <input
+                                                        type="password"
+                                                        className={`form-control ${erroriPassword.attuale ? 'is-invalid' : ''}`}
+                                                        value={datiPassword.attuale}
+                                                        onChange={e => { setDatiPassword(p => ({ ...p, attuale: e.target.value })); setErroriPassword(p => ({ ...p, attuale: undefined })) }}
+                                                        style={{ borderRadius: '10px' }}
+                                                    />
+                                                    {erroriPassword.attuale && <div className="invalid-feedback">{erroriPassword.attuale}</div>}
+                                                </div>
+                                                <div className="mb-2">
+                                                    <label className="form-label small fw-semibold text-secondary">NUOVA PASSWORD</label>
+                                                    <input
+                                                        type="password"
+                                                        className={`form-control ${erroriPassword.nuova ? 'is-invalid' : ''}`}
+                                                        value={datiPassword.nuova}
+                                                        onChange={e => { setDatiPassword(p => ({ ...p, nuova: e.target.value })); setErroriPassword(p => ({ ...p, nuova: undefined })) }}
+                                                        style={{ borderRadius: '10px' }}
+                                                    />
+                                                    {erroriPassword.nuova && <div className="invalid-feedback">{erroriPassword.nuova}</div>}
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label className="form-label small fw-semibold text-secondary">CONFERMA NUOVA PASSWORD</label>
+                                                    <input
+                                                        type="password"
+                                                        className={`form-control ${erroriPassword.conferma ? 'is-invalid' : ''}`}
+                                                        value={datiPassword.conferma}
+                                                        onChange={e => { setDatiPassword(p => ({ ...p, conferma: e.target.value })); setErroriPassword(p => ({ ...p, conferma: undefined })) }}
+                                                        style={{ borderRadius: '10px' }}
+                                                    />
+                                                    {erroriPassword.conferma && <div className="invalid-feedback">{erroriPassword.conferma}</div>}
+                                                </div>
+                                                <div className="d-flex gap-2">
+                                                    <button className="btn btn-sm fw-semibold" style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }} onClick={validaPassword}>
+                                                        Salva
+                                                    </button>
+                                                    <button
+                                                        className="btn btn-sm btn-outline-secondary fw-semibold"
+                                                        style={{ borderRadius: '8px' }}
+                                                        onClick={() => { setModificaPassword(false); setDatiPassword({ attuale: '', nuova: '', conferma: '' }) }}
+                                                    >
+                                                        Annulla
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <button
+                                                className="btn btn-light border text-start py-3 fw-semibold text-dark"
+                                                onClick={() => setModificaPassword(true)}
+                                            >
+                                                Cambia Password
+                                            </button>
+                                        )}
                                         <button className="btn btn-outline-danger py-3 fw-semibold text-start" >
                                             Elimina l'account
                                         </button>
