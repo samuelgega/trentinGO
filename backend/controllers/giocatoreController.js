@@ -149,4 +149,18 @@ const modificaProfilo = async (req, res) => {
     }
 }
 
-module.exports = { registrazioneGiocatore, visualizzaGiocatori, loginGiocatore, modificaProfilo };
+const eliminaProfilo = async (req,res) => {
+    try {
+        const idDaEliminare = req.params.idUtente; 
+        
+        const eliminato = await Giocatore.findByIdAndDelete(idDaEliminare);
+        
+        if (!eliminato) return res.status(404).json({ error: "Giocatore non trovato" });
+        
+        res.status(200).json({ message: "Giocatore eliminato con successo" });
+    } catch (error) {
+        res.status(500).json({ error: "Errore interno" });
+    }
+}
+
+module.exports = { registrazioneGiocatore, visualizzaGiocatori, loginGiocatore, modificaProfilo, eliminaProfilo };
