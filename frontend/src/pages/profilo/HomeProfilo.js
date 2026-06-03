@@ -13,6 +13,8 @@ const HomeProfilo = () =>{
     const [profilo, setProfilo] = useState(null);
     const [modificaNome, setModificaNome] = useState(false)
     const [nuovoNome, setNuovoNome] = useState('')
+    const [modificaEmail, setModificaEmail] = useState(false)
+    const [nuovaEmail, setNuovaEmail] = useState('')
 
 
     useEffect(() => {
@@ -138,9 +140,39 @@ const HomeProfilo = () =>{
                                             )}
                                         </li>
 
-                                        <li className="list-group-item d-flex flex-column flex-sm-row justify-content-between px-0 py-3">
-                                            <span className="text-secondary fw-semibold mb-1 mb-sm-0">Email Registrata</span>
-                                            <span className="fw-medium text-muted">{profilo.email}</span>
+                                        <li className="list-group-item px-0 py-3">
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <span className="text-secondary fw-semibold">Email Registrata</span>
+                                                {!modificaEmail && (
+                                                    <button
+                                                        className="btn btn-sm btn-link text-secondary p-0"
+                                                        onClick={() => { setModificaEmail(true); setNuovaEmail(profilo.email) }}
+                                                    >
+                                                        <i className="bi bi-pencil-square fs-6"></i>
+                                                    </button>
+                                                )}
+                                            </div>
+                                            {modificaEmail ? (
+                                                <div className="mt-2">
+                                                    <input
+                                                        type="email"
+                                                        className="form-control mb-2"
+                                                        value={nuovaEmail}
+                                                        onChange={e => setNuovaEmail(e.target.value)}
+                                                        style={{ borderRadius: '10px' }}
+                                                    />
+                                                    <div className="d-flex gap-2">
+                                                        <button className="btn btn-sm fw-semibold" style={{ backgroundColor: '#037149', color: 'white', borderRadius: '8px' }}>
+                                                            Salva
+                                                        </button>
+                                                        <button className="btn btn-sm btn-outline-secondary fw-semibold" style={{ borderRadius: '8px' }} onClick={() => setModificaEmail(false)}>
+                                                            Annulla
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <span className="fw-medium text-muted">{profilo.email}</span>
+                                            )}
                                         </li>
 
                                         {profilo.ruolo === 'giocatore' && (
