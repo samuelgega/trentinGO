@@ -6,5 +6,6 @@ const { verificaToken, autorizzaVisita } = require('../middlewares/authMiddlewar
 
 //rotta per la registrazione visita di un PDI
 router.post('/pdi', verificaToken, autorizzaVisita, VisitaController.registraPDI)
+router.get('/giocatore', verificaToken, VisitaController.getVisiteGiocatore)
 
 module.exports = router

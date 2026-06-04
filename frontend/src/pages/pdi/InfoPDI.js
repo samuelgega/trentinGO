@@ -2,16 +2,73 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAlert } from '../../contexts/AlertController';
+import NotificaVisita from '../../components/homeComponents/NotificaVisita';
 
 const InfoPDI = () => {
 
     const { id } = useParams();
     const navigate = useNavigate();
     const { showAlert } = useAlert();
-    
+
     const [pdi, setPdi] = useState(null);
     const [fotoGrandeIndex, setFotoGrandeIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+    const ruolo = localStorage.getItem('ruolo')
+    const [caricamento, setCaricamento] = useState(false)
+    const [giaVisitato, setGiaVisitato] = useState(false)
+    const [notifica, setNotifica] = useState(null)
+
+    const registraVisita = () => {
+        if (!navigator.geolocation) {
+            showAlert("Errore", "Il tuo dispositivo non supporta la geolocalizzazione", "danger")
+            return
+        }
+        setCaricamento(true)
+        navigator.geolocation.getCurrentPosition(
+            async (posizione) => {
+                const lon = posizione.coords.longitude
+                const lat = posizione.coords.latitude
+                const token = localStorage.getItem('token')
+                const idGiocatore = localStorage.getItem('userId')
+                try {
+                    const response = await fetch('http://localhost:3001/api/v1/visite/pdi', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ idGiocatore, idPDI: pdi._id, posizione: [lon, lat] })
+                    })
+                    const json = await response.json()
+                    if (response.ok) {
+                        setGiaVisitato(true)
+                        setNotifica({ nome: pdi.properties.nome, punteggio: pdi.properties.punteggio, levelUp: json.levelUp })
+                    } else if (response.status === 409) {
+                        setGiaVisitato(true)
+                        showAlert("Già visitato", "Hai già registrato una visita per questo PDI", "warning")
+                    } else if (response.status === 422) {
+                        showAlert("Troppo lontano", json.error, "warning")
+                    } else {
+                        showAlert("Errore", json.error || "Impossibile registrare la visita", "danger")
+                    }
+                } catch {
+                    showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+                } finally {
+                    setCaricamento(false)
+                }
+            },
+            (errore) => {
+                setCaricamento(false)
+                if (errore.code === errore.PERMISSION_DENIED) {
+                    showAlert("Permesso negato", "Abilita la geolocalizzazione per registrare la visita", "warning")
+                } else {
+                    showAlert("Errore", "Impossibile ottenere la posizione", "danger")
+                }
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        )
+    }
 
     // Prendo i dati del singolo PDI
     useEffect(() => {
@@ -35,6 +92,20 @@ const InfoPDI = () => {
     
         fetchPDI()
     }, [id, navigate, showAlert])
+
+    useEffect(() => {
+        if (!pdi || ruolo !== 'giocatore') return
+        const token = localStorage.getItem('token')
+        fetch('http://localhost:3001/api/v1/visite/giocatore', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => {
+                const visitato = json.data?.some(v => v.idPDI === pdi._id)
+                setGiaVisitato(visitato)
+            })
+            .catch(() => {})
+    }, [pdi, ruolo])
 
     //guardia per completare i dati di pdi
     if (!pdi) {
@@ -86,24 +157,54 @@ const InfoPDI = () => {
             <div className="container" style={{ marginTop: '-40px', position: 'relative', zIndex: 5 }}>
                 <div className="row justify-content-center">
                     <div className="col-12 col-lg-9">
-                        <div className="card border-0 shadow-sm p-4 p-md-5" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
-                            
-                            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-4 border-bottom">
-                                {/*Categoria */}
-                                <div>
-                                    <span className="badge text-uppercase px-3 py-2 mb-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
-                                        {pdi.properties.categoria || 'Punto di interesse'}
-                                    </span>
-                                    {/*Nome */}
-                                    <h1 className="fw-bold text-dark m-0" style={{ letterSpacing: '-0.02em' }}>{pdi.properties.nome}</h1>
+                        <div className="card border-0 shadow-sm p-4 p-md-5 position-relative" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
+
+                            {/* Badge visitato in alto a destra */}
+                            {giaVisitato && ruolo === 'giocatore' && (
+                                <div className="position-absolute d-flex align-items-center gap-2 px-3 py-2 shadow" style={{
+                                    top: '20px', right: '20px',
+                                    backgroundColor: '#037149',
+                                    borderRadius: '999px',
+                                    zIndex: 10
+                                }}>
+                                    <span className="material-symbols-outlined fill text-white" style={{ fontSize: '1.1rem' }}>thumb_up</span>
+                                    <span className="text-white fw-bold" style={{ fontSize: '0.82rem', letterSpacing: '0.03em' }}>VISITATO</span>
                                 </div>
-                                
-                                {/*Punteggio*/}
-                                <div 
-                                    className="d-flex align-items-center gap-2 px-3 py-2 rounded-pill align-self-start align-self-sm-center shadow-sm"
-                                    style={{ backgroundColor: '#e6f4ea', color: '#137b52', fontWeight: '700', fontSize: '1.1rem' }}
-                                >
-                                    {pdi.properties.punteggio}
+                            )}
+
+                            {/* Header: categoria + nome */}
+                            <div className="mb-4 pb-4 border-bottom">
+                                <span className="badge text-uppercase px-3 py-2 mb-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
+                                    {pdi.properties.categoria || 'Punto di interesse'}
+                                </span>
+                                <h1 className="fw-bold text-dark mb-0" style={{ letterSpacing: '-0.02em' }}>{pdi.properties.nome}</h1>
+                            </div>
+
+                            {/* Info rapide: prezzo + XP */}
+                            <div className="row g-3 mb-5">
+                                <div className="col-6">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex" style={{ backgroundColor: '#037149' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>payments</span>
+                                        </div>
+                                        <div>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.7rem' }}>INGRESSO</small>
+                                            <span className="fw-bold text-dark">
+                                                {pdi.properties.prezzo === 0 || !pdi.properties.prezzo ? 'Gratuito' : `${pdi.properties.prezzo} €`}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-6">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3" style={{ backgroundColor: '#e6f4ea', border: '1px solid #c3e6cb' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex" style={{ backgroundColor: '#137b52' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>star</span>
+                                        </div>
+                                        <div>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.7rem' }}>PUNTI XP</small>
+                                            <span className="fw-bold" style={{ color: '#137b52' }}>{pdi.properties.punteggio}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -113,23 +214,6 @@ const InfoPDI = () => {
                                 <p className="text-secondary" style={{ fontSize: '1.1rem', lineHeight: '1.7', whiteSpace: 'pre-line' }}>
                                     {pdi.properties.descrizione || "Nessuna descrizione dettagliata disponibile al momento per questo splendido luogo del Trentino."}
                                 </p>
-                            </div>
-
-                            {/*Box per il prezzo */}
-                            <div className="row g-4 mb-4">
-                                <div className="col-12 col-md-6">
-                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
-                                        <div className="p-3 rounded-3 text-white d-flex" style={{ backgroundColor: '#037149' }}>
-                                            <span className="material-symbols-outlined">payments</span>
-                                        </div>
-                                        <div>
-                                            <small className="text-muted d-block uppercase fw-semibold" style={{ fontSize: '0.75rem' }}>PREZZO INGRESSO</small>
-                                            <span className="fw-bold text-dark fs-5">
-                                                {pdi.properties.prezzo === 0 || !pdi.properties.prezzo ? 'Gratuito' : `${pdi.properties.prezzo} €`}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             {/*Tutte le foto */}
@@ -168,22 +252,29 @@ const InfoPDI = () => {
                                 <button className="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-3" onClick={() => navigate(-1)}>
                                     Torna alla mappa
                                 </button>
-                                <button 
-                                    className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm" 
-                                    style={{ backgroundColor: '#137b52' }}
-                                    onClick={() => {
-                                        const lat = pdi.geometry.coordinates[1];
-                                        const lng = pdi.geometry.coordinates[0];
-                                        //pulisce il nome del luogo
-                                        const nomeLuogo = encodeURIComponent(pdi.properties.nome);
-                                        //Url per google maps 
-                                        let linkMaps = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-                                        //apre maps in una nuova scheda
-                                        window.open(linkMaps, '_blank');
-                                    }}
-                                >
-                                    Ottieni indicazioni
-                                </button>
+                                <div className="d-flex gap-2">
+                                    {ruolo === 'giocatore' && (
+                                        <button
+                                            className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
+                                            style={{ backgroundColor: giaVisitato ? '#6c757d' : '#037149' }}
+                                            onClick={registraVisita}
+                                            disabled={caricamento || giaVisitato}
+                                        >
+                                            {caricamento ? 'Localizzazione...' : giaVisitato ? 'Già visitato' : 'Registra visita'}
+                                        </button>
+                                    )}
+                                    <button
+                                        className="btn btn-outline-secondary px-5 py-2 fw-semibold rounded-3"
+                                        onClick={() => {
+                                            const lat = pdi.geometry.coordinates[1];
+                                            const lng = pdi.geometry.coordinates[0];
+                                            let linkMaps = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+                                            window.open(linkMaps, '_blank');
+                                        }}
+                                    >
+                                        Ottieni indicazioni
+                                    </button>
+                                </div>
 
                             </div>
 
@@ -256,6 +347,7 @@ const InfoPDI = () => {
                     </div>
                 </div>
             )}
+        <NotificaVisita notifica={notifica} onHide={() => setNotifica(null)} />
         </div>
     );
 };

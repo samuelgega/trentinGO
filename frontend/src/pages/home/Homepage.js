@@ -9,10 +9,24 @@ const Homepage = () => {
 
   const { showAlert } = useAlert();
 
-  // PDI attualmente selezionato (click su card o su marker mappa)
   const [pdiSelezionato, setPdiSelezionato] = useState(null);
-  // Lista completa dei PDI ricevuta dal backend
   const [listaPDI, setListaPDI] = useState([]);
+  const [pdiVisitati, setPdiVisitati] = useState(new Set());
+
+  useEffect(() => {
+    const ruolo = localStorage.getItem('ruolo')
+    if (ruolo !== 'giocatore') return
+    const token = localStorage.getItem('token')
+    fetch('http://localhost:3001/api/v1/visite/giocatore', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(r => r.json())
+      .then(json => {
+        const ids = new Set(json.data?.map(v => v.idPDI).filter(Boolean))
+        setPdiVisitati(ids)
+      })
+      .catch(() => {})
+  }, [])
 
   // Seleziona un PDI oppure lo deseleziona se è già quello attivo
   const togglePdiSelezionato = (pdi) => {
@@ -80,6 +94,7 @@ const Homepage = () => {
               pdiSelezionatoLista={pdiSelezionato}
               PdiSelezionatoMappa={setPdiSelezionato}
               resetMappaKey={resetMappaKey}
+              pdiVisitati={pdiVisitati}
             />
           </div>
 
@@ -94,6 +109,8 @@ const Homepage = () => {
               setCategoriaSelezionata={handleSetCategoria}
               PdiSelezionatoLista={togglePdiSelezionato}
               pdiSelezionatoMappa={pdiSelezionato}
+              pdiVisitati={pdiVisitati}
+              setPdiVisitati={setPdiVisitati}
             />
           </div>
 

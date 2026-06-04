@@ -12,6 +12,7 @@ const GestisciUtenti = () => {
     const [listaGiocatori, setListaGiocatori] = useState([])
     const [listaGestori, setListaGestori] = useState([]);
     const [listaAdmin, setListaAdmin] = useState([]);
+    const [utenteSelezionato, setUtenteSelezionato] = useState(null)
     const token = localStorage.getItem('token')
 
     useEffect(() => {
@@ -59,6 +60,32 @@ const GestisciUtenti = () => {
         recuperoAdmin();
 
     }, [token])
+
+    const eliminaUtente = async () => {
+        if (!utenteSelezionato) return
+        const { id, tipo } = utenteSelezionato
+        const endpoint = tipo === 'giocatore'
+            ? `http://localhost:3001/api/v1/giocatori/${id}`
+            : `http://localhost:3001/api/v1/gestori/${id}`
+        try {
+            const response = await fetch(endpoint, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            })
+            if (response.ok) {
+                if (tipo === 'giocatore') setListaGiocatori(p => p.filter(u => u._id !== id))
+                else setListaGestori(p => p.filter(u => u._id !== id))
+                showAlert("Successo", "Utente eliminato con successo", "success")
+            } else {
+                const json = await response.json()
+                showAlert("Errore", json.error || "Impossibile eliminare l'utente", "danger")
+            }
+        } catch (error) {
+            showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+        } finally {
+            setUtenteSelezionato(null)
+        }
+    }
 
     // Funzione per generare l'intestazione delle Card
     const cardHeader = (label, color, bottoneExtra = null) => (
@@ -111,7 +138,7 @@ const GestisciUtenti = () => {
                                                     <div className="fw-bold">{u.username}</div>
                                                     <div className="text-muted small">{u.email}</div>
                                                 </div>
-                                                <button className="btn btn-sm btn-outline-danger" onClick={() => showAlert("Elimina", `Vuoi eliminare ${u.username}?`, "danger")}>
+                                                <button className="btn btn-sm btn-outline-danger" onClick={() => setUtenteSelezionato({ id: u._id, nome: u.username, tipo: 'giocatore' })}>
                                                     Elimina
                                                 </button>
                                             </li>
@@ -136,7 +163,7 @@ const GestisciUtenti = () => {
                                                     <div className="text-muted small">{u.email}</div>
                                                     {renderBadgeGestore(u.abilitato)}
                                                 </div>
-                                                <button className="btn btn-sm btn-outline-danger" onClick={() => showAlert("Elimina", `Vuoi eliminare ${u.nome}?`, "danger")}>
+                                                <button className="btn btn-sm btn-outline-danger" onClick={() => setUtenteSelezionato({ id: u._id, nome: u.nome, tipo: 'gestore' })}>
                                                     Elimina
                                                 </button>
                                             </li>
@@ -167,9 +194,6 @@ const GestisciUtenti = () => {
                                                     <div className="fw-bold">{u.username}</div>
                                                     <div className="text-muted small">{u.email}</div>
                                                 </div>
-                                                <button className="btn btn-sm btn-outline-danger" onClick={() => showAlert("Elimina", `Vuoi rimuovere i privilegi a ${u.username}?`, "danger")}>
-                                                    Elimina
-                                                </button>
                                             </li>
                                         ))}
                                     </ul>
@@ -180,6 +204,39 @@ const GestisciUtenti = () => {
                     </div>
                 </div>
             </div>
+            {utenteSelezionato && (
+                <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex="-1">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content border-0" style={{ borderRadius: '16px' }}>
+                            <div className="modal-body p-4">
+                                <div className="text-center mb-3">
+                                    <i className="bi bi-exclamation-triangle-fill text-danger" style={{ fontSize: '3rem' }}></i>
+                                </div>
+                                <h5 className="fw-bold text-center mb-2">Eliminare l'utente?</h5>
+                                <p className="text-muted text-center mb-0">
+                                    Stai per eliminare <strong>{utenteSelezionato.nome}</strong>. Questa azione è <strong>irreversibile</strong>.
+                                </p>
+                            </div>
+                            <div className="modal-footer border-0 pt-0 px-4 pb-4 d-flex gap-2">
+                                <button
+                                    className="btn btn-outline-secondary fw-semibold flex-fill"
+                                    style={{ borderRadius: '10px' }}
+                                    onClick={() => setUtenteSelezionato(null)}
+                                >
+                                    Annulla
+                                </button>
+                                <button
+                                    className="btn btn-danger fw-semibold flex-fill"
+                                    style={{ borderRadius: '10px' }}
+                                    onClick={eliminaUtente}
+                                >
+                                    Elimina definitivamente
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }
