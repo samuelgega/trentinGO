@@ -14,6 +14,7 @@ const ICONE_CATEGORIA = {
 const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezionata, setCategoriaSelezionata, PdiSelezionatoLista, pdiSelezionatoMappa }) => {
 
     const navigate = useNavigate();
+    const ruolo = localStorage.getItem('ruolo')
 
     // Quando la mappa seleziona un PDI, scrolla automaticamente alla card corrispondente nella lista
     useEffect(() => {
@@ -112,11 +113,20 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                                                 {pdi.properties.descrizione || "Nessuna descrizione disponibile per questo luogo."}
                                                 </p>
                                         
-                                        {/* Pulsante Dettagli */}
-                                            <div className="d-flex justify-content-end">
-                                                    <button 
-                                                        className="btn text-white px-3 py-2 fw-semibold shadow-sm d-flex align-items-center gap-1"
-                                                        style={{ backgroundColor: '#037149', borderRadius: '10px', fontSize: '0.9rem' }}
+                                        {/* Pulsanti azione */}
+                                            <div className="d-flex justify-content-end gap-2">
+                                                    {ruolo === 'giocatore' && (
+                                                        <button
+                                                            className="btn text-white px-3 py-2 fw-semibold shadow-sm"
+                                                            style={{ backgroundColor: '#037149', borderRadius: '10px', fontSize: '0.9rem' }}
+                                                            onClick={(e) => { e.stopPropagation(); }}
+                                                        >
+                                                            Registra visita
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        className="btn btn-outline-secondary px-3 py-2 fw-semibold shadow-sm d-flex align-items-center gap-1"
+                                                        style={{ borderRadius: '10px', fontSize: '0.9rem' }}
                                                         onClick={(e) => { e.stopPropagation(); navigate(`/dettagli/${pdi._id}`) }}
                                                     >
                                                         Visualizza dettagli

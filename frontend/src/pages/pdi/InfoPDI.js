@@ -8,10 +8,12 @@ const InfoPDI = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { showAlert } = useAlert();
-    
+
     const [pdi, setPdi] = useState(null);
     const [fotoGrandeIndex, setFotoGrandeIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+    const ruolo = localStorage.getItem('ruolo')
 
     // Prendo i dati del singolo PDI
     useEffect(() => {
@@ -88,22 +90,39 @@ const InfoPDI = () => {
                     <div className="col-12 col-lg-9">
                         <div className="card border-0 shadow-sm p-4 p-md-5" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
                             
-                            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-4 border-bottom">
-                                {/*Categoria */}
-                                <div>
-                                    <span className="badge text-uppercase px-3 py-2 mb-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
-                                        {pdi.properties.categoria || 'Punto di interesse'}
-                                    </span>
-                                    {/*Nome */}
-                                    <h1 className="fw-bold text-dark m-0" style={{ letterSpacing: '-0.02em' }}>{pdi.properties.nome}</h1>
+                            {/* Header: categoria + nome */}
+                            <div className="mb-4 pb-4 border-bottom">
+                                <span className="badge text-uppercase px-3 py-2 mb-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
+                                    {pdi.properties.categoria || 'Punto di interesse'}
+                                </span>
+                                <h1 className="fw-bold text-dark mb-0" style={{ letterSpacing: '-0.02em' }}>{pdi.properties.nome}</h1>
+                            </div>
+
+                            {/* Info rapide: prezzo + XP */}
+                            <div className="row g-3 mb-5">
+                                <div className="col-6">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex" style={{ backgroundColor: '#037149' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>payments</span>
+                                        </div>
+                                        <div>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.7rem' }}>INGRESSO</small>
+                                            <span className="fw-bold text-dark">
+                                                {pdi.properties.prezzo === 0 || !pdi.properties.prezzo ? 'Gratuito' : `${pdi.properties.prezzo} €`}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
-                                
-                                {/*Punteggio*/}
-                                <div 
-                                    className="d-flex align-items-center gap-2 px-3 py-2 rounded-pill align-self-start align-self-sm-center shadow-sm"
-                                    style={{ backgroundColor: '#e6f4ea', color: '#137b52', fontWeight: '700', fontSize: '1.1rem' }}
-                                >
-                                    {pdi.properties.punteggio}
+                                <div className="col-6">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3" style={{ backgroundColor: '#e6f4ea', border: '1px solid #c3e6cb' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex" style={{ backgroundColor: '#137b52' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>star</span>
+                                        </div>
+                                        <div>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.7rem' }}>PUNTI XP</small>
+                                            <span className="fw-bold" style={{ color: '#137b52' }}>{pdi.properties.punteggio}</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -113,23 +132,6 @@ const InfoPDI = () => {
                                 <p className="text-secondary" style={{ fontSize: '1.1rem', lineHeight: '1.7', whiteSpace: 'pre-line' }}>
                                     {pdi.properties.descrizione || "Nessuna descrizione dettagliata disponibile al momento per questo splendido luogo del Trentino."}
                                 </p>
-                            </div>
-
-                            {/*Box per il prezzo */}
-                            <div className="row g-4 mb-4">
-                                <div className="col-12 col-md-6">
-                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
-                                        <div className="p-3 rounded-3 text-white d-flex" style={{ backgroundColor: '#037149' }}>
-                                            <span className="material-symbols-outlined">payments</span>
-                                        </div>
-                                        <div>
-                                            <small className="text-muted d-block uppercase fw-semibold" style={{ fontSize: '0.75rem' }}>PREZZO INGRESSO</small>
-                                            <span className="fw-bold text-dark fs-5">
-                                                {pdi.properties.prezzo === 0 || !pdi.properties.prezzo ? 'Gratuito' : `${pdi.properties.prezzo} €`}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             {/*Tutte le foto */}
@@ -168,22 +170,28 @@ const InfoPDI = () => {
                                 <button className="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-3" onClick={() => navigate(-1)}>
                                     Torna alla mappa
                                 </button>
-                                <button 
-                                    className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm" 
-                                    style={{ backgroundColor: '#137b52' }}
-                                    onClick={() => {
-                                        const lat = pdi.geometry.coordinates[1];
-                                        const lng = pdi.geometry.coordinates[0];
-                                        //pulisce il nome del luogo
-                                        const nomeLuogo = encodeURIComponent(pdi.properties.nome);
-                                        //Url per google maps 
-                                        let linkMaps = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-                                        //apre maps in una nuova scheda
-                                        window.open(linkMaps, '_blank');
-                                    }}
-                                >
-                                    Ottieni indicazioni
-                                </button>
+                                <div className="d-flex gap-2">
+                                    {ruolo === 'giocatore' && (
+                                        <button
+                                            className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
+                                            style={{ backgroundColor: '#037149' }}
+                                            onClick={() => {}}
+                                        >
+                                            Registra visita
+                                        </button>
+                                    )}
+                                    <button
+                                        className="btn btn-outline-secondary px-5 py-2 fw-semibold rounded-3"
+                                        onClick={() => {
+                                            const lat = pdi.geometry.coordinates[1];
+                                            const lng = pdi.geometry.coordinates[0];
+                                            let linkMaps = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+                                            window.open(linkMaps, '_blank');
+                                        }}
+                                    >
+                                        Ottieni indicazioni
+                                    </button>
+                                </div>
 
                             </div>
 
