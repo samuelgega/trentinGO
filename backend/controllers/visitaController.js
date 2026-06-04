@@ -63,7 +63,6 @@ const registraPDI = async (req, res) => {
         //controllo se ci sono le coordinate e se combaciano con quelle del pdi
         const result = posizioneSchema.safeParse(req.body.posizione)
         if (!result.success) {
-            console.log('[DEBUG] Errore di zod: ', result.error)
             return res.status(400).json({ error: "Posizione mancante o non valida" })
         }
         const [lon, lat] = result.data
@@ -95,8 +94,6 @@ const registraPDI = async (req, res) => {
 
         //controllo se c'è stato un levelUp
         const xpFinali = xpIniziali + p.properties.punteggio
-        console.log(`[DEBUG] Iniziali(${xpIniziali}) e finali(${xpFinali})`)
-        console.log(`[DEBUG] LVL_iniziale(${calcolaLivello(xpIniziali)}) e lvl_finale(${calcolaLivello(xpFinali)})`)
         if (calcolaLivello(xpIniziali) < calcolaLivello(xpFinali)) {
             risposta.levelUp = calcolaLivello(xpFinali)
         }
