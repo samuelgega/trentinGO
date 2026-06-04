@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAlert } from '../../contexts/AlertController';
+import NotificaVisita from '../../components/homeComponents/NotificaVisita';
 
 const InfoPDI = () => {
 
@@ -16,6 +17,7 @@ const InfoPDI = () => {
     const ruolo = localStorage.getItem('ruolo')
     const [caricamento, setCaricamento] = useState(false)
     const [giaVisitato, setGiaVisitato] = useState(false)
+    const [notifica, setNotifica] = useState(null)
 
     const registraVisita = () => {
         if (!navigator.geolocation) {
@@ -41,11 +43,7 @@ const InfoPDI = () => {
                     const json = await response.json()
                     if (response.ok) {
                         setGiaVisitato(true)
-                        if (json.levelUp) {
-                            showAlert("Sei salito di livello!", `Complimenti! Hai raggiunto il livello ${json.levelUp} 🎉`, "success")
-                        } else {
-                            showAlert("Visita registrata!", `Hai guadagnato ${pdi.properties.punteggio} XP`, "success")
-                        }
+                        setNotifica({ nome: pdi.properties.nome, punteggio: pdi.properties.punteggio, levelUp: json.levelUp })
                     } else if (response.status === 409) {
                         setGiaVisitato(true)
                         showAlert("Già visitato", "Hai già registrato una visita per questo PDI", "warning")
@@ -349,6 +347,7 @@ const InfoPDI = () => {
                     </div>
                 </div>
             )}
+        <NotificaVisita notifica={notifica} onHide={() => setNotifica(null)} />
         </div>
     );
 };

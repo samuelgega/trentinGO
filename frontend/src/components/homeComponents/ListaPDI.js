@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../../contexts/AlertController'
+import NotificaVisita from './NotificaVisita'
 
 // Mappa ogni categoria alla relativa icona Material Symbols
 const ICONE_CATEGORIA = {
@@ -18,6 +19,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
     const { showAlert } = useAlert()
     const ruolo = localStorage.getItem('ruolo')
     const [pdiInCaricamento, setPdiInCaricamento] = useState(null)
+    const [notifica, setNotifica] = useState(null)
 
     const registraVisita = (pdi) => {
         if (!navigator.geolocation) {
@@ -43,11 +45,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                     const json = await response.json()
                     if (response.ok) {
                         setPdiVisitati(prev => new Set([...prev, pdi._id]))
-                        if (json.levelUp) {
-                            showAlert("Sei salito di livello!", `Complimenti! Hai raggiunto il livello ${json.levelUp} 🎉`, "success")
-                        } else {
-                            showAlert("Visita registrata!", `Hai guadagnato ${pdi.properties.punteggio} XP`, "success")
-                        }
+                        setNotifica({ nome: pdi.properties.nome, punteggio: pdi.properties.punteggio, levelUp: json.levelUp })
                     } else if (response.status === 409) {
                         setPdiVisitati(prev => new Set([...prev, pdi._id]))
                         showAlert("Già visitato", "Hai già registrato una visita per questo PDI", "warning")
@@ -207,6 +205,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                     })
                 )}
             </div>
+            <NotificaVisita notifica={notifica} onHide={() => setNotifica(null)} />
         </div>
     );
 }

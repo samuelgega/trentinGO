@@ -258,6 +258,17 @@
     opacity: 0.5;
 }
 
+/* animazione notifica visita */
+@keyframes notifica-entra {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.7); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes notifica-esci {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    to   { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+}
+
 .pin-grigio-chiaro {
     filter: brightness(1.2) saturate(0);
 }
