@@ -159,8 +159,21 @@ const InfoPDI = () => {
             <div className="container" style={{ marginTop: '-40px', position: 'relative', zIndex: 5 }}>
                 <div className="row justify-content-center">
                     <div className="col-12 col-lg-9">
-                        <div className="card border-0 shadow-sm p-4 p-md-5" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
-                            
+                        <div className="card border-0 shadow-sm p-4 p-md-5 position-relative" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
+
+                            {/* Badge visitato in alto a destra */}
+                            {giaVisitato && ruolo === 'giocatore' && (
+                                <div className="position-absolute d-flex align-items-center gap-2 px-3 py-2 shadow" style={{
+                                    top: '20px', right: '20px',
+                                    backgroundColor: '#037149',
+                                    borderRadius: '999px',
+                                    zIndex: 10
+                                }}>
+                                    <span className="material-symbols-outlined fill text-white" style={{ fontSize: '1.1rem' }}>thumb_up</span>
+                                    <span className="text-white fw-bold" style={{ fontSize: '0.82rem', letterSpacing: '0.03em' }}>VISITATO</span>
+                                </div>
+                            )}
+
                             {/* Header: categoria + nome */}
                             <div className="mb-4 pb-4 border-bottom">
                                 <span className="badge text-uppercase px-3 py-2 mb-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>

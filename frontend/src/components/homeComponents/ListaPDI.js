@@ -12,27 +12,12 @@ const ICONE_CATEGORIA = {
     chiesa: 'church',
 }
 
-const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezionata, setCategoriaSelezionata, PdiSelezionatoLista, pdiSelezionatoMappa }) => {
+const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezionata, setCategoriaSelezionata, PdiSelezionatoLista, pdiSelezionatoMappa, pdiVisitati, setPdiVisitati }) => {
 
     const navigate = useNavigate();
     const { showAlert } = useAlert()
     const ruolo = localStorage.getItem('ruolo')
     const [pdiInCaricamento, setPdiInCaricamento] = useState(null)
-    const [pdiVisitati, setPdiVisitati] = useState(new Set())
-
-    useEffect(() => {
-        if (ruolo !== 'giocatore') return
-        const token = localStorage.getItem('token')
-        fetch('http://localhost:3001/api/v1/visite/giocatore', {
-            headers: { 'Authorization': `Bearer ${token}` }
-        })
-            .then(r => r.json())
-            .then(json => {
-                const ids = new Set(json.data?.map(v => v.idPDI).filter(Boolean))
-                setPdiVisitati(ids)
-            })
-            .catch(() => {})
-    }, [ruolo])
 
     const registraVisita = (pdi) => {
         if (!navigator.geolocation) {
@@ -160,11 +145,12 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                     pdiFiltrati.map((pdi) => {
                         // La card viene evidenziata se corrisponde al marker selezionato sulla mappa
                         const isSelezionato = pdiSelezionatoMappa && pdiSelezionatoMappa._id === pdi._id;
+                        const visitato = ruolo === 'giocatore' && pdiVisitati.has(pdi._id)
                         return (
                             <div
                                 id={`card-pdi-${pdi._id}`}
                                 key={pdi._id}
-                                className={`pdi-card user-select-none ${isSelezionato ? 'border-success border-2 shadow' : 'shadow-sm'}`}
+                                className={`pdi-card user-select-none ${isSelezionato ? 'border-success border-2 shadow' : visitato ? 'pdi-card--visitato shadow-sm' : 'shadow-sm'}`}
                                 style={{ cursor: 'pointer', transition: 'all 0.3s ease' }}
                                 onClick={() => PdiSelezionatoLista(pdi)}
                             >
@@ -175,7 +161,13 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                                         </h5>
                                         {/* Badge categoria mostrato solo se il campo è valorizzato */}
                                         {pdi.properties.categoria && (
-                                            <span className="pdi-badge-categoria">
+                                            <span
+                                                className="pdi-badge-categoria"
+                                                style={ruolo === 'giocatore' ? {
+                                                    backgroundColor: visitato ? 'rgba(3, 113, 73, 0.15)' : 'rgba(108, 117, 125, 0.12)',
+                                                    color: visitato ? '#037149' : '#6c757d'
+                                                } : {}}
+                                            >
                                                 {pdi.properties.categoria}
                                             </span>
                                         )}
