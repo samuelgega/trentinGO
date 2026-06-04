@@ -111,4 +111,12 @@ const registraPDI = async (req, res) => {
     }
 }
 
-module.exports = { registraPDI }
+const registraEvento = async (req,res) => {
+    try{
+
+    }catch (error){
+        
+    }
+}
+
+module.exports = { registraPDI, registraEvento }
