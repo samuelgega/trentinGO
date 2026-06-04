@@ -12,8 +12,7 @@ const HomeEventi = () => {
     const navigate = useNavigate()
 
     const [listaEventi, setListaEventi] = useState([])
-    const [cardsData, setCardsData] = useState([])
-    const [isEvPassAttivo, setEvPassAttivo] = useState(false)
+    const [filtroStato, setFiltroStato] = useState('attivi')
     const oggi = new Date()
 
     const ruolo = localStorage.getItem('ruolo')
@@ -89,11 +88,6 @@ const HomeEventi = () => {
                 new Date(a.properties.dataInizio) - new Date(b.properties.dataInizio)
             )
             setListaEventi(ordinati)
-            setCardsData(ordinati.filter(ev => {
-                const fine = new Date(ev.properties.dataFine)
-                fine.setHours(23, 59, 59, 999)
-                return fine.getTime() >= oggi.getTime()
-            }))
         } catch (error) {
             console.error("Errore di connessione:", error)
             showAlert("Errore di connessione. Assicurati che il backend sia acceso!")
@@ -137,17 +131,18 @@ const HomeEventi = () => {
         return new Date(dataStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })
     }
 
-    const handleEvPassClick = () => {
-        if (isEvPassAttivo)
-            setCardsData(listaEventi.filter(ev => {
-                const fine = new Date(ev.properties.dataFine)
-                fine.setHours(23, 59, 59, 999)
-                return fine.getTime() >= oggi.getTime()
-            }))
-        else
-            setCardsData(listaEventi)
-        setEvPassAttivo(!isEvPassAttivo)
-    }
+    const filtriStato = [
+        { label: 'Tutti', valore: 'attivi' },
+        { label: 'In corso', valore: 'In corso' },
+        { label: 'Non iniziato', valore: 'Non iniziato' },
+        { label: 'Terminato', valore: 'Terminato' },
+    ]
+
+    const cardsData = listaEventi.filter(ev => {
+        const stato = getStatoEvento(ev.properties.dataInizio, ev.properties.dataFine)
+        if (filtroStato === 'attivi') return stato.label !== 'Terminato'
+        return stato.label === filtroStato
+    })
 
     return (
         <>
@@ -159,17 +154,24 @@ const HomeEventi = () => {
                 <div className="container-fluid py-5 px-4 px-md-5 bg-light flex-grow-1" style={{ overflowY: 'auto' }}>
 
                     {/* Header */}
-                    <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
-                        <div>
-                            <h2 className="fw-bold text-dark mb-1">I prossimi eventi</h2>
-                            <p className="text-muted fs-5 mb-0">Scopri i meravigliosi eventi che si terranno nel Trentino</p>
+                    <div className="mb-4">
+                        <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                            <div>
+                                <h2 className="fw-bold text-dark mb-1">I prossimi eventi</h2>
+                                <p className="text-muted fs-5 mb-0">Scopri i meravigliosi eventi che si terranno nel Trentino</p>
+                            </div>
                         </div>
-                        <button
-                            className={`btn ${isEvPassAttivo ? 'btn-trentingo-outline' : 'btn-trentingo'} px-4 py-2 fw-semibold shadow-sm`}
-                            onClick={handleEvPassClick}
-                        >
-                            {isEvPassAttivo ? 'Nascondi eventi passati' : 'Mostra eventi passati'}
-                        </button>
+                        <div className="d-flex flex-wrap gap-2">
+                            {filtriStato.map(f => (
+                                <button
+                                    key={f.valore}
+                                    className={`pdi-chip ${filtroStato === f.valore ? 'pdi-chip--attivo' : ''}`}
+                                    onClick={() => setFiltroStato(f.valore)}
+                                >
+                                    {f.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
 
                     {/* Griglia card */}
