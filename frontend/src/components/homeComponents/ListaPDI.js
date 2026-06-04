@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { useAlert } from '../../contexts/AlertController'
 
 // Mappa ogni categoria alla relativa icona Material Symbols
 const ICONE_CATEGORIA = {
@@ -14,7 +15,33 @@ const ICONE_CATEGORIA = {
 const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezionata, setCategoriaSelezionata, PdiSelezionatoLista, pdiSelezionatoMappa }) => {
 
     const navigate = useNavigate();
+    const { showAlert } = useAlert()
     const ruolo = localStorage.getItem('ruolo')
+    const [pdiInCaricamento, setPdiInCaricamento] = useState(null)
+
+    const registraVisita = (pdi) => {
+        if (!navigator.geolocation) {
+            showAlert("Errore", "Il tuo dispositivo non supporta la geolocalizzazione", "danger")
+            return
+        }
+        setPdiInCaricamento(pdi._id)
+        navigator.geolocation.getCurrentPosition(
+            (posizione) => {
+                const lon = posizione.coords.longitude
+                const lat = posizione.coords.latitude
+                // Step 4: chiamata API
+            },
+            (errore) => {
+                setPdiInCaricamento(null)
+                if (errore.code === errore.PERMISSION_DENIED) {
+                    showAlert("Permesso negato", "Abilita la geolocalizzazione per registrare la visita", "warning")
+                } else {
+                    showAlert("Errore", "Impossibile ottenere la posizione", "danger")
+                }
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        )
+    }
 
     // Quando la mappa seleziona un PDI, scrolla automaticamente alla card corrispondente nella lista
     useEffect(() => {
@@ -119,9 +146,10 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                                                         <button
                                                             className="btn text-white px-3 py-2 fw-semibold shadow-sm"
                                                             style={{ backgroundColor: '#037149', borderRadius: '10px', fontSize: '0.9rem' }}
-                                                            onClick={(e) => { e.stopPropagation(); }}
+                                                            onClick={(e) => { e.stopPropagation(); registraVisita(pdi) }}
+                                                            disabled={pdiInCaricamento === pdi._id}
                                                         >
-                                                            Registra visita
+                                                            {pdiInCaricamento === pdi._id ? 'Localizzazione...' : 'Registra visita'}
                                                         </button>
                                                     )}
                                                     <button

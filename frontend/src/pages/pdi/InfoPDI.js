@@ -14,6 +14,31 @@ const InfoPDI = () => {
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
     const ruolo = localStorage.getItem('ruolo')
+    const [caricamento, setCaricamento] = useState(false)
+
+    const registraVisita = () => {
+        if (!navigator.geolocation) {
+            showAlert("Errore", "Il tuo dispositivo non supporta la geolocalizzazione", "danger")
+            return
+        }
+        setCaricamento(true)
+        navigator.geolocation.getCurrentPosition(
+            (posizione) => {
+                const lon = posizione.coords.longitude
+                const lat = posizione.coords.latitude
+                // Step 4: chiamata API
+            },
+            (errore) => {
+                setCaricamento(false)
+                if (errore.code === errore.PERMISSION_DENIED) {
+                    showAlert("Permesso negato", "Abilita la geolocalizzazione per registrare la visita", "warning")
+                } else {
+                    showAlert("Errore", "Impossibile ottenere la posizione", "danger")
+                }
+            },
+            { enableHighAccuracy: true, timeout: 10000 }
+        )
+    }
 
     // Prendo i dati del singolo PDI
     useEffect(() => {
@@ -175,9 +200,10 @@ const InfoPDI = () => {
                                         <button
                                             className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
                                             style={{ backgroundColor: '#037149' }}
-                                            onClick={() => {}}
+                                            onClick={registraVisita}
+                                            disabled={caricamento}
                                         >
-                                            Registra visita
+                                            {caricamento ? 'Localizzazione...' : 'Registra visita'}
                                         </button>
                                     )}
                                     <button
