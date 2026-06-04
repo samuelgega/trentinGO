@@ -37,11 +37,22 @@ schemaVisita.pre('validate', function(next) {
     if (!hasPDI && !hasEvento) {
         return next(new Error('Una visita deve riferirsi a un PDI oppure a un Evento'))
     }
-    next()
 })
 
 // Vincolo per impedire che un giocatore possa visitare lo stesso PDI o evento più volte
-schemaVisita.index({ idGiocatore: 1, idPDI: 1 }, { unique: true, sparse: true })
-schemaVisita.index({ idGiocatore: 1, idEvento: 1 }, { unique: true, sparse: true })
+schemaVisita.index(
+    { idGiocatore: 1, idPDI: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { idPDI: { $exists: true, $type: "objectId" } }
+    }
+)
+schemaVisita.index(
+    { idGiocatore: 1, idEvento: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { idEvento: { $exists: true, $type: "objectId" } }
+    }
+)
 
 module.exports = mongoose.model('Visita', schemaVisita, 'Visite')
