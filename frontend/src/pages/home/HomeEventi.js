@@ -131,6 +131,13 @@ const HomeEventi = () => {
         return new Date(dataStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })
     }
 
+    const formatOra = (dataStr) => {
+        if (!dataStr) return null
+        const d = new Date(dataStr)
+        if (d.getHours() === 0 && d.getMinutes() === 0) return null
+        return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })
+    }
+
     const filtriStato = [
         { label: 'Tutti', valore: 'attivi' },
         { label: 'In corso', valore: 'In corso' },
@@ -254,16 +261,48 @@ const HomeEventi = () => {
 
                                             {/* Footer: data + bottone */}
                                             <div className="mt-auto pt-3 border-top">
-                                                <div className="d-flex align-items-center gap-1 text-muted mb-3" style={{ fontSize: '0.82rem' }}>
-                                                    <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>calendar_month</span>
-                                                    <span>{formatData(card.properties.dataInizio)}</span>
-                                                    {card.properties.dataFine && (
-                                                        <>
-                                                            <span>→</span>
-                                                            <span>{formatData(card.properties.dataFine)}</span>
-                                                        </>
-                                                    )}
-                                                </div>
+                                                {(() => {
+                                                    const stessoGiorno = card.properties.dataFine &&
+                                                        formatData(card.properties.dataInizio) === formatData(card.properties.dataFine)
+                                                    const oraInizio = formatOra(card.properties.dataInizio)
+                                                    const oraFine = formatOra(card.properties.dataFine)
+                                                    return (
+                                                        <div className="d-flex align-items-center gap-2 mb-3 px-1">
+                                                            <span className="material-symbols-outlined" style={{ fontSize: '1.1rem', color: '#037149', flexShrink: 0 }}>calendar_month</span>
+                                                            <div className="d-flex align-items-baseline gap-1 flex-wrap" style={{ fontSize: '0.82rem' }}>
+                                                                <span className="fw-semibold text-dark">{formatData(card.properties.dataInizio)}</span>
+                                                                {stessoGiorno ? (
+                                                                    <>
+                                                                        {(oraInizio || oraFine) && (
+                                                                            <span className="fw-bold rounded-pill px-2 py-0" style={{ backgroundColor: '#f1f3f5', color: '#6c757d', fontSize: '0.75rem' }}>
+                                                                                {oraInizio || '—'}{oraFine ? ` → ${oraFine}` : ''}
+                                                                            </span>
+                                                                        )}
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {oraInizio && (
+                                                                            <span className="fw-bold rounded-pill px-2 py-0" style={{ backgroundColor: '#f1f3f5', color: '#6c757d', fontSize: '0.75rem' }}>
+                                                                                {oraInizio}
+                                                                            </span>
+                                                                        )}
+                                                                        {card.properties.dataFine && (
+                                                                            <>
+                                                                                <span className="text-muted mx-1">→</span>
+                                                                                <span className="fw-semibold text-dark">{formatData(card.properties.dataFine)}</span>
+                                                                                {oraFine && (
+                                                                                    <span className="fw-bold rounded-pill px-2 py-0" style={{ backgroundColor: '#f1f3f5', color: '#6c757d', fontSize: '0.75rem' }}>
+                                                                                        {oraFine}
+                                                                                    </span>
+                                                                                )}
+                                                                            </>
+                                                                        )}
+                                                                    </>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })()}
 
                                                 {ruolo === 'giocatore' && (
                                                     <button

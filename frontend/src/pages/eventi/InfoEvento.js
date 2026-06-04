@@ -130,7 +130,14 @@ const InfoEvento = () => {
 
     const formatData = (dataStr) => {
         if (!dataStr) return '—';
-        return new Date(dataStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+        return new Date(dataStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+    };
+
+    const formatOra = (dataStr) => {
+        if (!dataStr) return null;
+        const d = new Date(dataStr);
+        if (d.getHours() === 0 && d.getMinutes() === 0) return null;
+        return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
     };
 
     const calcolaStato = () => {
@@ -192,37 +199,19 @@ const InfoEvento = () => {
                     <div className="col-12 col-lg-9">
                         <div className="card border-0 shadow-sm p-4 p-md-5" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
 
-                            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-4 border-bottom">
-                                {/* Categoria e nome */}
-                                <div>
-                                    <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                                        <span className="badge text-uppercase px-3 py-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
-                                            {evento.properties.categoria || 'Evento'}
-                                        </span>
-                                        {giaVisitato && ruolo === 'giocatore' && (
-                                            <div className="d-flex align-items-center gap-1 px-3 py-1 shadow-sm" style={{ backgroundColor: '#037149', borderRadius: '999px' }}>
-                                                <span className="material-symbols-outlined fill text-white" style={{ fontSize: '1rem' }}>thumb_up</span>
-                                                <span className="text-white fw-bold" style={{ fontSize: '0.78rem', letterSpacing: '0.03em' }}>VISITATO</span>
-                                            </div>
-                                        )}
-                                    </div>
-                                    <h1 className="fw-bold text-dark m-0" style={{ letterSpacing: '-0.02em' }}>{evento.properties.nome}</h1>
-                                </div>
-
-                                {/* Date in evidenza */}
-                                <div
-                                    className="d-flex flex-column align-items-center px-3 py-2 rounded-3 align-self-start align-self-sm-center shadow-sm text-center"
-                                    style={{ backgroundColor: '#e6f4ea', color: '#137b52', minWidth: '130px' }}
-                                >
-                                    <span className="material-symbols-outlined mb-1" style={{ fontSize: '1.4rem' }}>calendar_month</span>
-                                    <span className="fw-bold" style={{ fontSize: '0.9rem' }}>{formatData(evento.properties.dataInizio)}</span>
-                                    {evento.properties.dataFine && evento.properties.dataFine !== evento.properties.dataInizio && (
-                                        <>
-                                            <span className="text-muted" style={{ fontSize: '0.75rem' }}>fino al</span>
-                                            <span className="fw-bold" style={{ fontSize: '0.9rem' }}>{formatData(evento.properties.dataFine)}</span>
-                                        </>
+                            <div className="mb-4 pb-4 border-bottom">
+                                <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                    <span className="badge text-uppercase px-3 py-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
+                                        {evento.properties.categoria || 'Evento'}
+                                    </span>
+                                    {giaVisitato && ruolo === 'giocatore' && (
+                                        <div className="d-flex align-items-center gap-1 px-3 py-1 shadow-sm" style={{ backgroundColor: '#037149', borderRadius: '999px' }}>
+                                            <span className="material-symbols-outlined fill text-white" style={{ fontSize: '1rem' }}>thumb_up</span>
+                                            <span className="text-white fw-bold" style={{ fontSize: '0.78rem', letterSpacing: '0.03em' }}>VISITATO</span>
+                                        </div>
                                     )}
                                 </div>
+                                <h1 className="fw-bold text-dark m-0" style={{ letterSpacing: '-0.02em' }}>{evento.properties.nome}</h1>
                             </div>
 
                             {/* Descrizione */}
@@ -233,18 +222,46 @@ const InfoEvento = () => {
                                 </p>
                             </div>
 
-                            {/* Box prezzo */}
-                            <div className="row g-4 mb-4">
-                                <div className="col-12 col-md-6">
-                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
-                                        <div className="p-3 rounded-3 text-white d-flex" style={{ backgroundColor: '#037149' }}>
-                                            <span className="material-symbols-outlined">payments</span>
+                            {/* Box info: prezzo + date */}
+                            <div className="row g-3 mb-5">
+                                <div className="col-12 col-sm-4">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3 h-100" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex flex-shrink-0" style={{ backgroundColor: '#037149' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>payments</span>
                                         </div>
                                         <div>
-                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.75rem' }}>PREZZO BIGLIETTO</small>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.72rem' }}>PREZZO</small>
                                             <span className="fw-bold text-dark fs-5">
                                                 {evento.properties.prezzo === 0 || !evento.properties.prezzo ? 'Gratuito' : `${evento.properties.prezzo} €`}
                                             </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-12 col-sm-4">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3 h-100" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex flex-shrink-0" style={{ backgroundColor: '#6c757d' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>event</span>
+                                        </div>
+                                        <div>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.72rem' }}>INIZIO</small>
+                                            <span className="fw-bold text-dark d-block" style={{ fontSize: '0.95rem' }}>{formatData(evento.properties.dataInizio)}</span>
+                                            {formatOra(evento.properties.dataInizio) && (
+                                                <span className="fw-semibold" style={{ fontSize: '0.85rem', color: '#6c757d' }}>{formatOra(evento.properties.dataInizio)}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-12 col-sm-4">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3 h-100" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex flex-shrink-0" style={{ backgroundColor: '#6c757d' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>event</span>
+                                        </div>
+                                        <div>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.72rem' }}>FINE</small>
+                                            <span className="fw-bold text-dark d-block" style={{ fontSize: '0.95rem' }}>{formatData(evento.properties.dataFine)}</span>
+                                            {formatOra(evento.properties.dataFine) && (
+                                                <span className="fw-semibold" style={{ fontSize: '0.85rem', color: '#6c757d' }}>{formatOra(evento.properties.dataFine)}</span>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
