@@ -20,6 +20,76 @@ const InfoEvento = () => {
     const [notifica, setNotifica] = useState(null);
 
     useEffect(() => {
+        if (!evento || ruolo !== 'giocatore') return
+        const token = localStorage.getItem('token')
+        fetch('/api/v1/visite/giocatore', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => {
+                const visitato = json.data?.some(v => v.idEvento === evento._id)
+                setGiaVisitato(visitato)
+            })
+            .catch(() => {})
+    }, [evento, ruolo])
+
+    const registraVisita = () => {
+        const token = localStorage.getItem('token')
+        const idGiocatore = localStorage.getItem('userId')
+        const haCoordinate = evento.geometry?.coordinates?.length === 2
+
+        const eseguiPost = async (posizione) => {
+            const body = { idGiocatore, idEvento: evento._id }
+            if (posizione) body.posizione = posizione
+            try {
+                const response = await fetch('/api/v1/visite/evento', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                })
+                const json = await response.json()
+                if (response.ok) {
+                    setGiaVisitato(true)
+                    setNotifica({ nome: evento.properties.nome, punteggio: 10, levelUp: json.levelUp })
+                } else if (response.status === 409) {
+                    setGiaVisitato(true)
+                    showAlert("Già visitato", "Hai già registrato una visita per questo evento", "warning")
+                } else if (response.status === 422) {
+                    showAlert("Troppo lontano", json.error, "warning")
+                } else {
+                    showAlert("Errore", json.error || "Impossibile registrare la visita", "danger")
+                }
+            } catch {
+                showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+            } finally {
+                setCaricamento(false)
+            }
+        }
+
+        if (haCoordinate) {
+            if (!navigator.geolocation) {
+                showAlert("Errore", "Il tuo dispositivo non supporta la geolocalizzazione", "danger")
+                return
+            }
+            setCaricamento(true)
+            navigator.geolocation.getCurrentPosition(
+                (pos) => eseguiPost([pos.coords.longitude, pos.coords.latitude]),
+                (err) => {
+                    setCaricamento(false)
+                    if (err.code === err.PERMISSION_DENIED)
+                        showAlert("Permesso negato", "Abilita la geolocalizzazione per registrare la visita", "warning")
+                    else
+                        showAlert("Errore", "Impossibile ottenere la posizione", "danger")
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            )
+        } else {
+            setCaricamento(true)
+            eseguiPost(null)
+        }
+    }
+
+    useEffect(() => {
         const fetchEvento = async () => {
             try {
                 const response = await fetch(`/api/v1/eventi/${id}`);
@@ -120,27 +190,22 @@ const InfoEvento = () => {
             <div className="container" style={{ marginTop: '-40px', position: 'relative', zIndex: 5 }}>
                 <div className="row justify-content-center">
                     <div className="col-12 col-lg-9">
-                        <div className="card border-0 shadow-sm p-4 p-md-5 position-relative" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
-
-                            {/* Badge visitato in alto a destra */}
-                            {giaVisitato && ruolo === 'giocatore' && (
-                                <div className="position-absolute d-flex align-items-center gap-2 px-3 py-2 shadow" style={{
-                                    top: '20px', right: '20px',
-                                    backgroundColor: '#037149',
-                                    borderRadius: '999px',
-                                    zIndex: 10
-                                }}>
-                                    <span className="material-symbols-outlined fill text-white" style={{ fontSize: '1.1rem' }}>thumb_up</span>
-                                    <span className="text-white fw-bold" style={{ fontSize: '0.82rem', letterSpacing: '0.03em' }}>VISITATO</span>
-                                </div>
-                            )}
+                        <div className="card border-0 shadow-sm p-4 p-md-5" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
 
                             <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-4 border-bottom">
                                 {/* Categoria e nome */}
                                 <div>
-                                    <span className="badge text-uppercase px-3 py-2 mb-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
-                                        {evento.properties.categoria || 'Evento'}
-                                    </span>
+                                    <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                        <span className="badge text-uppercase px-3 py-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
+                                            {evento.properties.categoria || 'Evento'}
+                                        </span>
+                                        {giaVisitato && ruolo === 'giocatore' && (
+                                            <div className="d-flex align-items-center gap-1 px-3 py-1 shadow-sm" style={{ backgroundColor: '#037149', borderRadius: '999px' }}>
+                                                <span className="material-symbols-outlined fill text-white" style={{ fontSize: '1rem' }}>thumb_up</span>
+                                                <span className="text-white fw-bold" style={{ fontSize: '0.78rem', letterSpacing: '0.03em' }}>VISITATO</span>
+                                            </div>
+                                        )}
+                                    </div>
                                     <h1 className="fw-bold text-dark m-0" style={{ letterSpacing: '-0.02em' }}>{evento.properties.nome}</h1>
                                 </div>
 
@@ -254,15 +319,24 @@ const InfoEvento = () => {
                                     Torna agli eventi
                                 </button>
                                 <div className="d-flex gap-2">
-                                    {ruolo === 'giocatore' && (
-                                        <button
-                                            className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
-                                            style={{ backgroundColor: giaVisitato ? '#6c757d' : '#037149' }}
-                                            disabled={caricamento || giaVisitato}
-                                        >
-                                            {caricamento ? 'Attendere...' : giaVisitato ? 'Già visitato' : 'Registra visita'}
-                                        </button>
-                                    )}
+                                    {ruolo === 'giocatore' && (() => {
+                                        const statoEvento = calcolaStato()
+                                        const nonAncoraIniziato = statoEvento.label === 'Non ancora iniziato'
+                                        const terminato = statoEvento.label === 'Concluso'
+                                        return (
+                                            <button
+                                                className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
+                                                style={{
+                                                    backgroundColor: giaVisitato || terminato ? '#6c757d' : '#037149',
+                                                    opacity: nonAncoraIniziato ? 0.45 : 1
+                                                }}
+                                                disabled={caricamento || giaVisitato || nonAncoraIniziato || terminato}
+                                                onClick={registraVisita}
+                                            >
+                                                {caricamento ? 'Attendere...' : giaVisitato ? 'Già visitato' : terminato ? 'Concluso' : 'Registra visita'}
+                                            </button>
+                                        )
+                                    })()}
                                     {evento.geometry?.coordinates?.length === 2 && (
                                         <button
                                             className="btn btn-outline-secondary px-5 py-2 fw-semibold rounded-3"

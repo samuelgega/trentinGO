@@ -19,6 +19,63 @@ const HomeEventi = () => {
     const ruolo = localStorage.getItem('ruolo')
     const [eventiVisitati, setEventiVisitati] = useState(new Set())
     const [notifica, setNotifica] = useState(null)
+    const [caricamentoId, setCaricamentoId] = useState(null)
+
+    const registraVisita = (card) => {
+        const token = localStorage.getItem('token')
+        const idGiocatore = localStorage.getItem('userId')
+        const haCoordinate = card.geometry?.coordinates?.length === 2
+
+        const eseguiPost = async (posizione) => {
+            const body = { idGiocatore, idEvento: card._id }
+            if (posizione) body.posizione = posizione
+            try {
+                const response = await fetch('/api/v1/visite/evento', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                })
+                const json = await response.json()
+                if (response.ok) {
+                    setEventiVisitati(prev => new Set([...prev, card._id]))
+                    setNotifica({ nome: card.properties.nome, punteggio: 10, levelUp: json.levelUp })
+                } else if (response.status === 409) {
+                    setEventiVisitati(prev => new Set([...prev, card._id]))
+                    showAlert("Già visitato", "Hai già registrato una visita per questo evento", "warning")
+                } else if (response.status === 422) {
+                    showAlert("Troppo lontano", json.error, "warning")
+                } else {
+                    showAlert("Errore", json.error || "Impossibile registrare la visita", "danger")
+                }
+            } catch {
+                showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+            } finally {
+                setCaricamentoId(null)
+            }
+        }
+
+        if (haCoordinate) {
+            if (!navigator.geolocation) {
+                showAlert("Errore", "Il tuo dispositivo non supporta la geolocalizzazione", "danger")
+                return
+            }
+            setCaricamentoId(card._id)
+            navigator.geolocation.getCurrentPosition(
+                (pos) => eseguiPost([pos.coords.longitude, pos.coords.latitude]),
+                (err) => {
+                    setCaricamentoId(null)
+                    if (err.code === err.PERMISSION_DENIED)
+                        showAlert("Permesso negato", "Abilita la geolocalizzazione per registrare la visita", "warning")
+                    else
+                        showAlert("Errore", "Impossibile ottenere la posizione", "danger")
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            )
+        } else {
+            setCaricamentoId(card._id)
+            eseguiPost(null)
+        }
+    }
 
     const recuperaDatiDalDatabase = async () => {
         try {
@@ -45,6 +102,20 @@ const HomeEventi = () => {
 
     useEffect(() => {
         recuperaDatiDalDatabase()
+    }, [])
+
+    useEffect(() => {
+        if (ruolo !== 'giocatore') return
+        const token = localStorage.getItem('token')
+        fetch('/api/v1/visite/giocatore', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => {
+                const ids = new Set(json.data?.filter(v => v.idEvento).map(v => v.idEvento))
+                setEventiVisitati(ids)
+            })
+            .catch(() => {})
     }, [])
 
     const handleCardClick = (id) => {
@@ -195,11 +266,16 @@ const HomeEventi = () => {
                                                 {ruolo === 'giocatore' && (
                                                     <button
                                                         className="btn w-100 fw-semibold rounded-3 py-2"
-                                                        style={{ backgroundColor: visitato || terminato ? '#6c757d' : '#037149', color: 'white', fontSize: '0.9rem' }}
-                                                        disabled={visitato || terminato}
-                                                        onClick={e => e.stopPropagation()}
+                                                        style={{
+                                                            backgroundColor: visitato || terminato ? '#6c757d' : '#037149',
+                                                            color: 'white',
+                                                            fontSize: '0.9rem',
+                                                            opacity: nonAncoraIniziato ? 0.45 : 1
+                                                        }}
+                                                        disabled={visitato || terminato || nonAncoraIniziato || caricamentoId === card._id}
+                                                        onClick={e => { e.stopPropagation(); registraVisita(card) }}
                                                     >
-                                                        {visitato ? 'Già visitato' : terminato ? 'Evento terminato' : 'Registra visita'}
+                                                        {caricamentoId === card._id ? 'Attendere...' : visitato ? 'Già visitato' : terminato ? 'Evento terminato' : 'Registra visita'}
                                                     </button>
                                                 )}
                                             </div>
