@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAlert } from '../../contexts/AlertController';
+import NotificaVisita from '../../components/homeComponents/NotificaVisita';
 
 const InfoEvento = () => {
 
@@ -12,6 +13,11 @@ const InfoEvento = () => {
     const [evento, setEvento] = useState(null);
     const [fotoGrandeIndex, setFotoGrandeIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+    const ruolo = localStorage.getItem('ruolo');
+    const [caricamento, setCaricamento] = useState(false);
+    const [giaVisitato, setGiaVisitato] = useState(false);
+    const [notifica, setNotifica] = useState(null);
 
     useEffect(() => {
         const fetchEvento = async () => {
@@ -114,7 +120,20 @@ const InfoEvento = () => {
             <div className="container" style={{ marginTop: '-40px', position: 'relative', zIndex: 5 }}>
                 <div className="row justify-content-center">
                     <div className="col-12 col-lg-9">
-                        <div className="card border-0 shadow-sm p-4 p-md-5" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
+                        <div className="card border-0 shadow-sm p-4 p-md-5 position-relative" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
+
+                            {/* Badge visitato in alto a destra */}
+                            {giaVisitato && ruolo === 'giocatore' && (
+                                <div className="position-absolute d-flex align-items-center gap-2 px-3 py-2 shadow" style={{
+                                    top: '20px', right: '20px',
+                                    backgroundColor: '#037149',
+                                    borderRadius: '999px',
+                                    zIndex: 10
+                                }}>
+                                    <span className="material-symbols-outlined fill text-white" style={{ fontSize: '1.1rem' }}>thumb_up</span>
+                                    <span className="text-white fw-bold" style={{ fontSize: '0.82rem', letterSpacing: '0.03em' }}>VISITATO</span>
+                                </div>
+                            )}
 
                             <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-4 border-bottom">
                                 {/* Categoria e nome */}
@@ -234,25 +253,37 @@ const InfoEvento = () => {
                                 <button className="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-3" onClick={() => navigate(-1)}>
                                     Torna agli eventi
                                 </button>
-                                {evento.geometry?.coordinates?.length === 2 && (
-                                    <button
-                                        className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
-                                        style={{ backgroundColor: '#137b52' }}
-                                        onClick={() => {
-                                            const lat = evento.geometry.coordinates[1];
-                                            const lng = evento.geometry.coordinates[0];
-                                            window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
-                                        }}
-                                    >
-                                        Ottieni indicazioni
-                                    </button>
-                                )}
+                                <div className="d-flex gap-2">
+                                    {ruolo === 'giocatore' && (
+                                        <button
+                                            className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
+                                            style={{ backgroundColor: giaVisitato ? '#6c757d' : '#037149' }}
+                                            disabled={caricamento || giaVisitato}
+                                        >
+                                            {caricamento ? 'Attendere...' : giaVisitato ? 'Già visitato' : 'Registra visita'}
+                                        </button>
+                                    )}
+                                    {evento.geometry?.coordinates?.length === 2 && (
+                                        <button
+                                            className="btn btn-outline-secondary px-5 py-2 fw-semibold rounded-3"
+                                            onClick={() => {
+                                                const lat = evento.geometry.coordinates[1];
+                                                const lng = evento.geometry.coordinates[0];
+                                                window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+                                            }}
+                                        >
+                                            Ottieni indicazioni
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                         </div>
                     </div>
                 </div>
             </div>
+
+            <NotificaVisita notifica={notifica} onHide={() => setNotifica(null)} />
 
             {/* Lightbox */}
             {isLightboxOpen && (

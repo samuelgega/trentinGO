@@ -2,43 +2,50 @@ import React from "react"
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '../../contexts/AlertController'
-import HomeNav from "../../components/homeComponents/HomeNav";
+import HomeNav from "../../components/homeComponents/HomeNav"
+import NotificaVisita from "../../components/homeComponents/NotificaVisita"
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '../../assets/home.css'
 
 const HomeEventi = () => {
     const { showAlert } = useAlert()
+    const navigate = useNavigate()
+
     const [listaEventi, setListaEventi] = useState([])
     const [cardsData, setCardsData] = useState([])
-    const oggi = new Date()
     const [isEvPassAttivo, setEvPassAttivo] = useState(false)
+    const oggi = new Date()
+
+    const ruolo = localStorage.getItem('ruolo')
+    const [eventiVisitati, setEventiVisitati] = useState(new Set())
+    const [notifica, setNotifica] = useState(null)
 
     const recuperaDatiDalDatabase = async () => {
         try {
-            const response = await fetch('/api/v1/eventi');
+            const response = await fetch('/api/v1/eventi')
             if (!response.ok) {
                 showAlert("Errore nel recupero dati", "Riprovare riaggiornando la pagina", 'danger')
+                return
             }
             const jsonResponse = await response.json()
-            setListaEventi(jsonResponse.data.sort((a, b) => {
-                return new Date(a.properties.dataInizio) - new Date(b.properties.dataInizio)
-            }))
-            setCardsData(jsonResponse.data.filter(ev => {
+            const ordinati = jsonResponse.data.sort((a, b) =>
+                new Date(a.properties.dataInizio) - new Date(b.properties.dataInizio)
+            )
+            setListaEventi(ordinati)
+            setCardsData(ordinati.filter(ev => {
                 const fine = new Date(ev.properties.dataFine)
                 fine.setHours(23, 59, 59, 999)
                 return fine.getTime() >= oggi.getTime()
             }))
         } catch (error) {
-            console.error("Errore di connessione:", error);
-            showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
+            console.error("Errore di connessione:", error)
+            showAlert("Errore di connessione. Assicurati che il backend sia acceso!")
         }
     }
 
     useEffect(() => {
         recuperaDatiDalDatabase()
     }, [])
-
-    const navigate = useNavigate()
 
     const handleCardClick = (id) => {
         navigate(`/dettagli-evento/${id}`)
@@ -49,9 +56,9 @@ const HomeEventi = () => {
         const inizio = dataInizio ? new Date(dataInizio) : null
         const fine = dataFine ? new Date(dataFine) : null
         if (fine) fine.setHours(23, 59, 59, 999)
-        if (fine && ora > fine) return { colore: '#dc3545', label: 'Terminato' }
-        if (inizio && ora < inizio) return { colore: '#6c757d', label: 'Non iniziato' }
-        return { colore: '#28a745', label: 'In corso' }
+        if (fine && ora > fine) return { colore: '#dc3545', sfondo: '#fff0f0', label: 'Terminato' }
+        if (inizio && ora < inizio) return { colore: '#6c757d', sfondo: '#f1f3f5', label: 'Non iniziato' }
+        return { colore: '#28a745', sfondo: '#edfbf0', label: 'In corso' }
     }
 
     const formatData = (dataStr) => {
@@ -79,85 +86,133 @@ const HomeEventi = () => {
                 </div>
 
                 <div className="container-fluid py-5 px-4 px-md-5 bg-light flex-grow-1" style={{ overflowY: 'auto' }}>
+
+                    {/* Header */}
                     <div className="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-5">
                         <div>
                             <h2 className="fw-bold text-dark mb-1">I prossimi eventi</h2>
-                            <p className="text-muted fs-5 mb-0">Scopri i meravigliosi eventi che si terranno nel trentino</p>
+                            <p className="text-muted fs-5 mb-0">Scopri i meravigliosi eventi che si terranno nel Trentino</p>
                         </div>
-                        <div>
-                            <button
-                                className={`btn ${isEvPassAttivo ? 'btn-trentingo-outline' : 'btn-trentingo'} px-4 py-2 fw-semibold shadow-sm`}
-                                onClick={handleEvPassClick}
-                            >
-                                {isEvPassAttivo ? 'Nascondi eventi passati' : 'Mostra eventi passati'}
-                            </button>
-                        </div>
+                        <button
+                            className={`btn ${isEvPassAttivo ? 'btn-trentingo-outline' : 'btn-trentingo'} px-4 py-2 fw-semibold shadow-sm`}
+                            onClick={handleEvPassClick}
+                        >
+                            {isEvPassAttivo ? 'Nascondi eventi passati' : 'Mostra eventi passati'}
+                        </button>
                     </div>
 
-                    {/* g-4 imposta un gap (spaziatura) tra le card */}
+                    {/* Griglia card */}
                     <div className="row g-4">
-                        {cardsData.map((card) => (
-                            // Su schermi medi ne mostriamo 2 per riga, su quelli larghi 3 per riga (così risultano "belle larghe")
-                            <div key={card._id} className="col-12 col-md-6 col-xl-4">
-                                <div
-                                    className={`card h-100 border-0 
-                                ${(new Date(card.properties.dataFine)).getTime() < oggi.getTime()
-                                            ? 'bg-light text-muted opacity-50'
-                                            : 'bg-white shadow-sm'
-                                        }
-                            `}
-                                    style={{ cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                                    onClick={() => handleCardClick(card._id)}
-                                    onMouseEnter={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(-5px)';
-                                        e.currentTarget.classList.replace('shadow-sm', 'shadow');
-                                    }}
-                                    onMouseLeave={(e) => {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.classList.replace('shadow', 'shadow-sm');
-                                    }}
-                                >
-                                    <img
-                                        src={(card.properties.immagine[0] !== undefined) ? card.properties.immagine[0] : 'http://localhost:3001/uploads/eventoGenerico.png'}
-                                        className="card-img-top"
-                                        alt={card.properties.nome}
-                                        style={{ height: '220px', objectFit: 'cover' }}
-                                    />
-                                    <div className="card-body p-4 d-flex flex-column">
-                                        <h4 className="card-title fw-semibold mb-2">{card.properties.nome}</h4>
-                                        <p className="card-text text-secondary flex-grow-1" style={{ lineHeight: '1.6' }}>
-                                            {card.properties.descrizione}
-                                        </p>
-                                        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3 pt-3 border-top">
-                                            {/* Stato */}
-                                            {(() => {
-                                                const stato = getStatoEvento(card.properties.dataInizio, card.properties.dataFine)
-                                                return (
-                                                    <div className="d-flex align-items-center gap-2">
-                                                        <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: stato.colore, display: 'inline-block', flexShrink: 0 }} />
-                                                        <span className="fw-semibold" style={{ color: stato.colore, fontSize: '0.85rem' }}>{stato.label}</span>
-                                                    </div>
-                                                )
-                                            })()}
-                                            {/* Date */}
-                                            <div className="d-flex align-items-center gap-1 text-muted" style={{ fontSize: '0.82rem' }}>
-                                                <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>calendar_month</span>
-                                                <span>{formatData(card.properties.dataInizio)}</span>
-                                                {card.properties.dataFine && (
-                                                    <>
-                                                        <span>→</span>
-                                                        <span>{formatData(card.properties.dataFine)}</span>
-                                                    </>
+                        {cardsData.map((card) => {
+                            const stato = getStatoEvento(card.properties.dataInizio, card.properties.dataFine)
+                            const visitato = eventiVisitati.has(card._id)
+                            const terminato = stato.label === 'Terminato'
+                            const nonAncoraIniziato = stato.label === 'In corso' === false && stato.label !== 'Terminato'
+
+                            return (
+                                <div key={card._id} className="col-12 col-md-6 col-xl-4">
+                                    <div
+                                        className={`card h-100 border-0 ${visitato ? 'evento-card--visitato' : 'shadow-sm'}`}
+                                        style={{
+                                            borderRadius: '20px',
+                                            cursor: 'pointer',
+                                            overflow: 'hidden',
+                                            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                                            opacity: terminato ? 0.6 : 1
+                                        }}
+                                        onClick={() => handleCardClick(card._id)}
+                                        onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)' }}
+                                        onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)' }}
+                                    >
+                                        {/* Immagine con badge sovrapposti */}
+                                        <div className="position-relative">
+                                            <img
+                                                src={card.properties.immagine[0] ?? 'http://localhost:3001/uploads/eventoGenerico.png'}
+                                                className="w-100"
+                                                alt={card.properties.nome}
+                                                style={{ height: '200px', objectFit: 'cover' }}
+                                            />
+                                            {/* Gradiente scuro in basso sull'immagine */}
+                                            <div className="position-absolute bottom-0 start-0 w-100"
+                                                style={{ height: '60px', background: 'linear-gradient(to top, rgba(0,0,0,0.35), transparent)' }} />
+
+                                            {/* Badge stato (in basso a sinistra sull'immagine) */}
+                                            <div className="position-absolute d-flex align-items-center gap-1 px-2 py-1 rounded-pill"
+                                                style={{ bottom: '10px', left: '12px', backgroundColor: stato.sfondo }}>
+                                                <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: stato.colore, display: 'inline-block', flexShrink: 0 }} />
+                                                <span className="fw-semibold" style={{ color: stato.colore, fontSize: '0.75rem' }}>{stato.label}</span>
+                                            </div>
+
+                                            {/* Badge VISITATO (in alto a destra) */}
+                                            {visitato && ruolo === 'giocatore' && (
+                                                <div className="position-absolute d-flex align-items-center gap-1 px-2 py-1 shadow"
+                                                    style={{ top: '10px', right: '10px', backgroundColor: '#037149', borderRadius: '999px' }}>
+                                                    <span className="material-symbols-outlined fill text-white" style={{ fontSize: '0.9rem' }}>thumb_up</span>
+                                                    <span className="text-white fw-bold" style={{ fontSize: '0.72rem', letterSpacing: '0.03em' }}>VISITATO</span>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Body */}
+                                        <div className="card-body p-4 d-flex flex-column">
+                                            {/* Categoria + XP */}
+                                            <div className="d-flex align-items-center justify-content-between mb-2">
+                                                <span className="badge rounded-pill px-3 py-1 fw-semibold"
+                                                    style={{ backgroundColor: 'rgba(3,113,73,0.1)', color: '#037149', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                                                    {card.properties.categoria || 'Evento'}
+                                                </span>
+                                                <span className="d-flex align-items-center gap-1 fw-semibold"
+                                                    style={{ color: '#137b52', fontSize: '0.8rem' }}>
+                                                    <span className="material-symbols-outlined fill" style={{ fontSize: '1rem' }}>star</span>
+                                                    10 XP
+                                                </span>
+                                            </div>
+
+                                            {/* Titolo */}
+                                            <h5 className="fw-bold text-dark mb-2" style={{ letterSpacing: '-0.01em' }}>
+                                                {card.properties.nome}
+                                            </h5>
+
+                                            {/* Descrizione troncata */}
+                                            <p className="text-secondary flex-grow-1 mb-3"
+                                                style={{ fontSize: '0.9rem', lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                                {card.properties.descrizione || 'Nessuna descrizione disponibile.'}
+                                            </p>
+
+                                            {/* Footer: data + bottone */}
+                                            <div className="mt-auto pt-3 border-top">
+                                                <div className="d-flex align-items-center gap-1 text-muted mb-3" style={{ fontSize: '0.82rem' }}>
+                                                    <span className="material-symbols-outlined" style={{ fontSize: '1rem' }}>calendar_month</span>
+                                                    <span>{formatData(card.properties.dataInizio)}</span>
+                                                    {card.properties.dataFine && (
+                                                        <>
+                                                            <span>→</span>
+                                                            <span>{formatData(card.properties.dataFine)}</span>
+                                                        </>
+                                                    )}
+                                                </div>
+
+                                                {ruolo === 'giocatore' && (
+                                                    <button
+                                                        className="btn w-100 fw-semibold rounded-3 py-2"
+                                                        style={{ backgroundColor: visitato || terminato ? '#6c757d' : '#037149', color: 'white', fontSize: '0.9rem' }}
+                                                        disabled={visitato || terminato}
+                                                        onClick={e => e.stopPropagation()}
+                                                    >
+                                                        {visitato ? 'Già visitato' : terminato ? 'Evento terminato' : 'Registra visita'}
+                                                    </button>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            )
+                        })}
                     </div>
                 </div>
             </div>
+
+            <NotificaVisita notifica={notifica} onHide={() => setNotifica(null)} />
         </>
     )
 }
