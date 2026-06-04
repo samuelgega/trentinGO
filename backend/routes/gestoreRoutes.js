@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Gestore = require("../controllers/gestoreController");
-const { verificaToken, requireRuolo, autorizzaModifica } = require("../middlewares/authMiddleware");
+const { verificaToken, requireRuolo, autorizzaModifica, autorizzaEliminazione } = require("../middlewares/authMiddleware");
 
 //route per la visualizzazione di tutti i gestori
 router.get("/", verificaToken, requireRuolo('amministratore'), Gestore.visualizzaGestori);
@@ -26,7 +26,7 @@ router.put("/abilitato/:id", verificaToken, requireRuolo('amministratore'), Gest
 router.put('/:idUtente', verificaToken, autorizzaModifica('gestore'), Gestore.modificaProfilo)
 
 //elimina utente
-router.delete('/eliminaUtente/:idUtente', verificaToken, autorizzaModifica('gestore'), Gestore.eliminaProfilo)
+router.delete('/:idUtente', verificaToken, autorizzaEliminazione('gestore'), Gestore.eliminaProfilo)
 
 
 module.exports = router;

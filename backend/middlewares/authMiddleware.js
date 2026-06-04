@@ -58,6 +58,35 @@ const autorizzaModifica = (tipoTarget) => {
     }
 }
 
+const autorizzaEliminazione = (tipoTarget) => {
+    return async (req, res, next) => {
+        try {
+            const idRichiedente = req.utente.id
+            const ruoloRichiedente = req.utente.ruolo
+            const targetId = req.params.idUtente
+
+            // chiunque può eliminare se stesso
+            if (idRichiedente === targetId) {
+                return next()
+            }
+
+            //verifica se sei un admin
+            if (ruoloRichiedente !== 'amministratore') {
+                return res.status(403).json({ error: "Non hai i permessi per eliminare i dati di altri utenti." })
+            }
+
+            //verifica se un admin vuole eliminare un'altro admin
+            if (tipoTarget === 'amministratore') {
+                return res.status(403).json({ error: "Non hai i permessi per eliminare i dati di altri amministratori." })
+            }
+            next()
+        } catch (error) {
+            console.error("Errore nel middleware di autorizzazione modifica:", error)
+            res.status(500).json({ error: "Internal Server Error" })
+        }
+    }
+}
+
 const autorizzaVisita = (req, res, next) => {
     try {
         const { idGiocatore } = req.body
@@ -75,4 +104,4 @@ const autorizzaVisita = (req, res, next) => {
     }
 }
 
-module.exports = { verificaToken, requireRuolo, autorizzaModifica, autorizzaVisita }
+module.exports = { verificaToken, requireRuolo, autorizzaModifica,autorizzaEliminazione, autorizzaVisita }
