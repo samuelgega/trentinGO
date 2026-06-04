@@ -123,4 +123,12 @@ const getVisiteGiocatore = async (req, res) => {
     }
 }
 
-module.exports = { registraPDI, getVisiteGiocatore }
+const registraEvento = async (req,res) => {
+    try{
+
+    }catch (error){
+        
+    }
+}
+
+module.exports = { registraPDI, registraEvento,getVisiteGiocatore }
