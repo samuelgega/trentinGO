@@ -64,10 +64,10 @@ const HomeProfilo = () =>{
         const userId = localStorage.getItem('userId')
 
         const endpoint = profilo.ruolo === 'giocatore'
-            ? `http://localhost:3001/api/v1/giocatori/modificaUtente/${userId}`
+            ? `http://localhost:3001/api/v1/giocatori/${userId}`
             : profilo.ruolo === 'gestore'
-            ? `http://localhost:3001/api/v1/gestori/modificaUtente/${userId}`
-            : `http://localhost:3001/api/v1/amministratori/modificaUtente/${userId}`
+            ? `http://localhost:3001/api/v1/gestori/${userId}`
+            : `http://localhost:3001/api/v1/amministratori/${userId}`
 
         const campo = profilo.ruolo === 'gestore' ? { nome: nuovoNome } : { username: nuovoNome }
 
@@ -105,10 +105,10 @@ const HomeProfilo = () =>{
         const userId = localStorage.getItem('userId')
 
         const endpoint = profilo.ruolo === 'giocatore'
-            ? `http://localhost:3001/api/v1/giocatori/modificaUtente/${userId}`
+            ? `http://localhost:3001/api/v1/giocatori/${userId}`
             : profilo.ruolo === 'gestore'
-            ? `http://localhost:3001/api/v1/gestori/modificaUtente/${userId}`
-            : `http://localhost:3001/api/v1/amministratori/modificaUtente/${userId}`
+            ? `http://localhost:3001/api/v1/gestori/${userId}`
+            : `http://localhost:3001/api/v1/amministratori/${userId}`
 
         try {
             const response = await fetch(endpoint, {
