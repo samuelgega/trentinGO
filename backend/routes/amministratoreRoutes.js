@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 
 const Amministratore = require('../controllers/amministratoreController')
-const { verificaToken, requireRuolo, autorizzaModifica } = require('../middlewares/authMiddleware')
+const { verificaToken, requireRuolo, autorizzaModifica, autorizzaEliminazione } = require('../middlewares/authMiddleware')
 
 //rotta per la visualizzazione degli amministratori
 router.get('/', verificaToken, requireRuolo('amministratore'), Amministratore.visualizzaAmministratori)
@@ -17,7 +17,7 @@ router.post('/login', Amministratore.loginAmministratore)
 router.put('/:idUtente', verificaToken, autorizzaModifica('amministratore'), Amministratore.modificaProfilo)
 
 //elimina utente
-router.delete('/eliminaUtente/:idUtente', verificaToken, autorizzaModifica('amministratore'), Amministratore.eliminaProfilo)
+router.delete('/:idUtente', verificaToken, autorizzaEliminazione('amministratore'), Amministratore.eliminaProfilo)
 
 
 module.exports = router
