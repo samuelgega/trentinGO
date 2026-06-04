@@ -10,7 +10,7 @@ const posizioneSchema = z.tuple([
     z.number().min(-180).max(180)
 ])
 
-const TOLLERANZA = 5
+const TOLLERANZA = 10
 const BASE = 16 //punti necessari per il lvl 2
 
 //funzione che calcola la distanza tra 2 posizioni con la formula di Haversine
@@ -66,8 +66,9 @@ const registraPDI = async (req, res) => {
             return res.status(400).json({ error: "Posizione mancante o non valida" })
         }
         const [lon, lat] = result.data
-        if (calcolaDistanza(lon, lat, p.geometry.coordinates[0], p.geometry.coordinates[1]) > TOLLERANZA) {
-            return res.status(422).json({ error: `La posizione ricevuta è diversa da quella del PDI (${calcolaDistanza(lon, lat, p.geometry.coordinates[0], p.geometry.coordinates[1])}km)` })
+        const distanza = calcolaDistanza(lon, lat, p.geometry.coordinates[0], p.geometry.coordinates[1])
+        if (distanza > TOLLERANZA) {
+            return res.status(422).json({ error: `Sei distante ${distanza.toFixed(1)} km dal PDI` })
         }
 
         //calcolo gli xp del giocatore prima che si aggiorni
@@ -111,4 +112,15 @@ const registraPDI = async (req, res) => {
     }
 }
 
-module.exports = { registraPDI }
+const getVisiteGiocatore = async (req, res) => {
+    try {
+        const idGiocatore = req.utente.id
+        const visite = await Visita.find({ idGiocatore }).select('idPDI idEvento -_id')
+        res.status(200).json({ data: visite })
+    } catch (error) {
+        console.error("Errore nel recupero visite:", error)
+        res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { registraPDI, getVisiteGiocatore }

@@ -18,6 +18,21 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
     const { showAlert } = useAlert()
     const ruolo = localStorage.getItem('ruolo')
     const [pdiInCaricamento, setPdiInCaricamento] = useState(null)
+    const [pdiVisitati, setPdiVisitati] = useState(new Set())
+
+    useEffect(() => {
+        if (ruolo !== 'giocatore') return
+        const token = localStorage.getItem('token')
+        fetch('http://localhost:3001/api/v1/visite/giocatore', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => {
+                const ids = new Set(json.data?.map(v => v.idPDI).filter(Boolean))
+                setPdiVisitati(ids)
+            })
+            .catch(() => {})
+    }, [ruolo])
 
     const registraVisita = (pdi) => {
         if (!navigator.geolocation) {
@@ -26,10 +41,41 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
         }
         setPdiInCaricamento(pdi._id)
         navigator.geolocation.getCurrentPosition(
-            (posizione) => {
+            async (posizione) => {
                 const lon = posizione.coords.longitude
                 const lat = posizione.coords.latitude
-                // Step 4: chiamata API
+                const token = localStorage.getItem('token')
+                const idGiocatore = localStorage.getItem('userId')
+                try {
+                    const response = await fetch('http://localhost:3001/api/v1/visite/pdi', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ idGiocatore, idPDI: pdi._id, posizione: [lon, lat] })
+                    })
+                    const json = await response.json()
+                    if (response.ok) {
+                        setPdiVisitati(prev => new Set([...prev, pdi._id]))
+                        if (json.levelUp) {
+                            showAlert("Sei salito di livello!", `Complimenti! Hai raggiunto il livello ${json.levelUp} 🎉`, "success")
+                        } else {
+                            showAlert("Visita registrata!", `Hai guadagnato ${pdi.properties.punteggio} XP`, "success")
+                        }
+                    } else if (response.status === 409) {
+                        setPdiVisitati(prev => new Set([...prev, pdi._id]))
+                        showAlert("Già visitato", "Hai già registrato una visita per questo PDI", "warning")
+                    } else if (response.status === 422) {
+                        showAlert("Troppo lontano", json.error, "warning")
+                    } else {
+                        showAlert("Errore", json.error || "Impossibile registrare la visita", "danger")
+                    }
+                } catch {
+                    showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+                } finally {
+                    setPdiInCaricamento(null)
+                }
             },
             (errore) => {
                 setPdiInCaricamento(null)
@@ -145,11 +191,11 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                                                     {ruolo === 'giocatore' && (
                                                         <button
                                                             className="btn text-white px-3 py-2 fw-semibold shadow-sm"
-                                                            style={{ backgroundColor: '#037149', borderRadius: '10px', fontSize: '0.9rem' }}
+                                                            style={{ backgroundColor: pdiVisitati.has(pdi._id) ? '#6c757d' : '#037149', borderRadius: '10px', fontSize: '0.9rem' }}
                                                             onClick={(e) => { e.stopPropagation(); registraVisita(pdi) }}
-                                                            disabled={pdiInCaricamento === pdi._id}
+                                                            disabled={pdiInCaricamento === pdi._id || pdiVisitati.has(pdi._id)}
                                                         >
-                                                            {pdiInCaricamento === pdi._id ? 'Localizzazione...' : 'Registra visita'}
+                                                            {pdiInCaricamento === pdi._id ? 'Localizzazione...' : pdiVisitati.has(pdi._id) ? 'Già visitato' : 'Registra visita'}
                                                         </button>
                                                     )}
                                                     <button

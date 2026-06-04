@@ -15,6 +15,7 @@ const InfoPDI = () => {
 
     const ruolo = localStorage.getItem('ruolo')
     const [caricamento, setCaricamento] = useState(false)
+    const [giaVisitato, setGiaVisitato] = useState(false)
 
     const registraVisita = () => {
         if (!navigator.geolocation) {
@@ -23,10 +24,41 @@ const InfoPDI = () => {
         }
         setCaricamento(true)
         navigator.geolocation.getCurrentPosition(
-            (posizione) => {
+            async (posizione) => {
                 const lon = posizione.coords.longitude
                 const lat = posizione.coords.latitude
-                // Step 4: chiamata API
+                const token = localStorage.getItem('token')
+                const idGiocatore = localStorage.getItem('userId')
+                try {
+                    const response = await fetch('http://localhost:3001/api/v1/visite/pdi', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ idGiocatore, idPDI: pdi._id, posizione: [lon, lat] })
+                    })
+                    const json = await response.json()
+                    if (response.ok) {
+                        setGiaVisitato(true)
+                        if (json.levelUp) {
+                            showAlert("Sei salito di livello!", `Complimenti! Hai raggiunto il livello ${json.levelUp} 🎉`, "success")
+                        } else {
+                            showAlert("Visita registrata!", `Hai guadagnato ${pdi.properties.punteggio} XP`, "success")
+                        }
+                    } else if (response.status === 409) {
+                        setGiaVisitato(true)
+                        showAlert("Già visitato", "Hai già registrato una visita per questo PDI", "warning")
+                    } else if (response.status === 422) {
+                        showAlert("Troppo lontano", json.error, "warning")
+                    } else {
+                        showAlert("Errore", json.error || "Impossibile registrare la visita", "danger")
+                    }
+                } catch {
+                    showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+                } finally {
+                    setCaricamento(false)
+                }
             },
             (errore) => {
                 setCaricamento(false)
@@ -62,6 +94,20 @@ const InfoPDI = () => {
     
         fetchPDI()
     }, [id, navigate, showAlert])
+
+    useEffect(() => {
+        if (!pdi || ruolo !== 'giocatore') return
+        const token = localStorage.getItem('token')
+        fetch('http://localhost:3001/api/v1/visite/giocatore', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => {
+                const visitato = json.data?.some(v => v.idPDI === pdi._id)
+                setGiaVisitato(visitato)
+            })
+            .catch(() => {})
+    }, [pdi, ruolo])
 
     //guardia per completare i dati di pdi
     if (!pdi) {
@@ -199,11 +245,11 @@ const InfoPDI = () => {
                                     {ruolo === 'giocatore' && (
                                         <button
                                             className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
-                                            style={{ backgroundColor: '#037149' }}
+                                            style={{ backgroundColor: giaVisitato ? '#6c757d' : '#037149' }}
                                             onClick={registraVisita}
-                                            disabled={caricamento}
+                                            disabled={caricamento || giaVisitato}
                                         >
-                                            {caricamento ? 'Localizzazione...' : 'Registra visita'}
+                                            {caricamento ? 'Localizzazione...' : giaVisitato ? 'Già visitato' : 'Registra visita'}
                                         </button>
                                     )}
                                     <button
