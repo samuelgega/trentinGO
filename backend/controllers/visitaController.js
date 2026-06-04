@@ -1,8 +1,11 @@
 const Giocatore = require('../models/Giocatore')
 const PDI = require('../models/PDI')
+const Evento = require('../models/Evento')
 const Visita = require('../models/Visita')
 const z = require('zod')
 const mongoose = require('mongoose')
+
+const xpEvento = 10;
 
 //definizione schema posizione
 const posizioneSchema = z.tuple([
@@ -123,4 +126,98 @@ const getVisiteGiocatore = async (req, res) => {
     }
 }
 
-module.exports = { registraPDI, getVisiteGiocatore }
+const registraEvento = async (req,res) => {
+    try{
+        
+        const { idGiocatore, idEvento } = req.body
+
+        //Controllo se i dati sono corretti
+        if (!mongoose.Types.ObjectId.isValid(idGiocatore)) {
+            return res.status(400).json({ error: 'Id del giocatore non è valido' })
+        }
+        const idGiocatoreVerificato = new mongoose.Types.ObjectId(idGiocatore)
+
+        if (!mongoose.Types.ObjectId.isValid(idEvento)) {
+            return res.status(400).json({ error: "Id dell'evento non è valido" })
+        }
+        const idEventoVerificato = new mongoose.Types.ObjectId(idEvento)
+
+        //Controllo se il giocatore e l'evento esistono nel db
+        const giocatore = await Giocatore.findById(idGiocatoreVerificato)
+        if (!giocatore) {
+            return res.status(404).json({ error: 'Giocatore non trovato' })
+        }
+        
+        const evento = await Evento.findById(idEventoVerificato)
+        if (!evento) {
+            return res.status(404).json({ error: 'Evento non trovato' })
+        }
+
+        const adesso = new Date()
+        const dataInizio = evento.properties.dataInizio ? new Date(evento.properties.dataInizio) : null
+        const dataFine = evento.properties.dataFine ? new Date(evento.properties.dataFine) : null
+
+        //Controllo se l'evento deve ancora iniziare
+        if (dataInizio && adesso < dataInizio) {
+            return res.status(400).json({ error: "L'evento non è ancora iniziato. Potrai registrare la visita solo quando sarà attivo." })
+        }
+
+        //Controllo se l'evento è già terminato
+        if (dataFine && adesso > dataFine) {
+            return res.status(400).json({ error: "L'evento è già terminato. Non è possibile registrare la visita." })
+        }
+
+        //Controllo se ci sono le coordinate e se l'utente è vicino all'evento
+        const result = posizioneSchema.safeParse(req.body.posizione)
+        if (!result.success) {
+            return res.status(400).json({ error: "Posizione mancante o non valida" })
+        }
+        const [lon, lat] = result.data
+        if (calcolaDistanza(lon, lat, evento.geometry.coordinates[0], evento.geometry.coordinates[1]) > TOLLERANZA) {
+            return res.status(422).json({ 
+                error: `La tua posizione attuale è troppo distante dall'evento (${calcolaDistanza(lon, lat, evento.geometry.coordinates[0], evento.geometry.coordinates[1]).toFixed(2)}km)` 
+            })
+        }
+
+        //calcolo gli xp iniziali del giocatore
+        const [risultatoAggregazione] = await Visita.aggregate([
+            { $match: { idGiocatore: idGiocatoreVerificato } },
+            { $group: { _id: null, xpIniziali: { $sum: "$punteggio" } } }
+        ])
+        const xpIniziali = risultatoAggregazione ? risultatoAggregazione.xpIniziali : 0
+
+        //creo la visita
+        const v = await Visita.create({
+            idGiocatore: idGiocatoreVerificato,
+            idEvento: idEventoVerificato,
+            timestamp: new Date(),
+            punteggio: xpEvento
+        })
+
+        //risposta di successo
+        const risposta = {
+            message: 'Visita all\'evento registrata con successo',
+            levelUp: undefined,
+            nuoviAchievements: undefined
+        }
+
+        //Controllo level up
+        const xpFinali = xpIniziali + xpEvento
+        if (calcolaLivello(xpIniziali) < calcolaLivello(xpFinali)) {
+            risposta.levelUp = calcolaLivello(xpFinali)
+        }
+
+        // TODO: implementare check di nuovi achievements
+
+        return res.status(200).json(risposta)
+    }
+    catch (error) {
+        if (error.code === 11000) {
+            return res.status(409).json({ error: "Hai già registrato la tua visita a questo evento" })
+        }
+        console.error("Errore nella registrazione dell'evento: ", error)
+        return res.status(500).json({ error: "Errore interno del server" })
+    }
+}
+
+module.exports = { registraPDI, registraEvento,getVisiteGiocatore }

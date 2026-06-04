@@ -8,4 +8,7 @@ const { verificaToken, autorizzaVisita } = require('../middlewares/authMiddlewar
 router.post('/pdi', verificaToken, autorizzaVisita, VisitaController.registraPDI)
 router.get('/giocatore', verificaToken, VisitaController.getVisiteGiocatore)
 
+//rotta per registrare un visita di un evento
+router.post('/evento', verificaToken, autorizzaVisita, VisitaController.registraEvento);
+
 module.exports = router
