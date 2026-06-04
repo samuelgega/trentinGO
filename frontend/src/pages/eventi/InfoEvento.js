@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAlert } from '../../contexts/AlertController';
+import NotificaVisita from '../../components/homeComponents/NotificaVisita';
 
 const InfoEvento = () => {
 
@@ -12,6 +13,81 @@ const InfoEvento = () => {
     const [evento, setEvento] = useState(null);
     const [fotoGrandeIndex, setFotoGrandeIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+    const ruolo = localStorage.getItem('ruolo');
+    const [caricamento, setCaricamento] = useState(false);
+    const [giaVisitato, setGiaVisitato] = useState(false);
+    const [notifica, setNotifica] = useState(null);
+
+    useEffect(() => {
+        if (!evento || ruolo !== 'giocatore') return
+        const token = localStorage.getItem('token')
+        fetch('/api/v1/visite/giocatore', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => {
+                const visitato = json.data?.some(v => v.idEvento === evento._id)
+                setGiaVisitato(visitato)
+            })
+            .catch(() => {})
+    }, [evento, ruolo])
+
+    const registraVisita = () => {
+        const token = localStorage.getItem('token')
+        const idGiocatore = localStorage.getItem('userId')
+        const haCoordinate = evento.geometry?.coordinates?.length === 2
+
+        const eseguiPost = async (posizione) => {
+            const body = { idGiocatore, idEvento: evento._id }
+            if (posizione) body.posizione = posizione
+            try {
+                const response = await fetch('/api/v1/visite/evento', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                })
+                const json = await response.json()
+                if (response.ok) {
+                    setGiaVisitato(true)
+                    setNotifica({ nome: evento.properties.nome, punteggio: 10, levelUp: json.levelUp })
+                } else if (response.status === 409) {
+                    setGiaVisitato(true)
+                    showAlert("Già visitato", "Hai già registrato una visita per questo evento", "warning")
+                } else if (response.status === 422) {
+                    showAlert("Troppo lontano", json.error, "warning")
+                } else {
+                    showAlert("Errore", json.error || "Impossibile registrare la visita", "danger")
+                }
+            } catch {
+                showAlert("Errore di connessione", "Impossibile collegarsi al server", "danger")
+            } finally {
+                setCaricamento(false)
+            }
+        }
+
+        if (haCoordinate) {
+            if (!navigator.geolocation) {
+                showAlert("Errore", "Il tuo dispositivo non supporta la geolocalizzazione", "danger")
+                return
+            }
+            setCaricamento(true)
+            navigator.geolocation.getCurrentPosition(
+                (pos) => eseguiPost([pos.coords.longitude, pos.coords.latitude]),
+                (err) => {
+                    setCaricamento(false)
+                    if (err.code === err.PERMISSION_DENIED)
+                        showAlert("Permesso negato", "Abilita la geolocalizzazione per registrare la visita", "warning")
+                    else
+                        showAlert("Errore", "Impossibile ottenere la posizione", "danger")
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            )
+        } else {
+            setCaricamento(true)
+            eseguiPost(null)
+        }
+    }
 
     useEffect(() => {
         const fetchEvento = async () => {
@@ -54,7 +130,14 @@ const InfoEvento = () => {
 
     const formatData = (dataStr) => {
         if (!dataStr) return '—';
-        return new Date(dataStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'long', year: 'numeric' });
+        return new Date(dataStr).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+    };
+
+    const formatOra = (dataStr) => {
+        if (!dataStr) return null;
+        const d = new Date(dataStr);
+        if (d.getHours() === 0 && d.getMinutes() === 0) return null;
+        return d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
     };
 
     const calcolaStato = () => {
@@ -116,29 +199,19 @@ const InfoEvento = () => {
                     <div className="col-12 col-lg-9">
                         <div className="card border-0 shadow-sm p-4 p-md-5" style={{ borderRadius: '24px', backgroundColor: '#ffffff' }}>
 
-                            <div className="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 pb-4 border-bottom">
-                                {/* Categoria e nome */}
-                                <div>
-                                    <span className="badge text-uppercase px-3 py-2 mb-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
+                            <div className="mb-4 pb-4 border-bottom">
+                                <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                    <span className="badge text-uppercase px-3 py-2 rounded-pill fw-semibold" style={{ backgroundColor: 'rgba(3, 113, 73, 0.1)', color: '#037149', fontSize: '0.8rem' }}>
                                         {evento.properties.categoria || 'Evento'}
                                     </span>
-                                    <h1 className="fw-bold text-dark m-0" style={{ letterSpacing: '-0.02em' }}>{evento.properties.nome}</h1>
-                                </div>
-
-                                {/* Date in evidenza */}
-                                <div
-                                    className="d-flex flex-column align-items-center px-3 py-2 rounded-3 align-self-start align-self-sm-center shadow-sm text-center"
-                                    style={{ backgroundColor: '#e6f4ea', color: '#137b52', minWidth: '130px' }}
-                                >
-                                    <span className="material-symbols-outlined mb-1" style={{ fontSize: '1.4rem' }}>calendar_month</span>
-                                    <span className="fw-bold" style={{ fontSize: '0.9rem' }}>{formatData(evento.properties.dataInizio)}</span>
-                                    {evento.properties.dataFine && evento.properties.dataFine !== evento.properties.dataInizio && (
-                                        <>
-                                            <span className="text-muted" style={{ fontSize: '0.75rem' }}>fino al</span>
-                                            <span className="fw-bold" style={{ fontSize: '0.9rem' }}>{formatData(evento.properties.dataFine)}</span>
-                                        </>
+                                    {giaVisitato && ruolo === 'giocatore' && (
+                                        <div className="d-flex align-items-center gap-1 px-3 py-1 shadow-sm" style={{ backgroundColor: '#037149', borderRadius: '999px' }}>
+                                            <span className="material-symbols-outlined fill text-white" style={{ fontSize: '1rem' }}>thumb_up</span>
+                                            <span className="text-white fw-bold" style={{ fontSize: '0.78rem', letterSpacing: '0.03em' }}>VISITATO</span>
+                                        </div>
                                     )}
                                 </div>
+                                <h1 className="fw-bold text-dark m-0" style={{ letterSpacing: '-0.02em' }}>{evento.properties.nome}</h1>
                             </div>
 
                             {/* Descrizione */}
@@ -149,18 +222,46 @@ const InfoEvento = () => {
                                 </p>
                             </div>
 
-                            {/* Box prezzo */}
-                            <div className="row g-4 mb-4">
-                                <div className="col-12 col-md-6">
-                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
-                                        <div className="p-3 rounded-3 text-white d-flex" style={{ backgroundColor: '#037149' }}>
-                                            <span className="material-symbols-outlined">payments</span>
+                            {/* Box info: prezzo + date */}
+                            <div className="row g-3 mb-5">
+                                <div className="col-12 col-sm-4">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3 h-100" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex flex-shrink-0" style={{ backgroundColor: '#037149' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>payments</span>
                                         </div>
                                         <div>
-                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.75rem' }}>PREZZO BIGLIETTO</small>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.72rem' }}>PREZZO</small>
                                             <span className="fw-bold text-dark fs-5">
                                                 {evento.properties.prezzo === 0 || !evento.properties.prezzo ? 'Gratuito' : `${evento.properties.prezzo} €`}
                                             </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-12 col-sm-4">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3 h-100" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex flex-shrink-0" style={{ backgroundColor: '#6c757d' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>event</span>
+                                        </div>
+                                        <div>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.72rem' }}>INIZIO</small>
+                                            <span className="fw-bold text-dark d-block" style={{ fontSize: '0.95rem' }}>{formatData(evento.properties.dataInizio)}</span>
+                                            {formatOra(evento.properties.dataInizio) && (
+                                                <span className="fw-semibold" style={{ fontSize: '0.85rem', color: '#6c757d' }}>{formatOra(evento.properties.dataInizio)}</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="col-12 col-sm-4">
+                                    <div className="p-3 rounded-4 d-flex align-items-center gap-3 h-100" style={{ backgroundColor: '#f8f9fa', border: '1px solid #e2e8f0' }}>
+                                        <div className="p-2 rounded-3 text-white d-flex flex-shrink-0" style={{ backgroundColor: '#6c757d' }}>
+                                            <span className="material-symbols-outlined" style={{ fontSize: '1.2rem' }}>event</span>
+                                        </div>
+                                        <div>
+                                            <small className="text-muted d-block fw-semibold" style={{ fontSize: '0.72rem' }}>FINE</small>
+                                            <span className="fw-bold text-dark d-block" style={{ fontSize: '0.95rem' }}>{formatData(evento.properties.dataFine)}</span>
+                                            {formatOra(evento.properties.dataFine) && (
+                                                <span className="fw-semibold" style={{ fontSize: '0.85rem', color: '#6c757d' }}>{formatOra(evento.properties.dataFine)}</span>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
@@ -234,25 +335,46 @@ const InfoEvento = () => {
                                 <button className="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-3" onClick={() => navigate(-1)}>
                                     Torna agli eventi
                                 </button>
-                                {evento.geometry?.coordinates?.length === 2 && (
-                                    <button
-                                        className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
-                                        style={{ backgroundColor: '#137b52' }}
-                                        onClick={() => {
-                                            const lat = evento.geometry.coordinates[1];
-                                            const lng = evento.geometry.coordinates[0];
-                                            window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
-                                        }}
-                                    >
-                                        Ottieni indicazioni
-                                    </button>
-                                )}
+                                <div className="d-flex gap-2">
+                                    {ruolo === 'giocatore' && (() => {
+                                        const statoEvento = calcolaStato()
+                                        const nonAncoraIniziato = statoEvento.label === 'Non ancora iniziato'
+                                        const terminato = statoEvento.label === 'Concluso'
+                                        return (
+                                            <button
+                                                className="btn text-white px-5 py-2 fw-semibold rounded-3 shadow-sm"
+                                                style={{
+                                                    backgroundColor: giaVisitato || terminato ? '#6c757d' : '#037149',
+                                                    opacity: nonAncoraIniziato ? 0.45 : 1
+                                                }}
+                                                disabled={caricamento || giaVisitato || nonAncoraIniziato || terminato}
+                                                onClick={registraVisita}
+                                            >
+                                                {caricamento ? 'Attendere...' : giaVisitato ? 'Già visitato' : terminato ? 'Concluso' : 'Registra visita'}
+                                            </button>
+                                        )
+                                    })()}
+                                    {evento.geometry?.coordinates?.length === 2 && (
+                                        <button
+                                            className="btn btn-outline-secondary px-5 py-2 fw-semibold rounded-3"
+                                            onClick={() => {
+                                                const lat = evento.geometry.coordinates[1];
+                                                const lng = evento.geometry.coordinates[0];
+                                                window.open(`https://www.google.com/maps/search/?api=1&query=${lat},${lng}`, '_blank');
+                                            }}
+                                        >
+                                            Ottieni indicazioni
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                         </div>
                     </div>
                 </div>
             </div>
+
+            <NotificaVisita notifica={notifica} onHide={() => setNotifica(null)} />
 
             {/* Lightbox */}
             {isLightboxOpen && (

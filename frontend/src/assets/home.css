@@ -273,6 +273,13 @@
     filter: brightness(1.2) saturate(0);
 }
 
+/* card evento già visitato */
+.evento-card--visitato {
+    border: 2px solid #037149 !important;
+    background-color: rgba(3, 113, 73, 0.03);
+    box-shadow: 0 0 0 4px rgba(3, 113, 73, 0.08), 0 4px 16px rgba(3, 113, 73, 0.12) !important;
+}
+
 /* card PDI già visitato */
 .pdi-card--visitato {
     border: 2px solid #037149 !important;

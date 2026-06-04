@@ -28,14 +28,14 @@ const schemaVisita = new mongoose.Schema({
 })
 
 // Controllo per verificare che una visita sia associata ad un PDI oppure ad un evento
-schemaVisita.pre('validate', function(next) {
+schemaVisita.pre('validate', async function() {
     const hasPDI = !!this.idPDI
     const hasEvento = !!this.idEvento
     if (hasPDI && hasEvento) {
-        return next(new Error('Una visita non può riferirsi contemporaneamente a un PDI e a un Evento'))
+        throw new Error('Una visita non può riferirsi contemporaneamente a un PDI e a un Evento')
     }
     if (!hasPDI && !hasEvento) {
-        return next(new Error('Una visita deve riferirsi a un PDI oppure a un Evento'))
+        throw new Error('Una visita deve riferirsi a un PDI oppure a un Evento')
     }
 })
 

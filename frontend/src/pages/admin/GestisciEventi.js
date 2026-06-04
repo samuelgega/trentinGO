@@ -67,8 +67,10 @@ const GestisciEventi = () => {
         if (!eventoDaEliminare) return;
 
         try {
+            const token = localStorage.getItem('token')
             const response = await fetch(`http://localhost:3001/api/v1/eventi/${eventoDaEliminare._id}`, {
                 method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
                 showAlert(`Evento ${eventoDaEliminare.properties.nome} eliminato!`)

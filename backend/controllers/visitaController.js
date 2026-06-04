@@ -156,6 +156,7 @@ const registraEvento = async (req,res) => {
         const adesso = new Date()
         const dataInizio = evento.properties.dataInizio ? new Date(evento.properties.dataInizio) : null
         const dataFine = evento.properties.dataFine ? new Date(evento.properties.dataFine) : null
+        if (dataFine) dataFine.setHours(23, 59, 59, 999)
 
         //Controllo se l'evento deve ancora iniziare
         if (dataInizio && adesso < dataInizio) {
@@ -167,16 +168,17 @@ const registraEvento = async (req,res) => {
             return res.status(400).json({ error: "L'evento è già terminato. Non è possibile registrare la visita." })
         }
 
-        //Controllo se ci sono le coordinate e se l'utente è vicino all'evento
-        const result = posizioneSchema.safeParse(req.body.posizione)
-        if (!result.success) {
-            return res.status(400).json({ error: "Posizione mancante o non valida" })
-        }
-        const [lon, lat] = result.data
-        if (calcolaDistanza(lon, lat, evento.geometry.coordinates[0], evento.geometry.coordinates[1]) > TOLLERANZA) {
-            return res.status(422).json({ 
-                error: `La tua posizione attuale è troppo distante dall'evento (${calcolaDistanza(lon, lat, evento.geometry.coordinates[0], evento.geometry.coordinates[1]).toFixed(2)}km)` 
-            })
+        //Controllo posizione solo se l'evento ha coordinate geografiche
+        if (evento.geometry?.coordinates?.length === 2) {
+            const result = posizioneSchema.safeParse(req.body.posizione)
+            if (!result.success) {
+                return res.status(400).json({ error: "Posizione mancante o non valida" })
+            }
+            const [lon, lat] = result.data
+            const distanza = calcolaDistanza(lon, lat, evento.geometry.coordinates[0], evento.geometry.coordinates[1])
+            if (distanza > TOLLERANZA) {
+                return res.status(422).json({ error: `Sei distante ${distanza.toFixed(1)} km dall'evento` })
+            }
         }
 
         //calcolo gli xp iniziali del giocatore
