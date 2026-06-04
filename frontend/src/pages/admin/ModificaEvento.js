@@ -80,8 +80,8 @@ const ModificaEvento = () => {
                         latitudine: evento.geometry.coordinates[1] || '',
                         longitudine: evento.geometry.coordinates[0] || '',
                         prezzo: evento.properties.prezzo || 0,
-                        dataInizio: evento.properties.dataInizio ? evento.properties.dataInizio.split('T')[0] : '',
-                        dataFine: evento.properties.dataFine ? evento.properties.dataFine.split('T')[0] : '',
+                        dataInizio: evento.properties.dataInizio ? new Date(evento.properties.dataInizio).toISOString().slice(0, 16) : '',
+                        dataFine: evento.properties.dataFine ? new Date(evento.properties.dataFine).toISOString().slice(0, 16) : '',
                         pdiCollegato: idPdi || ''
                     })
                 } else {
@@ -107,21 +107,14 @@ const ModificaEvento = () => {
             error.prezzo = "Inserisci un prezzo valido (0 o più)"
 
         const oggi = new Date();
-        oggi.setHours(0, 0, 0, 0); 
-
         if (!dati.dataInizio) {
-            error.dataInizio = "La data di inizio è obbligatoria";
-        } 
+            error.dataInizio = "La data e ora di inizio sono obbligatorie";
+        }
 
         if (!dati.dataFine) {
-            error.dataFine = "La data di fine è obbligatoria";
+            error.dataFine = "La data e ora di fine sono obbligatorie";
         } else {
-            const dataInizioObj = new Date(dati.dataInizio);
-            dataInizioObj.setHours(0,0,0,0);
-            const dataFineObj = new Date(dati.dataFine);
-            dataFineObj.setHours(0,0,0,0);
-            
-            if (dataFineObj < dataInizioObj) error.dataFine = "La data di fine deve essere uguale o successiva alla data di inizio";
+            if (new Date(dati.dataFine) < new Date(dati.dataInizio)) error.dataFine = "La data di fine deve essere uguale o successiva alla data di inizio";
         }
 
         if (dati.latitudine === '' || isNaN(dati.latitudine) || dati.latitudine < -90 || dati.latitudine > 90)
@@ -201,12 +194,11 @@ const ModificaEvento = () => {
         immagini.forEach((img) => submitData.append('immagine', img))
 
         try {
+            const token = localStorage.getItem('token')
             const response = await fetch(`http://localhost:3001/api/v1/eventi/${id}`, {
-                method: 'PUT', 
+                method: 'PUT',
                 body: submitData,
-                headers: {
-                    // TODO: header di autenticazione
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             })
 
             const data = await response.json()
@@ -337,9 +329,9 @@ const ModificaEvento = () => {
                             <h5 className="text-trentingo mb-3">3. Date</h5>
                             <div className="row g-3 mb-4">
                                 <div className="col-md-6">
-                                    <label className="form-label fw-bold">Data di Inizio*</label>
+                                    <label className="form-label fw-bold">Data e Ora di Inizio*</label>
                                     <input
-                                        type="date"
+                                        type="datetime-local"
                                         name="dataInizio"
                                         value={formData.dataInizio}
                                         className="form-control"
@@ -348,9 +340,9 @@ const ModificaEvento = () => {
                                     <small className="text-danger">{errori.dataInizio}</small>
                                 </div>
                                 <div className="col-md-6">
-                                    <label className="form-label fw-bold">Data di Fine*</label>
+                                    <label className="form-label fw-bold">Data e Ora di Fine*</label>
                                     <input
-                                        type="date"
+                                        type="datetime-local"
                                         name="dataFine"
                                         value={formData.dataFine}
                                         className="form-control"

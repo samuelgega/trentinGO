@@ -70,26 +70,16 @@ const CreaEvento = () => {
         if (dati.prezzo !== '' && (isNaN(dati.prezzo) || dati.prezzo < 0))
             error.prezzo = "Inserisci un prezzo valido (0 o più)"
 
-        const oggi = new Date();
-        oggi.setHours(0, 0, 0, 0);
-
         if (!dati.dataInizio) {
-            error.dataInizio = "La data di inizio è obbligatoria";
+            error.dataInizio = "La data e ora di inizio sono obbligatorie";
         } else {
-            const dataInizioObj = new Date(dati.dataInizio);
-            dataInizioObj.setHours(0, 0, 0, 0);
-            if (dataInizioObj < oggi) error.dataInizio = "La data di inizio non può essere passata";
+            if (new Date(dati.dataInizio) < new Date()) error.dataInizio = "La data di inizio non può essere nel passato";
         }
 
         if (!dati.dataFine) {
-            error.dataFine = "La data di fine è obbligatoria";
+            error.dataFine = "La data e ora di fine sono obbligatorie";
         } else {
-            const dataInizioObj = new Date(dati.dataInizio);
-            dataInizioObj.setHours(0, 0, 0, 0);
-            const dataFineObj = new Date(dati.dataFine);
-            dataFineObj.setHours(0, 0, 0, 0);
-
-            if (dataFineObj < dataInizioObj) error.dataFine = "La data di fine deve essere uguale o successiva alla data di inizio";
+            if (new Date(dati.dataFine) < new Date(dati.dataInizio)) error.dataFine = "La data di fine deve essere uguale o successiva alla data di inizio";
         }
 
         if (dati.latitudine === '' || isNaN(dati.latitudine) || dati.latitudine < -90 || dati.latitudine > 90)
@@ -104,9 +94,10 @@ const CreaEvento = () => {
     //handle degli input
     const handleInput = (e) => {
         const { name, value } = e.target
-        setFormData(prev => ({ ...prev, [name]: value }))
+        const campiCoordinate = ['latitudine', 'longitudine']
+        const valorePulito = campiCoordinate.includes(name) ? value.replace(',', '.') : value
+        setFormData(prev => ({ ...prev, [name]: valorePulito }))
 
-        //pulisce l'errore se l'utente corregge
         if (errori[name]) {
             setErrori(prev => ({ ...prev, [name]: undefined }))
         }
@@ -171,14 +162,16 @@ const CreaEvento = () => {
         //FormData necessario per inviare files
         const submitData = new FormData()
         Object.entries(formData).forEach(([key, value]) => {
-            submitData.append(key, value)
+            if (key !== 'idGestore') submitData.append(key, value)
         })
         immagini.forEach((img) => submitData.append('immagine', img))
-        submitData.append('idGestore', idGestore)
+        if (idGestore) submitData.append('idGestore', idGestore)
 
         try {
+            const token = localStorage.getItem('token')
             const response = await fetch('http://localhost:3001/api/v1/eventi', {
                 method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
                 body: submitData
             })
 
@@ -246,6 +239,7 @@ const CreaEvento = () => {
                                             <option value="Enogastronomia">Enogastronomia</option>
                                             <option value="Fiere e Mercati">Fiere e Mercati</option>
                                             <option value="Famiglia e Bambini">Famiglia e Bambini</option>
+                                            <option value="Scalate e Arrampicate">Scalate e Arrampicate</option>
                                             <option value="Altro">Altro</option>
                                         </select>
                                         <small className="text-danger">{errori.categoria}</small>
@@ -311,12 +305,12 @@ const CreaEvento = () => {
                                 </div>
                                 <hr />
                                 {/* Date */}
-                                <h5 className="text-trentingo mb-3">3. Date</h5>
+                                <h5 className="text-trentingo mb-3">3. Date e Orari</h5>
                                 <div className="row g-3 mb-4">
                                     <div className="col-md-6">
-                                        <label className="form-label fw-bold">Data di Inizio*</label>
+                                        <label className="form-label fw-bold">Data e Ora di Inizio*</label>
                                         <input
-                                            type="date"
+                                            type="datetime-local"
                                             name="dataInizio"
                                             value={formData.dataInizio}
                                             className="form-control"
@@ -325,9 +319,9 @@ const CreaEvento = () => {
                                         <small className="text-danger">{errori.dataInizio}</small>
                                     </div>
                                     <div className="col-md-6">
-                                        <label className="form-label fw-bold">Data di Fine*</label>
+                                        <label className="form-label fw-bold">Data e Ora di Fine*</label>
                                         <input
-                                            type="date"
+                                            type="datetime-local"
                                             name="dataFine"
                                             value={formData.dataFine}
                                             className="form-control"
