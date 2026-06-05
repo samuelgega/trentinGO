@@ -75,19 +75,25 @@ const registraPDI = async (req, res) => {
         }
 
         //calcolo gli xp del giocatore prima che si aggiorni
-        const [risultatoAggregazione] = await Visita.aggregate([
-            { $match: { idGiocatore: idGiocatoreVerificato } },
-            { $group: { _id: null, xpIniziali: { $sum: "$punteggio" } } }
-        ])
-        const xpIniziali = risultatoAggregazione ? risultatoAggregazione.xpIniziali : 0
+        const xpIniziali = g.puntiEsperienza || 0
+        const livelloIniziale = g.livello || 1
+        
+        const puntiPDI = p.properties.punteggio || 0
+        const xpFinali = xpIniziali + puntiPDI
+        const livelloFinale = calcolaLivello(xpFinali)
 
         //creo la visita
         const v = await Visita.create({
             idGiocatore: idGiocatoreVerificato,
             idPDI: idPDIVerificato,
             timestamp: new Date(),
-            punteggio: p.properties.punteggio
+            punteggio: puntiPDI
         })
+
+        //aggiorno il giocatore
+        g.puntiEsperienza = xpFinali;
+        g.livello = livelloFinale;
+        await g.save();
 
         //strutturo la risposta di successo
         const risposta = {
@@ -97,9 +103,8 @@ const registraPDI = async (req, res) => {
         }
 
         //controllo se c'è stato un levelUp
-        const xpFinali = xpIniziali + p.properties.punteggio
-        if (calcolaLivello(xpIniziali) < calcolaLivello(xpFinali)) {
-            risposta.levelUp = calcolaLivello(xpFinali)
+        if (livelloFinale > livelloIniziale) {
+            risposta.levelUp = livelloFinale
         }
 
         //TODO: implementare check di nuovi achievements
@@ -182,11 +187,11 @@ const registraEvento = async (req, res) => {
         }
 
         //calcolo gli xp iniziali del giocatore
-        const [risultatoAggregazione] = await Visita.aggregate([
-            { $match: { idGiocatore: idGiocatoreVerificato } },
-            { $group: { _id: null, xpIniziali: { $sum: "$punteggio" } } }
-        ])
-        const xpIniziali = risultatoAggregazione ? risultatoAggregazione.xpIniziali : 0
+        const xpIniziali = giocatore.puntiEsperienza || 0
+        const livelloIniziale = giocatore.livello || 1
+        
+        const xpFinali = xpIniziali + xpEvento
+        const livelloFinale = calcolaLivello(xpFinali)
 
         //creo la visita
         const v = await Visita.create({
@@ -196,6 +201,11 @@ const registraEvento = async (req, res) => {
             punteggio: xpEvento
         })
 
+        //aggiorno il giocatore
+        giocatore.puntiEsperienza = xpFinali;
+        giocatore.livello = livelloFinale;
+        await giocatore.save();
+
         //risposta di successo
         const risposta = {
             message: 'Visita all\'evento registrata con successo',
@@ -204,9 +214,8 @@ const registraEvento = async (req, res) => {
         }
 
         //Controllo level up
-        const xpFinali = xpIniziali + xpEvento
-        if (calcolaLivello(xpIniziali) < calcolaLivello(xpFinali)) {
-            risposta.levelUp = calcolaLivello(xpFinali)
+        if (livelloFinale > livelloIniziale) {
+            risposta.levelUp = livelloFinale
         }
 
         // TODO: implementare check di nuovi achievements

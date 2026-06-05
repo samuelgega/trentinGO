@@ -19,4 +19,7 @@ router.put('/:idUtente', verificaToken, autorizzaModifica('giocatore'), Giocator
 //elimina utente
 router.delete('/:idUtente', verificaToken, autorizzaEliminazione('giocatore'), Giocatore.eliminaProfilo)
 
+//visualizza giocatore
+router.get("/:id", verificaToken, requireRuolo('giocatore', 'amministratore'), Giocatore.visualizzaGiocatore)
+
 module.exports = router;
