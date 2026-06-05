@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import HomeNav from '../../components/homeComponents/HomeNav'
 import '../../assets/home.css'
 
@@ -10,14 +11,57 @@ const rangi = [
 ]
 
 const DashboardGiocatore = () => {
+    const navigate = useNavigate()
     const username = localStorage.getItem('nome') || 'Giocatore'
 
-    const livello = 3
-    const xp = 40
-    const visitePDI = 5
-    const visiteEventi = 2
-    const xpPerLivelloCorrente = 32
-    const xpPerProssimoLivello = 48
+    const BASE = 16
+
+    const [livello, setLivello] = useState(1)
+    const [xp, setXp] = useState(0)
+    const [visitePDI, setVisitePDI] = useState(0)
+    const [visiteEventi, setVisiteEventi] = useState(0)
+    const [xpPerLivelloCorrente, setXpPerLivelloCorrente] = useState(0)
+    const [xpPerProssimoLivello, setXpPerProssimoLivello] = useState(BASE)
+
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+
+        // Fetch livello e XP dal profilo
+        fetch('/api/v1/datiUtente', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => {
+                const lv = json.data?.livello ?? 1
+                const punti = json.data?.puntiEsperienza ?? 0
+                setLivello(lv)
+                setXp(punti)
+                setXpPerLivelloCorrente(BASE * (lv - 1) * lv / 2)
+                setXpPerProssimoLivello(BASE * lv * (lv + 1) / 2)
+            })
+            .catch(() => {})
+
+        // Fetch conteggio visite PDI ed eventi
+        fetch('/api/v1/visite/giocatore?soloId=true', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => {
+                const visite = json.data ?? []
+                setVisitePDI(visite.filter(v => v.idPDI).length)
+                setVisiteEventi(visite.filter(v => v.idEvento).length)
+            })
+            .catch(() => {})
+    }, [])
+
+    const [vediTuttiPDI, setVediTuttiPDI] = useState(false)
+    const [vediTuttiEventi, setVediTuttiEventi] = useState(false)
+    const scrollRefPDI = useRef(null)
+    const scrollRefEventi = useRef(null)
+
+    const scorri = (ref, direzione) => {
+        if (ref.current) ref.current.scrollBy({ left: direzione * 230, behavior: 'smooth' })
+    }
 
     const rango = rangi.find(r => livello >= r.min && livello <= r.max) || rangi[0]
     const xpNelLivello = xp - xpPerLivelloCorrente
@@ -125,10 +169,134 @@ const DashboardGiocatore = () => {
                                 <p className="fw-semibold text-secondary mb-3 px-1" style={{ fontSize: '0.75rem', letterSpacing: '0.07em', textTransform: 'uppercase' }}>
                                     Storico visite
                                 </p>
-                                <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '22px', minHeight: '200px' }}>
-                                    <div className="card-body d-flex flex-column align-items-center justify-content-center text-center p-5" style={{ opacity: 0.45 }}>
-                                        <span className="material-symbols-outlined mb-2" style={{ fontSize: '2.5rem', color: '#6c757d' }}>history</span>
-                                        <span className="fw-semibold text-secondary" style={{ fontSize: '0.9rem' }}>In arrivo</span>
+                                <div className="card border-0 shadow-sm" style={{ borderRadius: '22px' }}>
+                                    <div className="card-body p-4">
+
+                                        {[
+                                            {
+                                                tipo: 'pdi',
+                                                colore: '#037149',
+                                                sfondo: 'rgba(3,113,73,0.1)',
+                                                icona: 'location_on',
+                                                label: 'Luoghi visitati',
+                                                ref: scrollRefPDI,
+                                                vediTutti: vediTuttiPDI,
+                                                setVediTutti: setVediTuttiPDI,
+                                                items: []
+                                            },
+                                            {
+                                                tipo: 'evento',
+                                                colore: '#0d6efd',
+                                                sfondo: 'rgba(13,110,253,0.1)',
+                                                icona: 'event',
+                                                label: 'Eventi partecipati',
+                                                ref: scrollRefEventi,
+                                                vediTutti: vediTuttiEventi,
+                                                setVediTutti: setVediTuttiEventi,
+                                                items: []
+                                            }
+                                        ].map((sezione, si) => (
+                                            <div key={si} className={si > 0 ? 'mt-4 pt-4 border-top' : ''} style={{ borderColor: '#f1f3f5' }}>
+                                                {/* Header sezione */}
+                                                <div className="d-flex align-items-center justify-content-between mb-3">
+                                                    <span className="fw-semibold" style={{ fontSize: '0.8rem', color: sezione.colore }}>
+                                                        <span className="material-symbols-outlined fill align-middle me-1" style={{ fontSize: '1rem' }}>{sezione.icona}</span>
+                                                        {sezione.label}
+                                                    </span>
+                                                    {sezione.items.length > 0 && (
+                                                        <button
+                                                            className="btn btn-sm border-0 p-0 fw-semibold"
+                                                            style={{ fontSize: '0.75rem', color: sezione.colore }}
+                                                            onClick={() => sezione.setVediTutti(v => !v)}
+                                                        >
+                                                            {sezione.vediTutti ? 'Comprimi' : 'Vedi tutti'}
+                                                        </button>
+                                                    )}
+                                                </div>
+
+                                                {sezione.items.length === 0 ? (
+                                                    <div className="pdi-empty-state" style={{ padding: '20px 16px' }}>
+                                                        <span className="material-symbols-outlined pdi-empty-icon" style={{ fontSize: '2rem' }}>search_off</span>
+                                                        <p style={{ fontSize: '0.85rem' }}>{sezione.tipo === 'pdi' ? 'Nessun luogo visitato' : 'Nessun evento visitato'}</p>
+                                                    </div>
+                                                ) : sezione.vediTutti ? (
+                                                    /* Vista lista */
+                                                    <div className="d-flex flex-column gap-2">
+                                                        {sezione.items.map((v, i) => (
+                                                            <div key={i} className="d-flex align-items-center gap-3 p-3 rounded-3" style={{ backgroundColor: '#f8f9fa' }}>
+                                                                <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                                                                    style={{ width: '40px', height: '40px', backgroundColor: sezione.sfondo }}>
+                                                                    <span className="material-symbols-outlined fill" style={{ fontSize: '1.2rem', color: sezione.colore }}>{sezione.icona}</span>
+                                                                </div>
+                                                                <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                                                    <div className="fw-semibold text-dark text-truncate" style={{ fontSize: '0.88rem' }}>{v.nome}</div>
+                                                                    <div className="text-muted" style={{ fontSize: '0.75rem' }}>
+                                                                        {new Date(v.timestamp).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                                        {' · '}
+                                                                        {new Date(v.timestamp).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                                                                    </div>
+                                                                </div>
+                                                                <span className="fw-bold" style={{ fontSize: '0.78rem', color: sezione.colore }}>+{v.xp} XP</span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                ) : (
+                                                    /* Vista carosello */
+                                                    <div className="d-flex align-items-center gap-2">
+                                                        <button className="btn p-0 border-0 flex-shrink-0" onClick={() => scorri(sezione.ref, -1)} style={{ color: sezione.colore }}>
+                                                            <span className="material-symbols-outlined">chevron_left</span>
+                                                        </button>
+                                                        <div
+                                                            ref={sezione.ref}
+                                                            className="d-flex gap-3 flex-grow-1"
+                                                            style={{ overflowX: 'auto', scrollSnapType: 'x mandatory', scrollBehavior: 'smooth', scrollbarWidth: 'none' }}
+                                                        >
+                                                            {sezione.items.map((v, i) => (
+                                                                <div key={i} className="flex-shrink-0 d-flex flex-column"
+                                                                    style={{
+                                                                        width: '175px',
+                                                                        scrollSnapAlign: 'start',
+                                                                        backgroundColor: '#fff',
+                                                                        borderRadius: '14px',
+                                                                        border: '1px solid #f0f0f0',
+                                                                        boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                                                                        overflow: 'hidden',
+                                                                        cursor: 'pointer',
+                                                                        transition: 'transform 0.18s ease, box-shadow 0.18s ease'
+                                                                    }}
+                                                                    onClick={() => navigate(sezione.tipo === 'pdi' ? `/dettagli/${v._id}` : `/dettagli-evento/${v._id}`)}
+                                                                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = sezione.sfondo }}
+                                                                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#fff' }}
+                                                                >
+                                                                    {/* Barra colorata in cima */}
+                                                                    <div style={{ height: '4px', backgroundColor: sezione.colore, opacity: 0.7 }} />
+                                                                    <div className="p-3 d-flex flex-column gap-2 flex-grow-1">
+                                                                        {/* Nome */}
+                                                                        <div className="fw-bold text-dark" style={{ fontSize: '0.87rem', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                                                            {v.nome}
+                                                                        </div>
+                                                                        {/* Data */}
+                                                                        <div className="text-muted" style={{ fontSize: '0.72rem' }}>
+                                                                            {new Date(v.timestamp).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                                        </div>
+                                                                        {/* XP */}
+                                                                        <div className="d-flex align-items-center gap-1 px-2 py-1 rounded-pill mt-auto align-self-start"
+                                                                            style={{ backgroundColor: sezione.sfondo }}>
+                                                                            <span className="material-symbols-outlined fill" style={{ fontSize: '0.8rem', color: sezione.colore }}>star</span>
+                                                                            <span className="fw-bold" style={{ fontSize: '0.73rem', color: sezione.colore }}>+{v.xp} XP</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <button className="btn p-0 border-0 flex-shrink-0" onClick={() => scorri(sezione.ref, 1)} style={{ color: sezione.colore }}>
+                                                            <span className="material-symbols-outlined">chevron_right</span>
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+
                                     </div>
                                 </div>
                             </div>

@@ -13,7 +13,7 @@ const posizioneSchema = z.tuple([
     z.number().min(-180).max(180)
 ])
 
-const TOLLERANZA = 3
+const TOLLERANZA = 10
 const BASE = 16 //punti necessari per il lvl 2
 
 //funzione che calcola la distanza tra 2 posizioni con la formula di Haversine
