@@ -77,7 +77,7 @@ const registraPDI = async (req, res) => {
         //calcolo gli xp del giocatore prima che si aggiorni
         const xpIniziali = g.puntiEsperienza || 0
         const livelloIniziale = g.livello || 1
-        
+
         const puntiPDI = p.properties.punteggio || 0
         const xpFinali = xpIniziali + puntiPDI
         const livelloFinale = calcolaLivello(xpFinali)
@@ -123,8 +123,14 @@ const registraPDI = async (req, res) => {
 const getVisiteGiocatore = async (req, res) => {
     try {
         const idGiocatore = req.utente.id
-        const visite = await Visita.find({ idGiocatore }).select('idPDI idEvento -_id')
-        res.status(200).json({ data: visite })
+        const { soloId } = req.query
+
+        if (soloId === 'true') {
+            const visite = await Visita.find({ idGiocatore }).select('idPDI idEvento -_id')
+            return res.status(200).json({ message: 'Visite recuperate con successo', data: visite })
+        }
+        const visite = await Visita.find({ idGiocatore }).populate('idPDI').populate('idEvento')
+        res.status(200).json({ message: 'Visite recuperate con successo', data: visite })
     } catch (error) {
         console.error("Errore nel recupero visite:", error)
         res.status(500).json({ error: "Errore interno del server" })
@@ -189,7 +195,7 @@ const registraEvento = async (req, res) => {
         //calcolo gli xp iniziali del giocatore
         const xpIniziali = giocatore.puntiEsperienza || 0
         const livelloIniziale = giocatore.livello || 1
-        
+
         const xpFinali = xpIniziali + xpEvento
         const livelloFinale = calcolaLivello(xpFinali)
 

@@ -98,10 +98,10 @@ const autorizzaVisita = (req, res, next) => {
 
         next()
     }
-    catch {
+    catch (error) {
         console.error("Errore nel middleware di autorizzazione registrazione visita:", error)
         res.status(500).json({ error: "Internal Server Error" })
     }
 }
 
-module.exports = { verificaToken, requireRuolo, autorizzaModifica,autorizzaEliminazione, autorizzaVisita }
+module.exports = { verificaToken, requireRuolo, autorizzaModifica, autorizzaEliminazione, autorizzaVisita }
