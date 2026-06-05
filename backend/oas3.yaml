@@ -824,41 +824,6 @@ paths:
                   type: string
                   x-stoplight:
                     id: 5giexn1aus5an
-  /gestori/eliminaUtente/{idUtente}:
-    delete:
-      summary: Elimina definitivamente il profilo di un gestore
-      tags:
-        - gestori
-      security:
-        - token: []
-      parameters:
-        - in: path
-          name: idUtente
-          required: true
-          description: L'ID univoco del gestore da eliminare
-          schema:
-            type: string
-            pattern: "^[a-fA-F0-9]{24}$"
-      responses:
-        "200":
-          description: Gestore eliminato con successo
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Gestore eliminato con successo
-        "401":
-          description: Accesso negato, token mancante, scaduto o non valido
-        "403":
-          description: Permessi insufficienti (Non sei il proprietario o un amministratore)
-        "404":
-          description: Gestore non trovato
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: eliminaGestore
   "/gestori/abilitato/{id}":
     parameters:
       - in: path
@@ -1370,41 +1335,6 @@ paths:
                   type: string
                   x-stoplight:
                     id: a7fh0x6nk3p35
-  /giocatori/eliminaUtente/{idUtente}:
-    delete:
-      summary: Elimina definitivamente il profilo di un giocatore
-      tags:
-        - giocatori
-      security:
-        - token: []
-      parameters:
-        - in: path
-          name: idUtente
-          required: true
-          description: L'ID univoco del giocatore da eliminare
-          schema:
-            type: string
-            pattern: "^[a-fA-F0-9]{24}$"
-      responses:
-        "200":
-          description: Giocatore eliminato con successo
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Giocatore eliminato con successo
-        "401":
-          description: Accesso negato, token mancante, scaduto o non valido
-        "403":
-          description: Permessi insufficienti (Non sei il proprietario o un amministratore)
-        "404":
-          description: Giocatore non trovato
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: eliminaGiocatore
   "/amministratori/{id}":
     parameters:
       - schema:
@@ -1518,24 +1448,14 @@ paths:
                   type: string
                   x-stoplight:
                     id: deg9hr1uqco2u
-  /amministratori/eliminaUtente/{idUtente}:
-    delete:
-      summary: Elimina definitivamente il profilo di un amministratore
+  /visite/pdi:
+    post:
+      summary: Registra una visita di un PDI
       tags:
-        - amministratori
-      security:
-        - token: []
-      parameters:
-        - in: path
-          name: idUtente
-          required: true
-          description: L'ID univoco dell'amministratore da eliminare
-          schema:
-            type: string
-            pattern: "^[a-fA-F0-9]{24}$"
+        - visite
       responses:
-        "200":
-          description: Amministratore eliminato con successo
+        "201":
+          description: La visita è stata registrata con successo
           content:
             application/json:
               schema:
@@ -1543,51 +1463,126 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Amministratore eliminato con successo
-        "401":
-          description: Accesso negato, token mancante, scaduto o non valido
-        "403":
-          description: Permessi insufficienti o tentativo di eliminare un altro amministratore
-        "404":
-          description: Amministratore non trovato
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: eliminaAmministratore
-  /visite/evento:
-    post:
-      summary: Registra la visita a un evento
-      tags:
-        - visite
-      security:
-        - token: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/VisitaEventoInput"
-      responses:
-        "200":
-          description: Visita registrata con successo
+                    x-stoplight:
+                      id: fo6ofhgdm7sqf
+                    example: Visita registrata con successo
+                  levelUp:
+                    type: integer
+                    x-stoplight:
+                      id: xx8tzq6ssower
+                    minimum: 1
+                    description: Può essere undefined se non c'è stato un levelUp
+                  nuoviAchievement:
+                    type: array
+                    x-stoplight:
+                      id: 3ys7q73wmkyju
+                    description: Può essere undefined se non sono stati sbloccati nuovi achievements
+                    items: {}
+        "400":
+          description: Dati mancanti o non validi
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/VisitaResponse"
-        "400":
-          description: Dati non validi o evento non attivo
-          $ref: "#/components/responses/ErrorResponse"
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: qboo6vng712jv
+                    example: ID del PDI non è valido
+        "401":
+          description: Token non valido o mancante
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: a9s2w4sl2gyc5
+                    example: Token non valido o scaduto
+        "403":
+          description: L'utente vuole registrare una visita per conto di un altro utente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  "":
+                    type: string
+                    x-stoplight:
+                      id: bwksybs85ja7y
+                    example: Non hai i permessi per registrare una visita per conto di altri utenti
         "404":
-          description: Giocatore o Evento non trovato
-          $ref: "#/components/responses/ErrorResponse"
+          description: Giocatore o PDI non trovati
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: 3yyy2jox94wgm
+                    example: Giocatore non trovato
+              examples: {}
         "409":
-          description: Visita già registrata
-          $ref: "#/components/responses/ErrorResponse"
+          description: La visita è già stata registrata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ecv93iw554g6u
+                    example: Questo PDI è già stato regisrato dall'utente
         "422":
-          description: Utente troppo distante dall'evento
-          $ref: "#/components/responses/ErrorResponse"
+          description: La posizione ricevuta non coincide con quella del DPI
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: mtbzc54toewmr
+                    example: Sei distante 6 km dal PDI
         "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: registraVisitaEvento
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: h5l8ao22p5upu
+                    example: Errore interno del server
+      operationId: registra-pdi
+      x-stoplight:
+        id: gzzv6dgx76z58
+      description: Registra nel sistema una visita di un PDI da parte di un giocatore ed assegna il punteggio
+      security:
+        - token: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                idGiocatore:
+                  type: string
+                  x-stoplight:
+                    id: 2sl05x3ds6iwx
+                idPDI:
+                  type: string
+                  x-stoplight:
+                    id: 2o8qj0pbbfr1q
 components:
   responses:
     ErrorResponse:
@@ -2139,46 +2134,6 @@ components:
               id: yw8r9h3yor73l
             type: string
             format: binary
-    VisitaEventoInput:
-      type: object
-      required:
-        - idGiocatore
-        - idEvento
-        - posizione
-      properties:
-        idGiocatore:
-          type: string
-          pattern: "^[a-fA-F0-9]{24}$"
-          example: 6641a2f3e4b0c12d3f456789
-        idEvento:
-          type: string
-          pattern: "^[a-fA-F0-9]{24}$"
-          example: 6641a2f3e4b0c12d3f456790
-        posizione:
-          type: array
-          items:
-            type: number
-          minItems: 2
-          maxItems: 2
-          example:
-            - 11.1118
-            - 46.0633
-          description: "Array contenente [longitudine, latitudine]"
-    VisitaResponse:
-      type: object
-      properties:
-        message:
-          type: string
-          example: Visita registrata con successo
-        levelUp:
-          type: integer
-          description: Nuovo livello raggiunto, se presente
-          example: 2
-        nuoviAchievements:
-          type: array
-          items:
-            type: string
-          description: Elenco dei nuovi achievement ottenuti
   securitySchemes:
     token:
       type: http
