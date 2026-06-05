@@ -1618,6 +1618,67 @@ paths:
         "500":
           $ref: "#/components/responses/ErrorResponse"
       operationId: registraVisitaEvento
+  /visite/giocatore:
+    get:
+      summary: Ottieni la lista delle visite
+      tags: []
+      responses:
+        "200":
+          description: Visite recuperate con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: dkjaml4w3ceb3
+                    example: Visite recuperate con successo
+                  data:
+                    type: array
+                    x-stoplight:
+                      id: jef9s091q2a21
+                    items:
+                      x-stoplight:
+                        id: 0kpg1qkg3c48f
+                      type: object
+        "401":
+          description: Token mancante o non valido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: y88pciv2wfpez
+                    example: Token non valido o scaduto
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errore:
+                    type: string
+                    x-stoplight:
+                      id: v7y686u77yoda
+                    example: Errore interno del server
+      operationId: ottieniElencoVisite
+      x-stoplight:
+        id: alktu2xct75o7
+      description: Ottiene la lista delle visite effettuate dal giocatore e le info sui PDI/eventi
+      security:
+        - token: []
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: soloId
+          description: True se si vogliono solo gli id dei PDI/eventi e non le info complete
 components:
   responses:
     ErrorResponse:
@@ -2202,7 +2263,7 @@ components:
           example: Visita registrata con successo
         levelUp:
           type: integer
-          description: Nuovo livello raggiunto, se presente
+          description: "Nuovo livello raggiunto, se presente"
           example: 2
         nuoviAchievements:
           type: array
