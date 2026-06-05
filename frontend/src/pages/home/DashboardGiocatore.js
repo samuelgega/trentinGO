@@ -54,6 +54,26 @@ const DashboardGiocatore = () => {
             .catch(() => {})
     }, [])
 
+    const [storicoVisite, setStoricoVisite] = useState([])
+
+    useEffect(() => {
+        const token = localStorage.getItem('token')
+        fetch('/api/v1/visite/giocatore', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+            .then(r => r.json())
+            .then(json => setStoricoVisite(json.data ?? []))
+            .catch(() => {})
+    }, [])
+
+    const itemsPDI = storicoVisite
+        .filter(v => v.idPDI)
+        .map(v => ({ _id: v.idPDI._id, nome: v.idPDI.properties?.nome, timestamp: v.timestamp, xp: v.punteggio }))
+
+    const itemsEventi = storicoVisite
+        .filter(v => v.idEvento)
+        .map(v => ({ _id: v.idEvento._id, nome: v.idEvento.properties?.nome, timestamp: v.timestamp, xp: v.punteggio }))
+
     const [vediTuttiPDI, setVediTuttiPDI] = useState(false)
     const [vediTuttiEventi, setVediTuttiEventi] = useState(false)
     const scrollRefPDI = useRef(null)
@@ -113,7 +133,7 @@ const DashboardGiocatore = () => {
                                                 </div>
                                             </div>
                                             <div className="flex-grow-1" style={{ minWidth: '160px' }}>
-                                                <p className="mb-0 text-white" style={{ opacity: 0.7, fontSize: '0.82rem' }}>Benvenuto,</p>
+                                                <p className="mb-0 text-white" style={{ opacity: 0.7, fontSize: '0.82rem' }}>Ciao,</p>
                                                 <h4 className="fw-bold text-white mb-2" style={{ fontSize: '1.4rem', letterSpacing: '-0.02em' }}>{username}</h4>
                                                 <div className="d-inline-flex align-items-center gap-1 px-3 py-1 mb-3 rounded-pill"
                                                     style={{ backgroundColor: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.22)' }}>
@@ -142,7 +162,7 @@ const DashboardGiocatore = () => {
                                     {[
                                         { icona: 'star',        valore: xp,           etichetta: 'XP Totali' },
                                         { icona: 'location_on', valore: visitePDI,    etichetta: 'Luoghi visitati' },
-                                        { icona: 'event',       valore: visiteEventi, etichetta: 'Eventi visitati' },
+                                        { icona: 'event',       valore: visiteEventi, etichetta: 'Eventi partecipati' },
                                     ].map(({ icona, valore, etichetta }) => (
                                         <div key={etichetta} className="col-4">
                                             <div className="card border-0 shadow-sm" style={{ borderRadius: '16px' }}>
@@ -182,7 +202,7 @@ const DashboardGiocatore = () => {
                                                 ref: scrollRefPDI,
                                                 vediTutti: vediTuttiPDI,
                                                 setVediTutti: setVediTuttiPDI,
-                                                items: []
+                                                items: itemsPDI
                                             },
                                             {
                                                 tipo: 'evento',
@@ -193,7 +213,7 @@ const DashboardGiocatore = () => {
                                                 ref: scrollRefEventi,
                                                 vediTutti: vediTuttiEventi,
                                                 setVediTutti: setVediTuttiEventi,
-                                                items: []
+                                                items: itemsEventi
                                             }
                                         ].map((sezione, si) => (
                                             <div key={si} className={si > 0 ? 'mt-4 pt-4 border-top' : ''} style={{ borderColor: '#f1f3f5' }}>
@@ -221,7 +241,7 @@ const DashboardGiocatore = () => {
                                                     </div>
                                                 ) : sezione.vediTutti ? (
                                                     /* Vista lista */
-                                                    <div className="d-flex flex-column gap-2">
+                                                    <div className="d-flex flex-column gap-2" style={{ maxHeight: '220px', overflowY: 'auto', scrollbarWidth: 'thin' }}>
                                                         {sezione.items.map((v, i) => (
                                                             <div key={i} className="d-flex align-items-center gap-3 p-3 rounded-3" style={{ backgroundColor: '#f8f9fa' }}>
                                                                 <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"

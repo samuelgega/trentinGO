@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import HomeNav from '../../components/homeComponents/HomeNav';
 import MappaTrentino from '../../components/homeComponents/MappaTrentino';
 import ListaPDI from '../../components/homeComponents/ListaPDI';
@@ -8,6 +9,7 @@ import '../../assets/home.css'
 const Homepage = () => {
 
   const { showAlert } = useAlert();
+  const location = useLocation();
 
   const [pdiSelezionato, setPdiSelezionato] = useState(null);
   const [listaPDI, setListaPDI] = useState([]);
@@ -17,7 +19,7 @@ const Homepage = () => {
     const ruolo = localStorage.getItem('ruolo')
     if (ruolo !== 'giocatore') return
     const token = localStorage.getItem('token')
-    fetch('http://localhost:3001/api/v1/visite/giocatore', {
+    fetch('http://localhost:3001/api/v1/visite/giocatore?soloId=true', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(r => r.json())
@@ -26,7 +28,7 @@ const Homepage = () => {
         setPdiVisitati(ids)
       })
       .catch(() => {})
-  }, [])
+  }, [location.key])
 
   // Seleziona un PDI oppure lo deseleziona se è già quello attivo
   const togglePdiSelezionato = (pdi) => {
