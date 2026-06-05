@@ -104,7 +104,7 @@ const registraPDI = async (req, res) => {
 
         //TODO: implementare check di nuovi achievements
 
-        return res.status(200).json(risposta)
+        return res.status(201).json(risposta)
     }
     catch (error) {
         if (error.code === 11000) {
@@ -126,9 +126,9 @@ const getVisiteGiocatore = async (req, res) => {
     }
 }
 
-const registraEvento = async (req,res) => {
-    try{
-        
+const registraEvento = async (req, res) => {
+    try {
+
         const { idGiocatore, idEvento } = req.body
 
         //Controllo se i dati sono corretti
@@ -147,7 +147,7 @@ const registraEvento = async (req,res) => {
         if (!giocatore) {
             return res.status(404).json({ error: 'Giocatore non trovato' })
         }
-        
+
         const evento = await Evento.findById(idEventoVerificato)
         if (!evento) {
             return res.status(404).json({ error: 'Evento non trovato' })
@@ -222,4 +222,4 @@ const registraEvento = async (req,res) => {
     }
 }
 
-module.exports = { registraPDI, registraEvento,getVisiteGiocatore }
+module.exports = { registraPDI, registraEvento, getVisiteGiocatore }
