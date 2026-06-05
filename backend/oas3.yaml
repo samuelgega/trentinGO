@@ -929,6 +929,16 @@ paths:
                       ruolo:
                         type: string
                         example: giocatore
+                      puntiEsperienza:
+                        type: number
+                        default: 0
+                        example: 40
+                        description: Presente solo se ruolo è giocatore
+                      livello:
+                        type: number
+                        default: 1
+                        example: 3
+                        description: Presente solo se ruolo è giocatore
         "400":
           description: Ruolo non riconosciuto
         "404":
@@ -1225,14 +1235,44 @@ paths:
     parameters:
       - schema:
           type: string
+          pattern: "^[a-fA-F0-9]{24}$"
         name: id
         in: path
         required: true
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
+        description: L'ID univoco del giocatore
+    get:
+      summary: Visualizza un singolo giocatore
+      tags:
+        - giocatori
+      description: Restituisce i dati di un giocatore. Il giocatore può vedere solo i propri dati; l'amministratore può vedere quelli di chiunque.
+      security:
+        - token: []
+      responses:
+        "200":
+          description: Giocatore recuperato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Giocatore"
+        "403":
+          description: Non hai i permessi per visualizzare i dati di un altro utente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Non hai i permessi per visualizzare i dati di un altro utente.
+        "404":
+          description: Giocatore non trovato
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: visualizzaGiocatore
     put:
       summary: Modifica un giocatore
       tags:
@@ -1946,8 +1986,6 @@ components:
         _id:
           type: string
           pattern: "^[a-fA-F0-9]{24}$"
-        id:
-          type: string
         username:
           type: string
           example: mario_rossi
@@ -1955,6 +1993,19 @@ components:
           type: string
           format: email
           example: mario@example.com
+        iscrittoNewsletter:
+          type: boolean
+          example: false
+        puntiEsperienza:
+          type: number
+          default: 0
+          example: 40
+          description: Punti esperienza totali accumulati dal giocatore
+        livello:
+          type: number
+          default: 1
+          example: 3
+          description: Livello corrente del giocatore, calcolato dai puntiEsperienza
     PDIUploadInput:
       type: object
       additionalProperties: false
