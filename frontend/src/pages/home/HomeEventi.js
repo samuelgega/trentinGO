@@ -182,6 +182,12 @@ const HomeEventi = () => {
                     </div>
 
                     {/* Griglia card */}
+                    {cardsData.length === 0 ? (
+                        <div className="pdi-empty-state">
+                            <span className="material-symbols-outlined pdi-empty-icon">event_busy</span>
+                            <p>Nessun evento trovato</p>
+                        </div>
+                    ) : (
                     <div className="row g-4">
                         {cardsData.map((card) => {
                             const stato = getStatoEvento(card.properties.dataInizio, card.properties.dataFine)
@@ -326,6 +332,7 @@ const HomeEventi = () => {
                             )
                         })}
                     </div>
+                    )}
                 </div>
             </div>
 
