@@ -26,6 +26,14 @@ const schemaGiocatore = new mongoose.Schema({
     scadenzaResetToken: {
         type: Date,
         required: false,
+    },
+    puntiEsperienza: {
+        type: Number,
+        default: 0
+    },
+    livello: {
+        type: Number,
+        default: 1
     }
 })
 
