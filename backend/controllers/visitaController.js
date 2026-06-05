@@ -13,7 +13,7 @@ const posizioneSchema = z.tuple([
     z.number().min(-180).max(180)
 ])
 
-const TOLLERANZA = 10
+const TOLLERANZA = 100
 const BASE = 16 //punti necessari per il lvl 2
 
 //funzione che calcola la distanza tra 2 posizioni con la formula di Haversine
@@ -196,7 +196,8 @@ const registraEvento = async (req, res) => {
         const xpIniziali = giocatore.puntiEsperienza || 0
         const livelloIniziale = giocatore.livello || 1
 
-        const xpFinali = xpIniziali + xpEvento
+        const puntiEvento = evento.properties.punteggio || xpEvento
+        const xpFinali = xpIniziali + puntiEvento
         const livelloFinale = calcolaLivello(xpFinali)
 
         //creo la visita
@@ -204,7 +205,7 @@ const registraEvento = async (req, res) => {
             idGiocatore: idGiocatoreVerificato,
             idEvento: idEventoVerificato,
             timestamp: new Date(),
-            punteggio: xpEvento
+            punteggio: puntiEvento
         })
 
         //aggiorno il giocatore

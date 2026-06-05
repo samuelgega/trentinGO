@@ -17,6 +17,7 @@ const schemaEvento = new mongoose.Schema({
         descrizione: String,
         categoria: String,
         prezzo: Number,
+        punteggio: { type: Number, default: 15 },
         immagine: [String],
         dataInizio: {
             type: Date,

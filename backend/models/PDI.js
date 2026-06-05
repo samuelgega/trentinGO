@@ -20,7 +20,7 @@ const schemaPDI = new mongoose.Schema({
         },
         categoria: String,
         prezzo: Number,
-        punteggio: Number,
+        punteggio: { type: Number, default: 10 },
         immagine: [String]
     }
 })
