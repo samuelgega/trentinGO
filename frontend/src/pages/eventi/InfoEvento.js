@@ -22,7 +22,7 @@ const InfoEvento = () => {
     useEffect(() => {
         if (!evento || ruolo !== 'giocatore') return
         const token = localStorage.getItem('token')
-        fetch('/api/v1/visite/giocatore', {
+        fetch('/api/v1/visite/giocatore?soloId=true', {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(r => r.json())
@@ -30,7 +30,7 @@ const InfoEvento = () => {
                 const visitato = json.data?.some(v => v.idEvento === evento._id)
                 setGiaVisitato(visitato)
             })
-            .catch(() => {})
+            .catch(() => { })
     }, [evento, ruolo])
 
     const registraVisita = () => {
