@@ -1,5 +1,5 @@
 const Giocatore = require("../models/Giocatore")
-const bycrypt = require('bcrypt')
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const Gestore = require('../models/Gestore')
 const Amministratore = require('../models/Amministratore')
@@ -28,8 +28,8 @@ const registrazioneGiocatore = async (req, res) => {
         }
 
         //hashing della password
-        const salt = await bycrypt.genSalt(10)
-        const hashedPassword = await bycrypt.hash(password, salt)
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
 
         //creazione nuovo giocatore
         const nuovoGiocatore = await Giocatore.create({
@@ -39,7 +39,6 @@ const registrazioneGiocatore = async (req, res) => {
             iscrittoNewsletter: iscrittoNewsletter ?? false
         })
 
-        await nuovoGiocatore.save()
         res.status(201).json({
             message: "Giocatore registrato con successo",
             data: {
@@ -86,7 +85,7 @@ const loginGiocatore = async (req, res) => {
             return res.status(401).json({ error: "Credenziali non valide" })
         }
 
-        const passwordCorretta = await bycrypt.compare(password, giocatore.password)
+        const passwordCorretta = await bcrypt.compare(password, giocatore.password)
         if (!passwordCorretta) {
             return res.status(401).json({ error: "Credenziali non valide" })
         }
@@ -125,7 +124,10 @@ const modificaProfilo = async (req, res) => {
         const { username, email } = req.body
 
         if (username) {
-            const u = await Giocatore.findOne({ username: String(username).toLocaleLowerCase() }) || await Gestore.findOne({ username: String(username).toLocaleLowerCase() }) || await Amministratore.findOne({ username: String(username).toLocaleLowerCase() })
+            const usernameFormattato = String(username).toLowerCase();
+            const u = await Giocatore.findOne({ username: usernameFormattato, _id: { $ne: idUtente } }) || 
+                      await Gestore.findOne({ username: usernameFormattato }) || 
+                      await Amministratore.findOne({ username: usernameFormattato })
             if (u) {
                 return res.status(409).json({ error: "Username già in uso" })
             }
@@ -133,14 +135,17 @@ const modificaProfilo = async (req, res) => {
         }
 
         if (email) {
-            const u = await Giocatore.findOne({ email: String(email).toLocaleLowerCase() }) || await Gestore.findOne({ email: String(email).toLocaleLowerCase() }) || await Amministratore.findOne({ email: String(email).toLocaleLowerCase() })
+            const emailFormattata = String(email).toLowerCase();
+            const u = await Giocatore.findOne({ email: emailFormattata, _id: { $ne: idUtente } }) || 
+                      await Gestore.findOne({ email: emailFormattata }) || 
+                      await Amministratore.findOne({ email: emailFormattata })
             if (u) {
                 return res.status(409).json({ error: "Email già registrata" })
             }
-            utente.email = email
+            utente.email = emailFormattata
         }
 
-        utente.save()
+        await utente.save()
         return res.status(200).json({ message: "Utente aggiornato con successo", data: utente })
     }
     catch (error) {
@@ -163,4 +168,32 @@ const eliminaProfilo = async (req,res) => {
     }
 }
 
-module.exports = { registrazioneGiocatore, visualizzaGiocatori, loginGiocatore, modificaProfilo, eliminaProfilo };
+const visualizzaGiocatore = async (req,res) => {
+
+    try {
+
+        //controllo chi sta facendo la richiesta
+        const idTarget = req.params.id;
+        const idRichiedente = req.utente.id;
+        const ruoloRichiedente = req.utente.ruolo;
+
+        if (idTarget !== idRichiedente && ruoloRichiedente !== 'amministratore') {
+            return res.status(403).json({ error: "Non hai i permessi per visualizzare i dati di un altro utente." });
+        }
+
+        //recupero il giocatore dal db
+        const giocatore = await Giocatore.findById(idTarget).select('-password -resetToken -scadenzaResetToken');
+        if (!giocatore) {
+            return res.status(404).json({ error: "Giocatore non trovato" });
+        }
+
+        return res.status(200).json({ data: giocatore });
+
+    } catch (error){
+        console.error("Errore nel recupero del Giocatore:", error);
+        res.status(500).json({ error: "Errore interno del server" });
+    }
+
+}
+
+module.exports = { registrazioneGiocatore, visualizzaGiocatori, loginGiocatore, modificaProfilo, eliminaProfilo, visualizzaGiocatore };
