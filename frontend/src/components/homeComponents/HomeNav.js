@@ -91,6 +91,17 @@ const HomeNav = () => {
                                     </button>
                                 </li>
                             )}
+                            {ruolo === 'giocatore' && (
+                                <li>
+                                    <button
+                                        className="dropdown-item custom-item d-flex align-items-center gap-2 py-2"
+                                        onClick={() => navigate('/dashboard')}
+                                    >
+                                        <span className="material-symbols-outlined fs-5">leaderboard</span>
+                                        La mia dashboard
+                                    </button>
+                                </li>
+                            )}
                             <li>
                                 <button
                                     className="dropdown-item custom-item d-flex align-items-center gap-2 py-2"

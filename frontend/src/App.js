@@ -5,7 +5,7 @@ import { AlertProvider } from '../src/contexts/AlertController';
 
 import { AdminHome, GestisciPDI, CreaPDI, CreaEvento, GestisciEventi, ModificaPDI, ModificaEvento, GestisciUtenti, GestisciGestori } from './pages/admin';
 import { GestoreHome, GestisciPDIAssociati, GestisciEventiCreati } from './pages/gestore';
-import { Homepage, HomeEventi } from './pages/home';
+import { Homepage, HomeEventi, DashboardGiocatore } from './pages/home';
 import { HomeProfilo, ImpostazioniAccount } from './pages/profilo';
 import Error404 from './pages/Error/NotFound';
 import InfoPDI from './pages/pdi/InfoPDI'
@@ -28,6 +28,11 @@ const App = () => {
           <Route path='/dettagli-evento/:id' element={<InfoEvento />} />
 
           {/* Rotte per utenti loggati */}
+          <Route path="/dashboard" element={
+            <RottaProtetta ruoliAmmessi={['giocatore']}>
+              <DashboardGiocatore />
+            </RottaProtetta>
+          } />
           <Route path="/profilo" element={
             <RottaProtetta ruoliAmmessi={['giocatore', 'gestore', 'amministratore']}>
               <HomeProfilo />
