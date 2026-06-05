@@ -2,11 +2,11 @@ import React from 'react'
 import HomeNav from '../../components/homeComponents/HomeNav'
 import '../../assets/home.css'
 
-const coloriLivello = [
-    { min: 1, max: 3, colore: '#6c757d', etichetta: 'Principiante' },
-    { min: 4, max: 7, colore: '#037149', etichetta: 'Esploratore' },
-    { min: 8, max: 12, colore: '#0d6efd', etichetta: 'Avventuriero' },
-    { min: 13, max: 99, colore: '#e8a000', etichetta: 'Leggenda' },
+const rangi = [
+    { min: 1,  max: 3,  colore: '#6c757d', sfondo: '#f1f3f5', etichetta: 'Principiante', icona: 'hiking' },
+    { min: 4,  max: 7,  colore: '#037149', sfondo: '#edfbf0', etichetta: 'Esploratore',  icona: 'explore' },
+    { min: 8,  max: 12, colore: '#0d6efd', sfondo: '#e7f0ff', etichetta: 'Avventuriero', icona: 'landscape' },
+    { min: 13, max: 99, colore: '#e8a000', sfondo: '#fff8e1', etichetta: 'Leggenda',     icona: 'military_tech' },
 ]
 
 const DashboardGiocatore = () => {
@@ -19,10 +19,11 @@ const DashboardGiocatore = () => {
     const xpPerLivelloCorrente = 32
     const xpPerProssimoLivello = 48
 
-    const rango = coloriLivello.find(r => livello >= r.min && livello <= r.max) || coloriLivello[0]
+    const rango = rangi.find(r => livello >= r.min && livello <= r.max) || rangi[0]
     const xpNelLivello = xp - xpPerLivelloCorrente
     const xpNecessari = xpPerProssimoLivello - xpPerLivelloCorrente
     const progressoPerc = Math.min(100, Math.round((xpNelLivello / xpNecessari) * 100))
+    const xpAlProssimo = xpNecessari - xpNelLivello
 
     return (
         <div className="vh-100 d-flex flex-column overflow-hidden">
@@ -30,88 +31,133 @@ const DashboardGiocatore = () => {
                 <HomeNav />
             </div>
 
-            <div className="flex-grow-1 py-5 px-4 px-md-5 bg-light" style={{ overflowY: 'auto' }}>
-                <div className="container-lg">
+            <div className="flex-grow-1 py-5 px-3 px-md-5" style={{ overflowY: 'auto', backgroundColor: '#f0f2f5' }}>
+                <div style={{ maxWidth: '860px', margin: '0 auto' }}>
 
-                    {/* Header */}
-                    <div className="mb-5">
-                        <h2 className="fw-bold text-dark mb-1">Ciao, {username}!</h2>
-                        <p className="text-muted fs-5 mb-0">Ecco i tuoi progressi su TrentinGO</p>
-                    </div>
+                    {/* Hero card */}
+                    <div
+                        className="card border-0 mb-4 overflow-hidden"
+                        style={{
+                            borderRadius: '24px',
+                            background: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 55%, #1d4ed8 100%)',
+                            boxShadow: '0 8px 32px rgba(3,113,73,0.25)'
+                        }}
+                    >
+                        {/* Cerchi decorativi di sfondo */}
+                        <div style={{ position: 'absolute', top: '-40px', right: '-40px', width: '220px', height: '220px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.05)', pointerEvents: 'none' }} />
+                        <div style={{ position: 'absolute', bottom: '-60px', right: '80px', width: '160px', height: '160px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.04)', pointerEvents: 'none' }} />
 
-                    {/* Card livello + barra XP */}
-                    <div className="card border-0 shadow-sm mb-4" style={{ borderRadius: '20px' }}>
-                        <div className="card-body p-4 p-md-5">
-                            <div className="row align-items-center g-4">
-                                <div className="col-auto">
-                                    <div
-                                        className="d-flex align-items-center justify-content-center rounded-circle"
-                                        style={{ width: '90px', height: '90px', backgroundColor: rango.colore, flexShrink: 0 }}
-                                    >
-                                        <div className="text-white text-center">
-                                            <div style={{ fontSize: '1.9rem', fontWeight: 800, lineHeight: 1 }}>{livello}</div>
-                                            <div style={{ fontSize: '0.65rem', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>LVL</div>
+                        <div className="card-body p-4 p-md-5 position-relative">
+                            <div className="d-flex align-items-center gap-4 flex-wrap">
+
+                                {/* Cerchio livello */}
+                                <div
+                                    className="d-flex align-items-center justify-content-center flex-shrink-0"
+                                    style={{
+                                        width: '100px', height: '100px', borderRadius: '50%',
+                                        backgroundColor: 'rgba(255,255,255,0.15)',
+                                        border: '3px solid rgba(255,255,255,0.35)',
+                                        backdropFilter: 'blur(6px)'
+                                    }}
+                                >
+                                    <div className="text-white text-center">
+                                        <div style={{ fontSize: '2.2rem', fontWeight: 900, lineHeight: 1 }}>{livello}</div>
+                                        <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.8 }}>LVL</div>
+                                    </div>
+                                </div>
+
+                                {/* Testo e barra */}
+                                <div className="flex-grow-1" style={{ minWidth: '180px' }}>
+                                    <p className="mb-0 text-white" style={{ opacity: 0.75, fontSize: '0.85rem', fontWeight: 500 }}>
+                                        Benvenuto,
+                                    </p>
+                                    <h3 className="fw-bold text-white mb-2" style={{ fontSize: '1.6rem', letterSpacing: '-0.02em' }}>
+                                        {username}
+                                    </h3>
+
+                                    {/* Badge rango */}
+                                    <div className="d-inline-flex align-items-center gap-1 px-3 py-1 mb-3 rounded-pill"
+                                        style={{ backgroundColor: 'rgba(255,255,255,0.18)', border: '1px solid rgba(255,255,255,0.25)' }}>
+                                        <span className="material-symbols-outlined fill text-white" style={{ fontSize: '0.95rem' }}>{rango.icona}</span>
+                                        <span className="text-white fw-semibold" style={{ fontSize: '0.78rem', letterSpacing: '0.04em' }}>{rango.etichetta.toUpperCase()}</span>
+                                    </div>
+
+                                    {/* Barra XP */}
+                                    <div>
+                                        <div className="d-flex justify-content-between mb-1">
+                                            <span className="text-white" style={{ fontSize: '0.8rem', opacity: 0.8 }}>{xp} XP</span>
+                                            <span className="text-white" style={{ fontSize: '0.8rem', opacity: 0.65 }}>ancora {xpAlProssimo} XP → Liv. {livello + 1}</span>
+                                        </div>
+                                        <div style={{ height: '8px', borderRadius: '99px', backgroundColor: 'rgba(255,255,255,0.2)' }}>
+                                            <div style={{ width: `${progressoPerc}%`, height: '100%', borderRadius: '99px', backgroundColor: 'rgba(255,255,255,0.85)', transition: 'width 0.6s ease' }} />
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col">
-                                    <div className="d-flex align-items-center gap-2 mb-1">
-                                        <span className="fw-bold text-dark" style={{ fontSize: '1.2rem' }}>Livello {livello}</span>
-                                        <span
-                                            className="badge rounded-pill px-3 py-1"
-                                            style={{ backgroundColor: `${rango.colore}22`, color: rango.colore, fontSize: '0.75rem', fontWeight: 700 }}
-                                        >
-                                            {rango.etichetta}
-                                        </span>
-                                    </div>
-                                    <div className="text-muted mb-2" style={{ fontSize: '0.88rem' }}>
-                                        {xp} XP &mdash; ancora <strong>{xpNecessari - xpNelLivello} XP</strong> al prossimo livello
-                                    </div>
-                                    <div className="progress" style={{ height: '10px', borderRadius: '99px', backgroundColor: '#e9ecef' }}>
-                                        <div
-                                            className="progress-bar"
-                                            style={{ width: `${progressoPerc}%`, backgroundColor: rango.colore, borderRadius: '99px', transition: 'width 0.6s ease' }}
-                                        />
-                                    </div>
-                                    <div className="d-flex justify-content-between mt-1">
-                                        <span className="text-muted" style={{ fontSize: '0.75rem' }}>Liv. {livello}</span>
-                                        <span className="text-muted" style={{ fontSize: '0.75rem' }}>Liv. {livello + 1}</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
 
+                    {/* Titolo sezione */}
+                    <p className="fw-semibold text-secondary mb-3 px-1" style={{ fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                        Le tue statistiche
+                    </p>
+
                     {/* Stat cards */}
-                    <div className="row g-3">
+                    <div className="row g-3 mb-4">
+
                         <div className="col-12 col-sm-4">
-                            <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '16px' }}>
-                                <div className="card-body p-4 text-center">
-                                    <span className="material-symbols-outlined fill mb-2" style={{ fontSize: '2.2rem', color: '#037149' }}>star</span>
-                                    <div className="fw-bold text-dark" style={{ fontSize: '2rem' }}>{xp}</div>
-                                    <div className="text-muted small fw-semibold">XP Totali</div>
+                            <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '18px' }}>
+                                <div className="card-body p-4">
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                                            style={{ width: '48px', height: '48px', backgroundColor: 'rgba(3,113,73,0.1)' }}>
+                                            <span className="material-symbols-outlined fill" style={{ fontSize: '1.5rem', color: '#037149' }}>star</span>
+                                        </div>
+                                        <div>
+                                            <div className="fw-bold text-dark" style={{ fontSize: '1.7rem', lineHeight: 1.1 }}>{xp}</div>
+                                            <div className="text-muted" style={{ fontSize: '0.82rem', fontWeight: 500 }}>XP Totali</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                         <div className="col-12 col-sm-4">
-                            <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '16px' }}>
-                                <div className="card-body p-4 text-center">
-                                    <span className="material-symbols-outlined fill mb-2" style={{ fontSize: '2.2rem', color: '#037149' }}>location_on</span>
-                                    <div className="fw-bold text-dark" style={{ fontSize: '2rem' }}>{visitePDI}</div>
-                                    <div className="text-muted small fw-semibold">Luoghi visitati</div>
+                            <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '18px' }}>
+                                <div className="card-body p-4">
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                                            style={{ width: '48px', height: '48px', backgroundColor: 'rgba(3,113,73,0.1)' }}>
+                                            <span className="material-symbols-outlined fill" style={{ fontSize: '1.5rem', color: '#037149' }}>location_on</span>
+                                        </div>
+                                        <div>
+                                            <div className="fw-bold text-dark" style={{ fontSize: '1.7rem', lineHeight: 1.1 }}>{visitePDI}</div>
+                                            <div className="text-muted" style={{ fontSize: '0.82rem', fontWeight: 500 }}>Luoghi visitati</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                         <div className="col-12 col-sm-4">
-                            <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '16px' }}>
-                                <div className="card-body p-4 text-center">
-                                    <span className="material-symbols-outlined fill mb-2" style={{ fontSize: '2.2rem', color: '#037149' }}>event</span>
-                                    <div className="fw-bold text-dark" style={{ fontSize: '2rem' }}>{visiteEventi}</div>
-                                    <div className="text-muted small fw-semibold">Eventi partecipati</div>
+                            <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '18px' }}>
+                                <div className="card-body p-4">
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0"
+                                            style={{ width: '48px', height: '48px', backgroundColor: 'rgba(3,113,73,0.1)' }}>
+                                            <span className="material-symbols-outlined fill" style={{ fontSize: '1.5rem', color: '#037149' }}>event</span>
+                                        </div>
+                                        <div>
+                                            <div className="fw-bold text-dark" style={{ fontSize: '1.7rem', lineHeight: 1.1 }}>{visiteEventi}</div>
+                                            <div className="text-muted" style={{ fontSize: '0.82rem', fontWeight: 500 }}>Eventi partecipati</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
                     </div>
+
 
                 </div>
             </div>
