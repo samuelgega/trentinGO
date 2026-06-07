@@ -24,7 +24,6 @@
     "crypto": "^1.0.1",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "jest": "^30.4.1",
     "js-yaml": "^4.1.1",
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.2.0",
@@ -36,6 +35,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "jest": "^30.4.2",
+    "mongodb-memory-server": "^11.2.0",
+    "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
   }
 }
