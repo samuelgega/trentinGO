@@ -12,8 +12,8 @@ afterEach(async () => await dbTest.clearDatabase());
 
 describe('=== TEST PER I PUNTI DI INTERESSE (PDI) ===', () => {
 
-    //crea evento
-    describe('POST /api/v1/pdi', () => {
+    //crea pdi
+    describe('• POST /api/v1/pdi', () => {
 
         describe("(0) Creazione di un nuovo PDI con dati validi", () => {
             test("Status 201. Il PDI viene creato con successo, salvato nel database e l'oggetto creato viene restituito nella risposta.", async () => {
@@ -304,4 +304,246 @@ describe('=== TEST PER I PUNTI DI INTERESSE (PDI) ===', () => {
             });
         })
     });
+
+    //podifica pdi
+    describe('• PUT /api/v1/pdi/:id', () => {
+        describe("(10) Aggiornamento del nome di un PDI esistente", () => {
+            test("Status 200. Il nome del PDI viene aggiornato con successo nel database e il record modificato viene restituito nel body della risposta.", async () => {
+
+                //genera token amministratore
+                const token = jwt.sign(
+                    { id: 1234, ruolo: 'amministratore' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1m' }
+                )
+
+                //creo un pdi
+                const nuovoPDI = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [11.11, 46.06]
+                    },
+                    properties: {
+                        nome: "Muse",
+                        categoria: "museo",
+                        punteggio: 20
+                    }
+                });
+
+                //recupero dell'id
+                const idNuovoPDI = nuovoPDI._id;
+
+                //json da inviare
+                const aggiornaDati = {
+                    nome: "Muse, museo delle scienze"
+                }
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .put(`/api/v1/pdi/${idNuovoPDI}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(aggiornaDati);
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(200);
+                expect(risposta.body).toHaveProperty('message', 'PDI aggiornato con successo');
+                expect(risposta.body).toHaveProperty('data');
+
+                //controllo è stato combiato il nome
+                const pdiModificatoRisposta = risposta.body.data;
+                expect(pdiModificatoRisposta.properties.nome).toBe("Muse, museo delle scienze");
+            })
+        });
+
+        describe("(11) Modifica della descrizione di un PDI esistente", () => {
+            test("Status 200. La descrizione viene modificata con successo. Il record aggiornato è visibile nella risposta dell'API.", async () => {
+
+                //genera token amministratore
+                const token = jwt.sign(
+                    { id: 1234, ruolo: 'amministratore' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1m' }
+                )
+
+                //creo un pdi
+                const nuovoPDI = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [11.11, 46.06]
+                    },
+                    properties: {
+                        nome: "Muse",
+                        categoria: "museo",
+                        punteggio: 20,
+                        descrizione: "Famoso museo delle scienze"
+                    }
+                });
+
+                //recupero dell'id
+                const idNuovoPDI = nuovoPDI._id;
+
+                //json da inviare
+                const aggiornaDati = {
+                    descrizione: "Museo delle scienze di Trento"
+                }
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .put(`/api/v1/pdi/${idNuovoPDI}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(aggiornaDati);
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(200);
+                expect(risposta.body).toHaveProperty('message', 'PDI aggiornato con successo');
+                expect(risposta.body).toHaveProperty('data');
+
+                //controllo è stato combiato il nome
+                const pdiModificatoRisposta = risposta.body.data;
+                expect(pdiModificatoRisposta.properties.descrizione).toBe("Museo delle scienze di Trento");
+            })
+        });
+
+        describe("(12) Modifica della categoria di un PDI esistente", () => {
+            test("Status 200. Il campo relativo alla tipologia/categoria viene aggiornato correttamente nel record del database.", async () => {
+
+                //genera token amministratore
+                const token = jwt.sign(
+                    { id: 1234, ruolo: 'amministratore' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1m' }
+                )
+
+                //creo un pdi
+                const nuovoPDI = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [11.11, 46.06]
+                    },
+                    properties: {
+                        nome: "Muse",
+                        categoria: "museo",
+                        punteggio: 20,
+                    }
+                });
+
+                //recupero dell'id
+                const idNuovoPDI = nuovoPDI._id;
+
+                //json da inviare
+                const aggiornaDati = {
+                    categoria: "Parco naturale"
+                }
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .put(`/api/v1/pdi/${idNuovoPDI}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(aggiornaDati);
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(200);
+                expect(risposta.body).toHaveProperty('message', 'PDI aggiornato con successo');
+                expect(risposta.body).toHaveProperty('data');
+
+                //controllo è stato combiato il nome
+                const pdiModificatoRisposta = risposta.body.data;
+                expect(pdiModificatoRisposta.properties.categoria).toBe("parco naturale");
+            })
+        });
+
+        describe("(13) Tentativo di modifica del nome di un PDI con un nome già usato da un altro PDI", () => {
+            test("Status 409. La modifica fallisce per violazione del vincolo di unicità. Il sistema restituisce l'errore: Un PDI con questo nome esiste già.", async () => {
+
+                //genera token amministratore
+                const token = jwt.sign(
+                    { id: 1234, ruolo: 'amministratore' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1m' }
+                )
+
+                //creo i pdi
+                const PDIA = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [11.11, 46.06]
+                    },
+                    properties: {
+                        nome: "Muse",
+                        categoria: "museo",
+                        punteggio: 20
+                    }
+                });
+
+                const PDIB = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [12.11, 44.06]
+                    },
+                    properties: {
+                        nome: "Lago di Garda",
+                        categoria: "lago",
+                        punteggio: 20
+                    }
+                });
+
+                //recupero dell'id
+                const idNuovoPDI = PDIA._id;
+
+                //json da inviare
+                const aggiornaDati = {
+                    nome: "Lago di Garda"
+                }
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .put(`/api/v1/pdi/${idNuovoPDI}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(aggiornaDati);
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(409);
+                expect(risposta.body).toHaveProperty('error', 'Esiste già un Punto di Interesse con questo nome. Scegline uno diverso.');
+            })
+        });
+
+        describe("(14) Tentativo di modifica di un PDI con ID non esistente tramite API", () => {
+            test("Status 404. La richiesta fallisce prima della validazione del body. Il sistema restituisce l'errore: PDI non trovato.", async () => {
+
+                //genera token amministratore
+                const token = jwt.sign(
+                    { id: 1234, ruolo: 'amministratore' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1m' }
+                )
+
+                //recupero dell'id
+                const idfasullo = '6641a2f3e4b0c12d3f456789';
+
+                //json da inviare
+                const aggiornaDati = {
+                    nome: "Muse, museo delle scienze"
+                }
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .put(`/api/v1/pdi/${idfasullo}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send(aggiornaDati);
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(404);
+                expect(risposta.body).toHaveProperty('error', 'PDI non trovato');
+    
+            })
+        });
+
+
+
+    })
 });
