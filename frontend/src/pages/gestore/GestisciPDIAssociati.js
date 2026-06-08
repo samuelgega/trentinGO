@@ -171,72 +171,12 @@ const GestisciPDIAssociati = () => {
                         <div className="col-12 col-lg-6">
                             <div className="card border-0 shadow-sm h-100" style={{ borderRadius: '14px', overflow: 'hidden' }}>
                                 {cardHeader('Richiedi creazione di un nuovo PDI', '#0d6efd')}
-                                <div className="card-body d-flex flex-column px-4 py-3">
-                                    <p className="text-muted small mb-3">Proponi un nuovo Punto di Interesse da aggiungere alla piattaforma.</p>
-                                    <form onSubmit={handleRichiestaCreazione} className="d-flex flex-column flex-grow-1">
-                                        <div className="mb-3">
-                                            <label className="form-label fw-semibold text-secondary small">NOME PDI</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                placeholder="Es. Castello del Buonconsiglio"
-                                                value={nuovoPDI.nome}
-                                                onChange={e => setNuovoPDI(p => ({ ...p, nome: e.target.value }))}
-                                                required
-                                            />
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label fw-semibold text-secondary small">CATEGORIA</label>
-                                            <select
-                                                className="form-select"
-                                                value={nuovoPDI.categoria}
-                                                onChange={e => setNuovoPDI(p => ({ ...p, categoria: e.target.value }))}
-                                                required
-                                            >
-                                                <option value="">-- Seleziona categoria --</option>
-                                                {CATEGORIE.map(c => <option key={c} value={c}>{c}</option>)}
-                                            </select>
-                                        </div>
-                                        <div className="row g-3 mb-3">
-                                            <div className="col-6">
-                                                <label className="form-label fw-semibold text-secondary small">LATITUDINE</label>
-                                                <input
-                                                    type="number"
-                                                    step="any"
-                                                    className="form-control"
-                                                    placeholder="Es. 46.0748"
-                                                    value={nuovoPDI.latitudine}
-                                                    onChange={e => setNuovoPDI(p => ({ ...p, latitudine: e.target.value }))}
-                                                    required
-                                                />
-                                            </div>
-                                            <div className="col-6">
-                                                <label className="form-label fw-semibold text-secondary small">LONGITUDINE</label>
-                                                <input
-                                                    type="number"
-                                                    step="any"
-                                                    className="form-control"
-                                                    placeholder="Es. 11.1217"
-                                                    value={nuovoPDI.longitudine}
-                                                    onChange={e => setNuovoPDI(p => ({ ...p, longitudine: e.target.value }))}
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="mb-3">
-                                            <label className="form-label fw-semibold text-secondary small">DESCRIZIONE (opzionale)</label>
-                                            <textarea
-                                                className="form-control"
-                                                rows={3}
-                                                placeholder="Descrivi brevemente il punto di interesse..."
-                                                value={nuovoPDI.descrizione}
-                                                onChange={e => setNuovoPDI(p => ({ ...p, descrizione: e.target.value }))}
-                                            />
-                                        </div>
-                                        <button type="submit" className="btn btn-primary fw-semibold px-4 mt-auto">
-                                            Invia richiesta
-                                        </button>
-                                    </form>
+                                <div className="card-body p-0" style={{ height: '300px', maxHeight: '300px', overflowY: 'auto' }}>
+                                    <ul className="list-group list-group-flush h-100">
+                                        <li className="list-group-item d-flex align-items-center justify-content-center text-muted h-100 border-0">
+                                            In arrivo
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
