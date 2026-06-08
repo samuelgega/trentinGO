@@ -65,8 +65,10 @@ const GestisciPDI = () => {
         if (!pdiDaEliminare) return;
 
         try {
+            const token = localStorage.getItem('token')
             const response = await fetch(`http://localhost:3001/api/v1/pdi/${pdiDaEliminare._id}`, {
                 method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
                 showAlert(`PDI ${pdiDaEliminare.properties.nome} eliminato!`)

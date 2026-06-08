@@ -80,9 +80,12 @@ const AdminNav = () => {
                                 </button>
                             </li>
                             <li>
-                                <button className="dropdown-item custom-item d-flex align-items-center gap-2 py-2">
-                                    <span className="material-symbols-outlined fs-5">settings</span>
-                                    Impostazioni(provvisorio)
+                                <button 
+                                    className="dropdown-item custom-item d-flex align-items-center gap-2 py-2"
+                                    onClick={() => { navigate('/home')}}
+                                >
+                                    <span className="material-symbols-outlined fs-5">map</span>
+                                    Vai alla mappa
                                 </button>
                             </li>
 

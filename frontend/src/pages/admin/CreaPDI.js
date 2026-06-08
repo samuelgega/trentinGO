@@ -96,12 +96,11 @@ const CreaPDI = () => {
 
         //chiamata API
         try {
+            const token = localStorage.getItem('token')
             const response = await fetch('/api/v1/pdi', {
                 method: 'POST',
-                body: submitData,
-                headers: {
-                    //TODO: header di autenticazione
-                }
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: submitData
             })
 
             if (response.status === 201) {
