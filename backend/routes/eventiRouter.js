@@ -7,16 +7,21 @@ const router = express.Router()
 
 //route per visualizzare gli eventi
 router.get("/", EventiController.visualizzaTuttiEventi)
+
+//rotta per visualizzare gli eventi creati dal gestore
+router.get('/gestore', verificaToken, requireRuolo('gestore'), EventiController.visualizzaEventiGestore)
+
+//rotta per visualizzare un singolo evento
 router.get('/:idEvento', EventiController.visualizzaEvento)
 
 //route per creare eventi
-router.post('/', verificaToken, requireRuolo('amministratore'), upload.array('immagine', 10), EventiController.creaEvento)
+router.post('/', verificaToken, requireRuolo('amministratore','gestore'), upload.array('immagine', 10), EventiController.creaEvento)
 
 //modifica degli eventi
-router.put('/:idEvento', verificaToken, requireRuolo('amministratore'), upload.array('immagine', 10), EventiController.modificaEvento)
+router.put('/:idEvento', verificaToken, requireRuolo('amministratore','gestore'), upload.array('immagine', 10), EventiController.modificaEvento)
 
 //route per eliminare un singolo evento
-router.delete('/:id', verificaToken, requireRuolo('amministratore'), EventiController.eliminaEvento)
+router.delete('/:id', verificaToken, requireRuolo('amministratore','gestore'), EventiController.eliminaEvento)
 
 module.exports = router
 

@@ -1,67 +1,101 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GestoreNav from '../../components/gestoreComponents/GestoreNav'
-import {useAlert} from '../../contexts/AlertController'
+import { useAlert } from '../../contexts/AlertController'
+import PopUpElimina from '../../contexts/EliminaController'
 
 const GestisciEventiCreati = () => {
     const navigate = useNavigate()
     const { showAlert } = useAlert()
 
-    //dati prova da implementare in futuro con il backend
-    const [listaEventi, setListaEventi] = useState([
-        {
-            _id: '1',
-            properties: { 
-                nome: 'Marcatini di natale',
-                categoria: 'Cultura',
-                dataInizio: '2026-05-01', 
-                dataFine: '2026-05-20'   
-            }
-        },
-        {
-            _id: '2',
-            properties: { 
-                nome: 'Mercato',
-                categoria: 'Sport',
-                dataInizio: '2026-04-10',
-                dataFine: '2026-04-15'   
-            }
-        },
-        {
-            _id: '3',
-            properties: { 
-                nome: 'Festival dello sport',
-                categoria: 'Musica',
-                dataInizio: '2026-06-01', 
-                dataFine: '2026-06-10'   
-            }
-        }
-    ])
+    const [listaEventi, setListaEventi] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [popupAperto, setPopupAperto] = useState(false)
+    const [eventoDaEliminare, setEventoDaEliminare] = useState(null)
 
-    // handler per tornare alla home 
+    //Recupero dati dal backend
+    const recuperaMieiEventi = useCallback(async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:3001/api/v1/eventi/gestore', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.status === 404) {
+                setListaEventi([]);
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Errore nel recupero degli eventi");
+            }
+
+            const jsonResponse = await response.json();
+            setListaEventi(jsonResponse.data);
+            
+        } catch (error) {
+            console.error("Errore di connessione:", error);
+            showAlert("Errore di connessione al server.", "danger");
+        } finally {
+            setLoading(false);
+        }
+    }, [showAlert]);
+
+    useEffect(() => {
+        recuperaMieiEventi();
+    }, [recuperaMieiEventi]);
+
+
     const goToHome = () => {
         navigate('/gestore-home')
     }
 
-    // handler per andare alla pagina crea evento
     const goToCreaEvento = () => {
-        navigate('/crea-evento')
+        navigate('/gestore-home/crea-evento') 
     }
 
-    // handler per gestire la modifica
     const gestisciModifica = (evento) => {
-        showAlert(`Hai cliccato MODIFICA sull'Evento: ${evento.properties.nome} (ID: ${evento._id})`)
+        navigate(`/modifica-evento/${evento._id}`) 
     }
 
-    // handler per gestire l'eliminazione (ora aggiorna anche l'interfaccia)
-    const gestisciElimina = (evento) => {
-        const conferma = window.confirm(`Sei sicuro di voler eliminare ${evento.properties.nome}?`)
-        if (conferma) {
-            showAlert(`Evento ${evento._id} eliminato!`)
+    //apertura/chiusura popup
+    const apriPopupElimina = (evento) => {
+        setEventoDaEliminare(evento)
+        setPopupAperto(true)
+    }
+
+    const chiudiPopupElimina = () => {
+        setEventoDaEliminare(null)
+        setPopupAperto(false)
+    }
+
+    //eliminazione
+    const gestisciEliminazione = async () => {
+        if (!eventoDaEliminare) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:3001/api/v1/eventi/${eventoDaEliminare._id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                showAlert(`Evento "${eventoDaEliminare.properties.nome}" eliminato con successo!`, "success");
+                recuperaMieiEventi();
+            } else {
+                showAlert("Errore", "Impossibile eliminare l'evento", "danger");
+            }
+        } catch (error) {
+            console.error(error);
+            showAlert("Errore di connessione.", "Assicurati che il backend sia acceso", "danger");
+        } finally {
+            chiudiPopupElimina();
         }
     }
 
-    //funzione per determinare lo stato dell'evento in base alle date
+    // Calcolo stato
     const getStatoEvento = (dataInizio, dataFine) => {
         if (!dataInizio || !dataFine) return null;
 
@@ -69,7 +103,6 @@ const GestisciEventiCreati = () => {
         const inizio = new Date(dataInizio);
         const fine = new Date(dataFine);
 
-        //Azzero le ore per confrontare solo le date
         oggi.setHours(0, 0, 0, 0);
         inizio.setHours(0, 0, 0, 0);
         fine.setHours(0, 0, 0, 0);
@@ -91,8 +124,8 @@ const GestisciEventiCreati = () => {
                     
                     <div className="d-flex justify-content-between align-items-center mb-4">
                         <div>
-                            <h4 className="fw-bold mb-0">Gestione Eventi</h4>
-                            <p className="text-muted small mb-0">Aggiungi, modifica o elimina eventi</p>
+                            <h4 className="fw-bold mb-0">I Miei Eventi</h4>
+                            <p className="text-muted small mb-0">Gestisci gli eventi che hai creato</p>
                         </div>
                         <div className="d-flex align-items-center gap-2">
                             <button className="btn btn-trentingo btn-sm fw-semibold px-3" onClick={goToCreaEvento}>
@@ -111,16 +144,22 @@ const GestisciEventiCreati = () => {
                                     <thead style={{ backgroundColor: '#f8f9fa' }}>
                                         <tr>
                                             <th className="px-4 py-3 text-secondary fw-semibold small">NOME</th>
-                                            <th className="py-3 text-secondary fw-semibold small">TIPO</th>
+                                            <th className="py-3 text-secondary fw-semibold small">CATEGORIA</th>
                                             <th className="py-3 text-secondary fw-semibold small">STATO</th>
                                             <th className="py-3 text-secondary fw-semibold small text-end px-4" style={{ width: '200px' }}>AZIONI</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {listaEventi.length === 0 ? (
+                                        {loading ? (
+                                            <tr>
+                                                <td colSpan={4} className="text-center py-5">
+                                                    <div className="spinner-border text-primary" role="status"></div>
+                                                </td>
+                                            </tr>
+                                        ) : listaEventi.length === 0 ? (
                                             <tr>
                                                 <td colSpan={4} className="text-center text-muted py-5">
-                                                    Nessun evento trovato.
+                                                    Nessun evento trovato. Inizia creandone uno!
                                                 </td>
                                             </tr>
                                         ) : (
@@ -144,7 +183,7 @@ const GestisciEventiCreati = () => {
                                                         </button>
                                                         <button
                                                             className="btn btn-sm btn-outline-danger"
-                                                            onClick={() => gestisciElimina(evento)}
+                                                            onClick={() => apriPopupElimina(evento)}
                                                         >
                                                             Elimina
                                                         </button>
@@ -159,6 +198,12 @@ const GestisciEventiCreati = () => {
                     </div>
                 </div>
             </div>
+            <PopUpElimina
+                isOpen={popupAperto}
+                onClose={chiudiPopupElimina}
+                onConfirm={gestisciEliminazione}
+                nomeElemento={eventoDaEliminare ? eventoDaEliminare.properties.nome : ""}
+            />
         </>
     )
 
