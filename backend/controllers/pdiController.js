@@ -1,3 +1,4 @@
+const { error } = require("console");
 const PDI = require("../models/PDI");
 const fs = require("fs");
 
@@ -27,10 +28,26 @@ const creaPDI = async (req, res) => {
         if (!punteggio || punteggio < 0) {
             return res.status(400).json({ error: "Il punteggio è un campo obbligatorio e deve essere un numero positivo" });
         }
+        if(punteggio < 20){
+            return res.status(400).json({ error: "Il punteggio deve essere almeno di 20"})
+        }
 
         //controllo se la posizione è presente e ha valori validi
         if (latitudine === undefined || longitudine === undefined) {
             return res.status(400).json({ error: "le coordinate di latitudine e longitudine sono obbligatorie" });
+        }
+        if (latitudine < -90 || latitudine > 90 || longitudine < -180 || longitudine >180){
+            return res.status(400).json({ error: "le coordinate devono stare nel range latitudine(-90,90), longitudine(-180,180)"})
+        }
+
+        //controllo descrizione
+        if (descrizione && descrizione.length > 500) {
+            return res.status(400).json({ error: "La descrizione non può superare i 500 caratteri" });
+        }
+
+        //controllo prezzo
+        if(prezzo && prezzo < 0){
+            return res.status(400).json({error: "Il prezzo non può essere inferiore a 0"})
         }
 
 
@@ -46,7 +63,7 @@ const creaPDI = async (req, res) => {
                 descrizione,
                 categoria: categoria.toLowerCase(),
                 prezzo: prezzo || 0,
-                punteggio: punteggio || 0,
+                punteggio: punteggio,
                 immagine: arrayImmagini
             }
         });
@@ -57,6 +74,11 @@ const creaPDI = async (req, res) => {
         });
 
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(409).json({
+                error: "Esiste già un Punto di Interesse con questo nome. Scegline uno diverso."
+            });
+        }
         console.error("Errore nella creazione del PDI:", error);
         res.status(500).json({ error: "Errore interno del server" });
     }
@@ -150,7 +172,7 @@ const modificaPDI = async (req, res) => {
 
     } catch (error) {
         if (error.code === 11000) {
-            return res.status(400).json({
+            return res.status(409).json({
                 error: "Esiste già un Punto di Interesse con questo nome. Scegline uno diverso."
             });
         }
