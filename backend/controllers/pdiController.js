@@ -172,7 +172,7 @@ const modificaPDI = async (req, res) => {
 
     } catch (error) {
         if (error.code === 11000) {
-            return res.status(400).json({
+            return res.status(409).json({
                 error: "Esiste già un Punto di Interesse con questo nome. Scegline uno diverso."
             });
         }
