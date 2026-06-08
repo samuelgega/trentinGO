@@ -542,8 +542,166 @@ describe('=== TEST PER I PUNTI DI INTERESSE (PDI) ===', () => {
     
             })
         });
-
-
-
     })
+
+    //elimina pdi
+    describe('• DELETE /api/v1/pdi/:id', () => {
+        describe("(15) Eliminazione di un PDI specifico", () => {
+            test("Status 200. Il PDI viene eliminato con successo dal database e il server restituisce un messaggio di conferma JSON.", async () => {
+
+                //genera token amministratore
+                const token = jwt.sign(
+                    { id: 1234, ruolo: 'amministratore' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1m' }
+                )
+
+                //creo un pdi
+                const nuovoPDI = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [11.11, 46.06]
+                    },
+                    properties: {
+                        nome: "Muse",
+                        categoria: "museo",
+                        punteggio: 20
+                    }
+                });
+
+                //recupero dell'id
+                const idNuovoPDI = nuovoPDI._id;
+
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .delete(`/api/v1/pdi/${idNuovoPDI}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send()
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(200);
+                expect(risposta.body).toHaveProperty('message', 'PDI eliminato con successo');
+                expect(risposta.body).toHaveProperty('data');
+
+                //controllo è stato combiato il nome
+                const pdiModificatoRisposta = risposta.body.data;
+                expect(pdiModificatoRisposta.properties.nome).toBe("Muse");
+            })
+        });
+
+        describe("(16) Tentativo di eliminazione di un PDI con ID non esistente tramite API", () => {
+            test("Status 404. La richiesta fallisce. Il database non trova riscontri e il sistema risponde con l'errore: PDI non trovato.", async () => {
+
+                //genera token amministratore
+                const token = jwt.sign(
+                    { id: 1234, ruolo: 'amministratore' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1m' }
+                )
+
+                //creo un pdi
+                const nuovoPDI = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [11.11, 46.06]
+                    },
+                    properties: {
+                        nome: "Muse",
+                        categoria: "museo",
+                        punteggio: 20
+                    }
+                });
+
+                //crea id fasullo
+                const idfasullo = '6641a2f3e4b0c12d3f456789';
+
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .delete(`/api/v1/pdi/${idfasullo}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send()
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(404);
+                expect(risposta.body).toHaveProperty('error', 'PDI non trovato');
+            })
+        });
+
+        describe("(17) Tentativo di eliminazione di un PDI senza autenticazione", () => {
+            test("Status 401. L'accesso viene negato dal middleware di controllo delle rotte prima di raggiungere il controller. Accesso negato: token mancante.", async () => {
+
+                //creo un pdi
+                const nuovoPDI = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [11.11, 46.06]
+                    },
+                    properties: {
+                        nome: "Muse",
+                        categoria: "museo",
+                        punteggio: 20
+                    }
+                });
+
+                //recupero dell'id
+                const idNuovoPDI = nuovoPDI._id;
+
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .delete(`/api/v1/pdi/${idNuovoPDI}`)
+                    .send()
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(401);
+                expect(risposta.body).toHaveProperty('error', 'Accesso negato: token mancante');
+            })
+        });
+
+        describe("(18) Tentativo di eliminazione di un PDI da parte di un Gestore", () => {
+            test("Status 403. Il middleware di controllo del ruolo intercetta la richiesta e risponde con l'errore: Accesso negato: permessi insufficienti.", async () => {
+
+                //genera token amministratore
+                const token = jwt.sign(
+                    { id: 1234, ruolo: 'gestore' },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1m' }
+                )
+
+                //creo un pdi
+                const nuovoPDI = await PDI.create({
+                    type: "Feature",
+                    geometry: {
+                        type: "Point",
+                        coordinates: [11.11, 46.06]
+                    },
+                    properties: {
+                        nome: "Muse",
+                        categoria: "museo",
+                        punteggio: 20
+                    }
+                });
+
+                //recupero dell'id
+                const idNuovoPDI = nuovoPDI._id;
+
+
+                //invio richiesta
+                const risposta = await request(app)
+                    .delete(`/api/v1/pdi/${idNuovoPDI}`)
+                    .set('Authorization', `Bearer ${token}`)
+                    .send()
+
+                //controllo risposta
+                expect(risposta.statusCode).toBe(403);
+                expect(risposta.body).toHaveProperty('error', 'Accesso negato: permessi insufficienti');
+            })
+        });
+    })
+
 });
