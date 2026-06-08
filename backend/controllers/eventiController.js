@@ -110,7 +110,12 @@ const creaEvento = async (req, res) => {
         if (!validazione.datiValidi)
             return res.status(400).json({ error: validazione.errore })
 
-        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato, idGestore } = req.body
+        const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato } = req.body
+
+        let idGestoreSelezionato = req.body.idGestore;
+        if (req.utente.ruolo === 'gestore') {
+            idGestoreSelezionato = req.utente.id;
+        }
 
         if (!nome || !dataInizio || !dataFine || !latitudine || !longitudine)
             return res.status(400).json({ error: "Dati mancanti" })
@@ -146,7 +151,7 @@ const creaEvento = async (req, res) => {
                 dataFine,
                 dataCreazione: new Date(),
                 pdiCollegato: refPdi,
-                idGestore
+                idGestore: idGestoreSelezionato
             }
         })
 
@@ -176,10 +181,9 @@ const modificaEvento = async (req, res) => {
         if (!ev) {
             return res.status(404).json({ error: "Evento non trovato" })
         }
-        // const gest = await Gestore.findById(idGestore)
-        // if (!gest) {
-        //     return res.status(404).json({ error: "Gestore non trovato" })
-        // }
+        if (req.utente.ruolo === 'gestore' && ev.properties.idGestore.toString() !== req.utente.id) {
+            return res.status(403).json({ error: "Non sei autorizzato a modificare questo evento." });
+        }
 
         let arrayImmagini = []
         if (req.files && req.files.length > 0) {
@@ -241,6 +245,10 @@ const eliminaEvento = async (req, res) => {
             return res.status(404).json({ error: "Evento non trovato" })
         }
 
+        if (req.utente.ruolo === 'gestore' && eventoEsistente.properties.idGestore.toString() !== req.utente.id) {
+            return res.status(403).json({ error: "Non sei autorizzato a eliminare questo evento." });
+        }
+
         //controlle se l'evento ha immagini associate e le elimino
         if (eventoEsistente.properties.immagine && eventoEsistente.properties.immagine.length > 0) {
             eventoEsistente.properties.immagine.forEach(immagine => {
@@ -265,4 +273,27 @@ const eliminaEvento = async (req, res) => {
 
     }
 }
-module.exports = { visualizzaTuttiEventi, creaEvento, eliminaEvento, modificaEvento, visualizzaEvento }
+
+const visualizzaEventiGestore = async (req, res) => {
+    try {
+        const eventiList = await Evento.find({ 'properties.idGestore': req.utente.id }).populate('properties.pdiCollegato');
+
+        if (!eventiList || eventiList.length === 0) {
+            return res.status(404).json({ error: "Nessun evento trovato" });
+        }
+
+        const output = eventiList.map(ev => {
+            if (Array.isArray(ev.properties.immagine)) {
+                ev.properties.immagine = ev.properties.immagine.map(img => `${baseUrl}/uploads/${img}`);
+            }
+            return ev;
+        });
+
+        return res.status(200).json({ data: output });
+    } catch (e) {
+        return res.status(500).json({ error: "Errore interno" });
+    }
+}
+
+
+module.exports = { visualizzaTuttiEventi, creaEvento, eliminaEvento, modificaEvento, visualizzaEvento, visualizzaEventiGestore }

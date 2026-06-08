@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '../../contexts/AlertController'
-import AdminNav from '../../components/adminComponents/AdminNav'
 
 const MAX_SIZE = 2 * 1024 * 1024 // 2MB
 const MAX_IMG = 10
@@ -97,12 +96,11 @@ const CreaPDI = () => {
 
         //chiamata API
         try {
+            const token = localStorage.getItem('token')
             const response = await fetch('/api/v1/pdi', {
                 method: 'POST',
-                body: submitData,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: submitData
             })
 
             if (response.status === 201) {

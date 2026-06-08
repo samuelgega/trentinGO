@@ -117,12 +117,11 @@ const ModificaPDI = () => {
         immagini.forEach((img) => submitData.append('immagine', img))
 
         try {
+            const token = localStorage.getItem('token')
             const response = await fetch(`http://localhost:3001/api/v1/pdi/${id}`, {
                 method: 'PUT', 
-                body: submitData,
-                headers: {
-                    // TODO: header di autenticazione
-                }
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: submitData
             })
 
             const data = await response.json()
