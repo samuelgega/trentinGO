@@ -5,7 +5,7 @@ const Visita = require('../models/Visita')
 const z = require('zod')
 const mongoose = require('mongoose')
 
-const xpEvento = 10;
+const xpEvento = 15;
 
 //definizione schema posizione
 const posizioneSchema = z.tuple([
@@ -13,7 +13,7 @@ const posizioneSchema = z.tuple([
     z.number().min(-180).max(180)
 ])
 
-const TOLLERANZA = 100
+const TOLLERANZA = 5
 const BASE = 16 //punti necessari per il lvl 2
 
 //funzione che calcola la distanza tra 2 posizioni con la formula di Haversine

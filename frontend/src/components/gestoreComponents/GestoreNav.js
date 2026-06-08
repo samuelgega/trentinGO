@@ -6,7 +6,7 @@ const GestoreNav = () => {
     const [isLoggato, setLoggato] = useState(false)
     const [isTendinaAperta, setTendina] = useState(false)
     const [ruolo, setRuolo] = useState('')
-
+    const [nome, setNome] = useState('')
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -14,6 +14,7 @@ const GestoreNav = () => {
         if (tk) {
             setLoggato(true)
             setRuolo(localStorage.getItem('ruolo'))
+            setNome(localStorage.getItem('nome') || '')
         }
     }, [])
 
@@ -29,20 +30,26 @@ const GestoreNav = () => {
                 {isLoggato ? (
                     <div className="dropdown position-relative d-inline-block">
                         <button
-                            className="btn shadow-none d-flex align-items-center justify-content-center p-0 profile-btn"
+                            className="btn shadow-none d-flex align-items-center gap-2 p-0 profile-btn"
                             title="Profilo"
                             onClick={() => { setTendina(!isTendinaAperta) }}
                             style={{
-                                width: '3.5rem',
                                 height: '3.5rem',
                                 backgroundColor: 'transparent',
                                 color: '#037149',
-                                border: 'none'
+                                border: 'none',
+                                paddingLeft: '8px',
+                                paddingRight: '4px'
                             }}
                         >
                             <span className="material-symbols-outlined fs-2" style={{ pointerEvents: 'none' }}>
                                 account_circle
                             </span>
+                            {nome && (
+                                <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#1e293b', pointerEvents: 'none', maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {nome}
+                                </span>
+                            )}
                         </button>
 
                         {/* tendina */}
@@ -132,4 +139,4 @@ const GestoreNav = () => {
     )
 }
 
-export default GestoreNav
+export default GestoreNav;
