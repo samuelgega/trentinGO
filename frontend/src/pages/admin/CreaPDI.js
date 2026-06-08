@@ -20,6 +20,7 @@ const CreaPDI = () => {
     const navigate = useNavigate()
 
     const fileInputRef = useRef(null)
+    const token = localStorage.getItem('token')
 
     const [formData, setFormData] = useState(statoInizialeForm)
     const [immagini, setImmagini] = useState([])
@@ -119,169 +120,169 @@ const CreaPDI = () => {
         <>
             <div style={{ backgroundColor: '#f0f2f5', minHeight: '100vh' }} className="pb-5">
                 <div className="container pt-4">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h2>Crea nuovo punto di interesse</h2>
-                    <button
-                        className="btn btn-trentingo-outline"
-                        onClick={() => navigate(-1)}
-                    >
-                        &larr; Annulla e torna indietro
-                    </button>
-                </div>
-
-                <div className="card shadow pdi-card border-0">
-                    <div className="card-body p-4">
-                        <form onSubmit={handleSubmit} onReset={handleReset}>
-
-                            {/* Informazioni base */}
-                            <h5 className="text-trentingo mb-3">1. Informazioni Generali</h5>
-                            <div className="row g-3 mb-4">
-                                <div className="col-md-8">
-                                    <label className="form-label fw-bold">Nome del punto di interesse*</label>
-                                    <input
-                                        type="text"
-                                        name="nome"
-                                        value={formData.nome}
-                                        className="form-control"
-                                        placeholder="es. Piazza Duomo"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.nome}</small>
-                                </div>
-                                <div className="col-md-4">
-                                    <label className="form-label fw-bold">Tipologia*</label>
-                                    <select
-                                        name="categoria"
-                                        value={formData.categoria}
-                                        className="form-select"
-                                        onChange={handleInput}
-                                    >
-                                        <option value="">Selezionare tipologia</option>
-                                        <option value="Chiesa">Chiesa</option>
-                                        <option value="Castello">Castello</option>
-                                        <option value="Monumento">Monumento</option>
-                                        <option value="Museo">Museo</option>
-                                        <option value="Parco">Parco</option>
-                                        <option value="Montagna">Montagna</option>
-                                        <option value="Lago">Lago</option>
-                                        <option value="Santuario">Santuario</option>
-                                        <option value="Altro">Altro</option>
-                                    </select>
-                                    <small className="text-danger">{errori.categoria}</small>
-                                </div>
-                            </div>
-                            <div className="row g-3 mb-4">
-                                <label className="form-label fw-bold">Descrizione Estesa</label>
-                                <textarea
-                                    name="descrizione"
-                                    value={formData.descrizione}
-                                    className="form-control"
-                                    rows="4"
-                                    placeholder="Inserisci una descrizione dettagliata..."
-                                    onChange={handleInput}
-                                ></textarea>
-                                <small className="text-danger">{errori.descrizione}</small>
-                            </div>
-
-                            <hr />
-
-                            {/* Posizione */}
-                            <h5 className="text-trentingo mb-3">2. Posizione Geografica</h5>
-                            <div className="row g-3 mb-4">
-                                <div className="col-md-6">
-                                    <label className="form-label fw-bold">Latitudine*</label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        name="latitudine"
-                                        value={formData.latitudine}
-                                        className="form-control"
-                                        placeholder="Inserire latitudine"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.latitudine}</small>
-                                </div>
-                                <div className="col-md-6">
-                                    <label className="form-label fw-bold">Longitudine*</label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        name="longitudine"
-                                        value={formData.longitudine}
-                                        className="form-control"
-                                        placeholder="Inserire longitudine"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.longitudine}</small>
-                                </div>
-                            </div>
-
-                            <hr />
-
-                            {/* Dettagli */}
-                            <h5 className="text-trentingo mb-3">3. Dettagli</h5>
-                            <div className="row g-3 mb-4">
-                                <div className="col-md-6">
-                                    <label className="form-label fw-bold">Punteggio*</label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        name="punteggio"
-                                        value={formData.punteggio}
-                                        className="form-control"
-                                        placeholder="Inserire punteggio"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.punteggio}</small>
-                                </div>
-                                <div className="col-md-6">
-                                    <label className="form-label fw-bold">Prezzo</label>
-                                    <input
-                                        type="number"
-                                        step="any"
-                                        name="prezzo"
-                                        value={formData.prezzo}
-                                        className="form-control"
-                                        placeholder="Inserire prezzo"
-                                        onChange={handleInput}
-                                    />
-                                    <small className="text-danger">{errori.prezzo}</small>
-                                </div>
-                                <div className="col-md-6">
-                                    <label className="form-label fw-bold">Foto (URL o File)</label>
-                                    <div className="input-group">
-                                        <input
-                                            type="file"
-                                            className="form-control"
-                                            multiple
-                                            ref={fileInputRef}
-                                            onChange={handleImg}
-                                            accept="image/jpeg, image/png, image/webp"
-                                        />
-                                        <button
-                                            className="btn btn-outline-danger"
-                                            type="button"
-                                            onClick={() => {
-                                                setImmagini([])
-                                                if (fileInputRef.current) fileInputRef.current.value = ""
-                                            }}
-                                        >
-                                            Rimuovi foto
-                                        </button>
-                                    </div>
-                                    <small className="text-muted">Puoi selezionare più file contemporaneamente (max. 2MB per file)</small><br />
-                                    <small className="text-muted">Tipi di file ammessi: JPEG, PNG, WEBP. Massimo 10 immagini</small>
-                                </div>
-                            </div>
-
-                            {/* Tasti azione */}
-                            <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
-                                <button type="reset" className="btn btn-light me-md-2">Svuota Campi</button>
-                                <button type="submit" className="btn btn-trentingo px-5">Salva PDI</button>
-                            </div>
-                        </form>
+                    <div className="d-flex justify-content-between align-items-center mb-4">
+                        <h2>Crea nuovo punto di interesse</h2>
+                        <button
+                            className="btn btn-trentingo-outline"
+                            onClick={() => navigate(-1)}
+                        >
+                            &larr; Annulla e torna indietro
+                        </button>
                     </div>
-                </div>
+
+                    <div className="card shadow pdi-card border-0">
+                        <div className="card-body p-4">
+                            <form onSubmit={handleSubmit} onReset={handleReset}>
+
+                                {/* Informazioni base */}
+                                <h5 className="text-trentingo mb-3">1. Informazioni Generali</h5>
+                                <div className="row g-3 mb-4">
+                                    <div className="col-md-8">
+                                        <label className="form-label fw-bold">Nome del punto di interesse*</label>
+                                        <input
+                                            type="text"
+                                            name="nome"
+                                            value={formData.nome}
+                                            className="form-control"
+                                            placeholder="es. Piazza Duomo"
+                                            onChange={handleInput}
+                                        />
+                                        <small className="text-danger">{errori.nome}</small>
+                                    </div>
+                                    <div className="col-md-4">
+                                        <label className="form-label fw-bold">Tipologia*</label>
+                                        <select
+                                            name="categoria"
+                                            value={formData.categoria}
+                                            className="form-select"
+                                            onChange={handleInput}
+                                        >
+                                            <option value="">Selezionare tipologia</option>
+                                            <option value="Chiesa">Chiesa</option>
+                                            <option value="Castello">Castello</option>
+                                            <option value="Monumento">Monumento</option>
+                                            <option value="Museo">Museo</option>
+                                            <option value="Parco">Parco</option>
+                                            <option value="Montagna">Montagna</option>
+                                            <option value="Lago">Lago</option>
+                                            <option value="Santuario">Santuario</option>
+                                            <option value="Altro">Altro</option>
+                                        </select>
+                                        <small className="text-danger">{errori.categoria}</small>
+                                    </div>
+                                </div>
+                                <div className="row g-3 mb-4">
+                                    <label className="form-label fw-bold">Descrizione Estesa</label>
+                                    <textarea
+                                        name="descrizione"
+                                        value={formData.descrizione}
+                                        className="form-control"
+                                        rows="4"
+                                        placeholder="Inserisci una descrizione dettagliata..."
+                                        onChange={handleInput}
+                                    ></textarea>
+                                    <small className="text-danger">{errori.descrizione}</small>
+                                </div>
+
+                                <hr />
+
+                                {/* Posizione */}
+                                <h5 className="text-trentingo mb-3">2. Posizione Geografica</h5>
+                                <div className="row g-3 mb-4">
+                                    <div className="col-md-6">
+                                        <label className="form-label fw-bold">Latitudine*</label>
+                                        <input
+                                            type="number"
+                                            step="any"
+                                            name="latitudine"
+                                            value={formData.latitudine}
+                                            className="form-control"
+                                            placeholder="Inserire latitudine"
+                                            onChange={handleInput}
+                                        />
+                                        <small className="text-danger">{errori.latitudine}</small>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label className="form-label fw-bold">Longitudine*</label>
+                                        <input
+                                            type="number"
+                                            step="any"
+                                            name="longitudine"
+                                            value={formData.longitudine}
+                                            className="form-control"
+                                            placeholder="Inserire longitudine"
+                                            onChange={handleInput}
+                                        />
+                                        <small className="text-danger">{errori.longitudine}</small>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                {/* Dettagli */}
+                                <h5 className="text-trentingo mb-3">3. Dettagli</h5>
+                                <div className="row g-3 mb-4">
+                                    <div className="col-md-6">
+                                        <label className="form-label fw-bold">Punteggio*</label>
+                                        <input
+                                            type="number"
+                                            step="any"
+                                            name="punteggio"
+                                            value={formData.punteggio}
+                                            className="form-control"
+                                            placeholder="Inserire punteggio"
+                                            onChange={handleInput}
+                                        />
+                                        <small className="text-danger">{errori.punteggio}</small>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label className="form-label fw-bold">Prezzo</label>
+                                        <input
+                                            type="number"
+                                            step="any"
+                                            name="prezzo"
+                                            value={formData.prezzo}
+                                            className="form-control"
+                                            placeholder="Inserire prezzo"
+                                            onChange={handleInput}
+                                        />
+                                        <small className="text-danger">{errori.prezzo}</small>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <label className="form-label fw-bold">Foto (URL o File)</label>
+                                        <div className="input-group">
+                                            <input
+                                                type="file"
+                                                className="form-control"
+                                                multiple
+                                                ref={fileInputRef}
+                                                onChange={handleImg}
+                                                accept="image/jpeg, image/png, image/webp"
+                                            />
+                                            <button
+                                                className="btn btn-outline-danger"
+                                                type="button"
+                                                onClick={() => {
+                                                    setImmagini([])
+                                                    if (fileInputRef.current) fileInputRef.current.value = ""
+                                                }}
+                                            >
+                                                Rimuovi foto
+                                            </button>
+                                        </div>
+                                        <small className="text-muted">Puoi selezionare più file contemporaneamente (max. 2MB per file)</small><br />
+                                        <small className="text-muted">Tipi di file ammessi: JPEG, PNG, WEBP. Massimo 10 immagini</small>
+                                    </div>
+                                </div>
+
+                                {/* Tasti azione */}
+                                <div className="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                    <button type="reset" className="btn btn-light me-md-2">Svuota Campi</button>
+                                    <button type="submit" className="btn btn-trentingo px-5">Salva PDI</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>

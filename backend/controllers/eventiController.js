@@ -12,7 +12,7 @@ const validaDati = (dati) => {
     if (nome.trim() === "" || nome.trim().length < 2 || nome.trim().length > 100) {
         return {
             datiValidi: false,
-            errore: 'Il nome è obbligatorio e deve avere dai 2 ai 200 caratteri'
+            errore: 'Il nome dell\'evento è obbligatorio'
         }
     }
 
@@ -47,13 +47,19 @@ const validaDati = (dati) => {
     if (
         isNaN(dInizio.getTime())
         || isNaN(dFine.getTime())
-        || dInizio.getTime() > dFine.getTime()) {
+        || dInizio.getTime() > dFine.getTime()
+    ) {
         return {
             datiValidi: false,
-            errore: 'Le date di inizio e fine sono obbligatorie e la data di fine non può venire prima di quella di inizio'
+            errore: 'La data di fine deve essere successiva alla data di inizio'
         }
     }
-
+    if (dInizio.getTime() < (new Date())) {
+        return {
+            datiValidi: false,
+            errore: 'La data di inizio non può essere nel passato'
+        }
+    }
 
     //controllo degli id
     if (idEvento && !mongoose.Types.ObjectId.isValid(idEvento))
