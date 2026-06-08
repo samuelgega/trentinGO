@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAlert } from '../../contexts/AlertController'
-import AdminNav from '../../components/adminComponents/AdminNav'
 
 const MAX_SIZE = 2 * 1024 * 1024 // 2MB
 const MAX_IMG = 10

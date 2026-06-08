@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AdminNav from '../../components/adminComponents/AdminNav'
 import { useAlert } from '../../contexts/AlertController'
@@ -15,7 +15,7 @@ const GestisciPDI = () => {
     const [popupAperto, setPopupAperto] = useState(false)
     const [pdiDaEliminare, setPdiDaEliminare] = useState(null)
 
-    const recuperaDatiDalDatabase = async () => {
+    const recuperaDatiDalDatabase = useCallback(async () => {
         try {
             const response = await fetch('http://localhost:3001/api/v1/pdi');
             if (!response.ok) {
@@ -28,11 +28,11 @@ const GestisciPDI = () => {
             console.error("Errore di connessione:", error);
             showAlert("Errore di connessione. Assicurati che il backend sia acceso!");
         }
-    }
+    },[showAlert])
 
     useEffect(() => {
         recuperaDatiDalDatabase()
-    }, [])
+    }, [recuperaDatiDalDatabase])
 
     // handler per tornare alla home 
     const goToHome = () => {

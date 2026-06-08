@@ -183,7 +183,7 @@ const AuthGestore = () => {
                                 className="btn w-100 fw-semibold py-2 mb-2"
                                 style={{ backgroundColor: '#037149', color: 'white', borderRadius: '10px' }}
                             >
-                                Crea account
+                                Invia richiesta di creazione account
                             </button>
                             <button
                                 type="reset"
@@ -202,7 +202,7 @@ const AuthGestore = () => {
                                 style={{ borderRadius: '10px' }}
                                 onClick={() => navigate('/auth/giocatore')}
                             >
-                                Registrati come Gestore
+                                Registrati come giocatore
                             </button>
                         </div>
                         <div className="mb-4">

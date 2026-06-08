@@ -14,9 +14,6 @@ const GestisciPDIAssociati = () => {
     const [tuttiPDI, setTuttiPDI] = useState([])
     const [pdiSelezionato, setPdiSelezionato] = useState('')
     const [motivazione, setMotivazione] = useState('')
-
-    const [nuovoPDI, setNuovoPDI] = useState({ nome: '', categoria: '', descrizione: '', latitudine: '', longitudine: '' })
-
     const [listaRichieste, setListaRichieste] = useState([])
 
     useEffect(() => {
@@ -88,13 +85,6 @@ const GestisciPDIAssociati = () => {
             showAlert("Errore di connessione.", "Riprovare più tardi", "danger")
         }
     }
-
-    const handleRichiestaCreazione = (e) => {
-        e.preventDefault()
-        setNuovoPDI({ nome: '', categoria: '', descrizione: '', latitudine: '', longitudine: '' })
-    }
-
-    const CATEGORIE = ['Chiesa', 'Castello', 'Monumento', 'Museo', 'Parco', 'Montagna', 'Lago', 'Santuario', 'Altro']
 
     const cardHeader = (label, color) => (
         <div className="card-header border-0 fw-semibold py-3 px-4" style={{ backgroundColor: color, color: 'white' }}>
