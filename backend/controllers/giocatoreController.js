@@ -15,6 +15,10 @@ const registrazioneGiocatore = async (req, res) => {
             return res.status(400).json({ error: "username, email e password sono obbligatori" });
         }
 
+        if (password.length < 8) {
+            return res.status(400).json({ error: "La password deve essere di almeno 8 caratteri" });
+        }
+
         //controllo se username esiste gia
         const usernameEsistente = await Giocatore.findOne({ username: username })
         if (usernameEsistente) {
