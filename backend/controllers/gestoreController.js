@@ -19,12 +19,12 @@ const registrazioneGestore = async (req, res) => {
 
         const nomeEsistente = await Gestore.findOne({ nome: nome })
         if (nomeEsistente) {
-            return res.status(409).json({ error: "Nome già esistente" })
+            return res.status(409).json({ error: "Nome o email già in uso" })
         }
 
         const emailEsistente = await Gestore.findOne({ email: email.toLowerCase() })
         if (emailEsistente) {
-            return res.status(409).json({ error: "Email già esistente" })
+            return res.status(409).json({ error: "Nome o email già in uso" })
         }
 
         const partitaIvaEsistente = await Gestore.findOne({ partitaIva: partitaIva })
