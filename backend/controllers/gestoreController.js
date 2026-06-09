@@ -173,7 +173,7 @@ const modificaProfilo = async (req, res) => {
             utente.email = email
         }
 
-        utente.save()
+        await utente.save()
         return res.status(200).json({ message: "Utente aggiornato con successo", data: utente })
     }
     catch (error) {

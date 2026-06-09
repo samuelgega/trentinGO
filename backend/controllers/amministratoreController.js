@@ -92,7 +92,7 @@ const modificaProfilo = async (req, res) => {
             if (u) {
                 return res.status(409).json({ error: "Email già registrata" })
             }
-            utente.email = email
+            utente.email = emailFormattata
         }
 
         await utente.save()

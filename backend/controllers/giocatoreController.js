@@ -90,7 +90,7 @@ const modificaProfilo = async (req, res) => {
 
         if (username) {
             const usernameFormattato = String(username).toLowerCase();
-            const u = await Giocatore.findOne({ username: usernameFormattato, _id: { $ne: idUtente } }) || 
+            const u = await Giocatore.findOne({ username: usernameFormattato, _id: { $ne: id } }) || 
                       await Gestore.findOne({ username: usernameFormattato }) || 
                       await Amministratore.findOne({ username: usernameFormattato })
             if (u) {
@@ -101,7 +101,7 @@ const modificaProfilo = async (req, res) => {
 
         if (email) {
             const emailFormattata = String(email).toLowerCase();
-            const u = await Giocatore.findOne({ email: emailFormattata, _id: { $ne: idUtente } }) || 
+            const u = await Giocatore.findOne({ email: emailFormattata, _id: { $ne: id } }) || 
                       await Gestore.findOne({ email: emailFormattata }) || 
                       await Amministratore.findOne({ email: emailFormattata })
             if (u) {
@@ -121,7 +121,7 @@ const modificaProfilo = async (req, res) => {
 
 const eliminaProfilo = async (req,res) => {
     try {
-        const idDaEliminare = req.params.idUtente; 
+        const idDaEliminare = req.params.id; 
         
         const eliminato = await Giocatore.findByIdAndDelete(idDaEliminare);
         
