@@ -257,7 +257,6 @@ paths:
       description: ""
       security:
         - token: []
-    parameters: []
   "/eventi/{idEvento}":
     get:
       summary: Visualizza un evento specifico
@@ -308,8 +307,9 @@ paths:
       parameters:
         - schema:
             type: string
-          in: query
+          in: path
           name: idEvento
+          required: true
       description: ""
     put:
       summary: Modifica un evento
@@ -372,13 +372,14 @@ paths:
       parameters:
         - schema:
             type: string
-          in: query
+          in: path
           name: idEvento
+          required: true
       requestBody:
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: "#/components/schemas/PDIUpdateInput"
+              $ref: "#/components/schemas/EventoUploadInput"
       security:
         - token: []
     delete:
@@ -430,190 +431,592 @@ paths:
       parameters:
         - schema:
             type: string
-          in: query
+          in: path
           name: idEvento
+          required: true
       security:
         - token: []
-  /richieste-associazione:
+  /eventi/gestore:
     get:
-      summary: Ottieni la lista delle richieste di associazione
+      summary: Recupera gli eventi creati dal gestore autenticato
+      description: Restituisce una lista di tutti gli eventi creati dal gestore attualmente loggato. L'ID del gestore viene letto in modo sicuro dal token JWT. Include i dati popolati del PDI collegato e i percorsi assoluti delle immagini.
       tags:
-        - richieste-associazione
-      parameters:
-        - in: query
-          name: gestore
-          schema:
-            type: string
-            pattern: "^[a-fA-F0-9]{24}$"
-          description: Filtra le richieste per ID gestore
+        - Eventi
+      security:
+        - bearerAuth: []
       responses:
-        "200":
-          description: Lista recuperata con successo
+        '200':
+          description: Lista degli eventi recuperata con successo.
           content:
             application/json:
               schema:
                 type: object
-                additionalProperties: false
                 properties:
-                  message:
-                    type: string
-                    example: Lista delle richieste di associazione
                   data:
                     type: array
+                    description: Array di oggetti Evento.
                     items:
-                      $ref: "#/components/schemas/RichiestaAssociazionePDI"
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: visualizzaRichiesteAssociazione
-      security:
-        - token: []
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: "Feature"
+                        geometry:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: "Point"
+                            coordinates:
+                              type: array
+                              items:
+                                type: number
+                              example: [11.12108, 46.06787]
+                        properties:
+                          type: object
+                          properties:
+                            nome:
+                              type: string
+                              example: "Concerto in Piazza"
+                            categoria:
+                              type: string
+                              example: "Musica"
+                            immagine:
+                              type: array
+                              items:
+                                type: string
+                              example: ["http://localhost:3001/uploads/img1.jpg"]
+                            idGestore:
+                              type: string
+                              example: "60d5ec49f1b2c8a1b4e5d6a1"
+                            pdiCollegato:
+                              type: object
+                              description: Oggetto PDI popolato dal database.
+        '404':
+          description: Nessun evento trovato per il gestore specificato.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Nessun evento trovato"
+        '500':
+          description: Errore interno del server durante la ricerca degli eventi.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore interno"
+  /login:
     post:
-      summary: Invia una nuova richiesta di associazione a un PDI
+      summary: Login unificato per gli utenti
       tags:
-        - richieste-associazione
+        - autenticazione
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RichiestaAssociazionePDIInput"
+              $ref: "#/components/schemas/CredenzialeLoginInput"
       responses:
-        "201":
-          description: Richiesta inviata con successo
+        "200":
+          description: Login effettuato con successo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "401":
+          description: Credenziali non valide
           content:
             application/json:
               schema:
                 type: object
-                additionalProperties: false
+                properties:
+                  error:
+                    type: string
+                    example: Credenziali non valide
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: login
+  /datiUtente:
+    get:
+      summary: Ottieni i dati unificati dell'utente loggato
+      tags:
+        - autenticazione
+      security:
+        - token: []
+      responses:
+        "200":
+          description: Profilo recuperato con successo
+          content:
+            application/json:
+              schema:
+                type: object
                 properties:
                   message:
                     type: string
-                    example: Richiesta di associazione inviata con successo
+                    example: Profilo recuperato con successo
                   data:
-                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+                    type: object
+                    description: "Dati dinamici (variano se è Giocatore, Gestore o Admin)"
+                    properties:
+                      _id:
+                        type: string
+                        example: 6641a2f3e4b0c12d3f456789
+                      email:
+                        type: string
+                        example: utente@email.com
+                      ruolo:
+                        type: string
+                        example: giocatore
+                      puntiEsperienza:
+                        type: number
+                        default: 0
+                        example: 40
+                        description: Presente solo se ruolo è giocatore
+                      livello:
+                        type: number
+                        default: 1
+                        example: 3
+                        description: Presente solo se ruolo è giocatore
         "400":
-          description: Campi obbligatori mancanti o richiesta già esistente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Esiste già una richiesta pendente per questo PDI
+          description: Ruolo non riconosciuto
         "404":
-          description: PDI non trovato
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: PDI non trovato
+          description: Utente non trovato
         "500":
           $ref: "#/components/responses/ErrorResponse"
-      operationId: creaRichiestaAssociazione
-      security:
-        - token: []
-  "/richieste-associazione/{id}":
-    parameters:
-      - in: path
-        name: id
-        required: true
-        schema:
-          type: string
-          pattern: "^[a-fA-F0-9]{24}$"
-        description: L'ID univoco della richiesta di associazione
-    get:
-      summary: Visualizza una richiesta di associazione specifica
+      operationId: visualizzaProfilo
+  /resetPassword:
+    post:
+      summary: Richiesta reset password
       tags:
-        - richieste-associazione
+        - resetPassword
+      responses:
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: nn3b7eo6pz8zx
+                    example: Errore interno del server
+        2XX:
+          description: Token generato e inviato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: sw4b31gcwtfce
+                    example: E' stata mandata una mail con le istruzioni per il recupero password
+      operationId: richiestaResetPassword
+      x-stoplight:
+        id: jmkipse8p1ivi
+      description: Genera un token per il reset password e lo invia alla mail dell'utente
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  x-stoplight:
+                    id: y0v8lytzscgp9
+                  example: utente@mail.com
+  "/resetPassword/{token}":
+    parameters:
+      - schema:
+          type: string
+        name: token
+        in: path
+        required: true
+    put:
+      summary: Reset password
+      tags:
+        - resetPassword
       responses:
         "200":
-          description: Richiesta recuperata con successo
+          description: Passoword ripristinata
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  data:
-                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
-        "404":
-          $ref: "#/components/responses/ErrorResponse"
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: kwp4cnul3x5rn
+                    example: Password resettata con successo
+        "400":
+          description: Password non valida o token insistente/scaduto
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: kp1omonp5ztbv
+                    example: Token non valido o scaduto
         "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: visualizzaRichiestaAssociazione
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: qlmq1c11fjvsd
+                    example: Errore interno del server
+      operationId: resetPassword
+      x-stoplight:
+        id: yphd0z3o3l0nj
+      description: "Dato il token, reimposta la password dell'utente"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nuovaPassword:
+                  type: string
+                  x-stoplight:
+                    id: 5wty2c7iyb3v7
+  /cambiaPassword:
+    put:
+      summary: Cambia la password dell'utente autenticato
+      description: Permette a qualsiasi utente loggato (giocatore, gestore o amministratore) di cambiare la propria password. È necessario fornire la password corrente per autorizzare l'operazione.
+      tags:
+        - autenticazione
       security:
         - token: []
-    put:
-      summary: Aggiorna lo stato di una richiesta (approva o rifiuta)
-      tags:
-        - richieste-associazione
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              additionalProperties: false
               required:
-                - stato
+                - attuale
+                - nuova
               properties:
-                stato:
+                attuale:
                   type: string
-                  enum:
-                    - approvata
-                    - rifiutata
-                  example: approvata
+                  format: password
+                  description: La password attualmente in uso.
+                  example: "VecchiaPassword123!"
+                nuova:
+                  type: string
+                  format: password
+                  description: La nuova password desiderata.
+                  example: "NuovaPassword456!"
       responses:
-        "200":
-          description: Stato aggiornato con successo
+        '200':
+          description: Operazione completata con successo.
           content:
             application/json:
               schema:
                 type: object
-                additionalProperties: false
                 properties:
                   message:
                     type: string
-                    example: Richiesta approvata con successo
-                  data:
-                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
-        "404":
-          $ref: "#/components/responses/ErrorResponse"
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: aggiornaStatoRichiesta
-      security:
-        - token: []
-    delete:
-      summary: Elimina una richiesta di associazione
+                    example: "Password aggiornata con successo"
+        '400':
+          description: Payload incompleto o non valido.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Password attuale e nuova sono obbligatorie"
+        '401':
+          description: Non autorizzato. La password attuale inserita non coincide con quella nel database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Password attuale non corretta"
+        '404':
+          description: L'utente associato al token non è stato trovato nel database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Utente non trovato"
+        '500':
+          description: Errore interno del server durante l'hashing o il salvataggio.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore interno del server"
+  /giocatori:
+    get:
+      summary: Ottieni la lista di tutti i giocatori
       tags:
-        - richieste-associazione
+        - giocatori
       responses:
         "200":
-          description: Richiesta eliminata con successo
+          description: Lista dei giocatori recuperata con successo
           content:
             application/json:
               schema:
                 type: object
-                additionalProperties: false
                 properties:
                   message:
                     type: string
-                    example: Richiesta eliminata con successo
+                    example: Lista dei giocatori
                   data:
-                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Giocatore"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: visualizzaGiocatori
+      security:
+        - token: []
+    post:
+      summary: Registra un nuovo giocatore
+      tags:
+        - giocatori
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GiocatoreRegistrationInput"
+      responses:
+        "200":
+          description: Giocatore registrato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Giocatore registrato con successo
+                  data:
+                    $ref: "#/components/schemas/Giocatore"
+        "400":
+          description: Bad Request (dati mancanti o duplicati)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Username già esistente
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: registrazioneGiocatore
+  "/giocatori/{id}":
+    parameters:
+      - schema:
+          type: string
+          pattern: "^[a-fA-F0-9]{24}$"
+        name: id
+        in: path
+        required: true
+        description: L'ID univoco del giocatore
+    get:
+      summary: Visualizza un singolo giocatore
+      tags:
+        - giocatori
+      description: Restituisce i dati di un giocatore. Il giocatore può vedere solo i propri dati; l'amministratore può vedere quelli di chiunque.
+      security:
+        - token: []
+      responses:
+        "200":
+          description: Giocatore recuperato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Giocatore"
+        "403":
+          description: Non hai i permessi per visualizzare i dati di un altro utente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Non hai i permessi per visualizzare i dati di un altro utente.
         "404":
+          description: Giocatore non trovato
           $ref: "#/components/responses/ErrorResponse"
         "500":
           $ref: "#/components/responses/ErrorResponse"
-      operationId: eliminaRichiestaAssociazione
+      operationId: visualizzaGiocatore
+    put:
+      summary: Modifica un giocatore
+      tags:
+        - giocatori
+      responses:
+        "200":
+          description: Il giocatore è stato aggiornato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    x-stoplight:
+                      id: 9aicj4tiycdpg
+                    example: Utente aggiornato con successo
+        "401":
+          description: Errore nell'autenticazione
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: 4sto5ibs3eh1h
+                    example: Token non valido o scaduto
+        "403":
+          description: Non si hanno i permessi necessari per modificare il giocatore
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ml22s0bc1kj7c
+                    example: Non hai i permessi per modificare i dati di altri utenti
+        "404":
+          description: L'utente che si vuole modificare non è stato trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: ocl8ba97wl13y
+                    example: Utente non trovato
+        "409":
+          description: Username o email già in uso da qualcun'altro
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: wr12npak5z5pm
+                    example: Username già in uso
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    x-stoplight:
+                      id: y5p4eio8su3qv
+                    example: Errore interno del server
+      operationId: modificaGiocatore
+      x-stoplight:
+        id: azedwcd2dfzqw
       security:
         - token: []
+      description: Modifica le informazioni di un giocatore
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  x-stoplight:
+                    id: t7i2us74olht7
+                email:
+                  type: string
+                  x-stoplight:
+                    id: a7fh0x6nk3p35
+    delete:
+      summary: Elimina un profilo giocatore
+      description: Elimina definitivamente il profilo di un giocatore dal database tramite il suo ID univoco.
+      tags:
+        - giocatori
+      security:
+        - token: []
+      responses:
+        '200':
+          description: Operazione completata con successo. Il profilo è stato eliminato.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Giocatore eliminato con successo"
+        '404':
+          description: Il giocatore specificato non è stato trovato nel database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Giocatore non trovato"
+        '500':
+          description: Errore interno del server durante l'eliminazione.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore interno"
   /gestori:
     get:
       summary: Ottieni la lista di tutti i gestori
@@ -803,11 +1206,6 @@ paths:
       x-stoplight:
         id: nyh6qz9aroitz
       description: Modifica le informazioni di un gestore
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: idUtente
       security:
         - token: []
       requestBody:
@@ -824,6 +1222,44 @@ paths:
                   type: string
                   x-stoplight:
                     id: 5giexn1aus5an
+    delete:
+      summary: Elimina un profilo gestore
+      description: Elimina definitivamente il profilo di un gestore dal database tramite il suo ID univoco (solitamente un'operazione riservata all'Amministratore).
+      tags:
+        - Gestori
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operazione completata con successo. Il profilo è stato eliminato.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Gestore eliminato con successo"
+        '404':
+          description: Il gestore specificato non è stato trovato nel database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Gestore non trovato"
+        '500':
+          description: Errore interno del server durante l'eliminazione.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore interno"
   "/gestori/abilitato/{id}":
     parameters:
       - in: path
@@ -865,49 +1301,18 @@ paths:
       operationId: abilitaGestore
       security:
         - token: []
-  /login:
-    post:
-      summary: Login unificato per gli utenti
-      tags:
-        - autenticazione
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CredenzialeLoginInput"
-      responses:
-        "200":
-          description: Login effettuato con successo
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LoginResponse"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
-        "401":
-          description: Credenziali non valide
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Credenziali non valide
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: login
-  /datiUtente:
+  /gestori/pdiGestore:
     get:
-      summary: Ottieni i dati unificati dell'utente loggato
+      summary: Recupera i PDI associati al gestore autenticato
+      description: Restituisce l'elenco completo dei Punti di Interesse (PDI) assegnati o creati dal gestore attualmente loggato, leggendo l'ID direttamente dal token JWT.
       tags:
-        - autenticazione
+        - Gestori
+        - PDI
       security:
-        - token: []
+        - bearerAuth: []
       responses:
-        "200":
-          description: Profilo recuperato con successo
+        '200':
+          description: PDI recuperati con successo.
           content:
             application/json:
               schema:
@@ -915,37 +1320,48 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Profilo recuperato con successo
+                    example: "PDI associati recuperati con successo"
                   data:
-                    type: object
-                    description: "Dati dinamici (variano se è Giocatore, Gestore o Admin)"
-                    properties:
-                      _id:
-                        type: string
-                        example: 6641a2f3e4b0c12d3f456789
-                      email:
-                        type: string
-                        example: utente@email.com
-                      ruolo:
-                        type: string
-                        example: giocatore
-                      puntiEsperienza:
-                        type: number
-                        default: 0
-                        example: 40
-                        description: Presente solo se ruolo è giocatore
-                      livello:
-                        type: number
-                        default: 1
-                        example: 3
-                        description: Presente solo se ruolo è giocatore
-        "400":
-          description: Ruolo non riconosciuto
-        "404":
-          description: Utente non trovato
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: visualizzaProfilo
+                    type: array
+                    description: Array popolato di oggetti PDI.
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "612f1b2c8a1b4e5d6a1b9c2a"
+                        type:
+                          type: string
+                          example: "Feature"
+                        properties:
+                          type: object
+                          properties:
+                            nome:
+                              type: string
+                              example: "MUSE - Museo delle Scienze"
+                            categoria:
+                              type: string
+                              example: "Cultura"
+        '404':
+          description: Il gestore associato al token non è stato trovato nel database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Gestore non trovato"
+        '500':
+          description: Errore interno del server durante la query.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore interno del server"
   /amministratori:
     get:
       summary: Ottieni la lista di tutti gli amministratori
@@ -1019,362 +1435,7 @@ paths:
           $ref: "#/components/responses/ErrorResponse"
       operationId: creaAmministratore
       security:
-        - token: []
-  /amministratori/login:
-    post:
-      summary: Login di un amministratore
-      tags:
-        - amministratori
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/CredenzialeLoginInput"
-      responses:
-        "200":
-          description: Login effettuato con successo
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/LoginResponseAdmin"
-        "400":
-          $ref: "#/components/responses/ErrorResponse"
-        "401":
-          description: Credenziali non valide
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Credenziali non valide
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: loginAmministratore
-  /giocatori:
-    get:
-      summary: Ottieni la lista di tutti i giocatori
-      tags:
-        - giocatori
-      responses:
-        "200":
-          description: Lista dei giocatori recuperata con successo
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Lista dei giocatori
-                  data:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/Giocatore"
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: visualizzaGiocatori
-      security:
-        - token: []
-    post:
-      summary: Registra un nuovo giocatore
-      tags:
-        - giocatori
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GiocatoreRegistrationInput"
-      responses:
-        "200":
-          description: Giocatore registrato con successo
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Giocatore registrato con successo
-                  data:
-                    $ref: "#/components/schemas/Giocatore"
-        "400":
-          description: Bad Request (dati mancanti o duplicati)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Username già esistente
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: registrazioneGiocatore
-  /resetPassword:
-    post:
-      summary: Richiesta reset password
-      tags:
-        - resetPassword
-      responses:
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: nn3b7eo6pz8zx
-                    example: Errore interno del server
-        2XX:
-          description: Token generato e inviato
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    x-stoplight:
-                      id: sw4b31gcwtfce
-                    example: E' stata mandata una mail con le istruzioni per il recupero password
-      operationId: richiestaResetPassword
-      x-stoplight:
-        id: jmkipse8p1ivi
-      description: Genera un token per il reset password e lo invia alla mail dell'utente
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  x-stoplight:
-                    id: y0v8lytzscgp9
-                  example: utente@mail.com
-  "/resetPassword/{token}":
-    parameters:
-      - schema:
-          type: string
-        name: token
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: token
-        in: path
-        required: true
-    put:
-      summary: Reset password
-      tags:
-        - resetPassword
-      responses:
-        "200":
-          description: Passoword ripristinata
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    x-stoplight:
-                      id: kwp4cnul3x5rn
-                    example: Password resettata con successo
-        "400":
-          description: Password non valida o token insistente/scaduto
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: kp1omonp5ztbv
-                    example: Token non valido o scaduto
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: qlmq1c11fjvsd
-                    example: Errore interno del server
-      operationId: resetPassword
-      x-stoplight:
-        id: yphd0z3o3l0nj
-      description: "Dato il token, reimposta la password dell'utente"
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: token
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                nuovaPassword:
-                  type: string
-                  x-stoplight:
-                    id: 5wty2c7iyb3v7
-  "/giocatori/{id}":
-    parameters:
-      - schema:
-          type: string
-          pattern: "^[a-fA-F0-9]{24}$"
-        name: id
-        in: path
-        required: true
-        description: L'ID univoco del giocatore
-    get:
-      summary: Visualizza un singolo giocatore
-      tags:
-        - giocatori
-      description: Restituisce i dati di un giocatore. Il giocatore può vedere solo i propri dati; l'amministratore può vedere quelli di chiunque.
-      security:
-        - token: []
-      responses:
-        "200":
-          description: Giocatore recuperato con successo
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: "#/components/schemas/Giocatore"
-        "403":
-          description: Non hai i permessi per visualizzare i dati di un altro utente
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    example: Non hai i permessi per visualizzare i dati di un altro utente.
-        "404":
-          description: Giocatore non trovato
-          $ref: "#/components/responses/ErrorResponse"
-        "500":
-          $ref: "#/components/responses/ErrorResponse"
-      operationId: visualizzaGiocatore
-    put:
-      summary: Modifica un giocatore
-      tags:
-        - giocatori
-      responses:
-        "200":
-          description: Il giocatore è stato aggiornato
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    x-stoplight:
-                      id: 9aicj4tiycdpg
-                    example: Utente aggiornato con successo
-        "401":
-          description: Errore nell'autenticazione
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: 4sto5ibs3eh1h
-                    example: Token non valido o scaduto
-        "403":
-          description: Non si hanno i permessi necessari per modificare il giocatore
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: ml22s0bc1kj7c
-                    example: Non hai i permessi per modificare i dati di altri utenti
-        "404":
-          description: L'utente che si vuole modificare non è stato trovato
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: ocl8ba97wl13y
-                    example: Utente non trovato
-        "409":
-          description: Username o email già in uso da qualcun'altro
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: wr12npak5z5pm
-                    example: Username già in uso
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    x-stoplight:
-                      id: y5p4eio8su3qv
-                    example: Errore interno del server
-      operationId: modificaGiocatore
-      x-stoplight:
-        id: azedwcd2dfzqw
-      security:
-        - token: []
-      description: Modifica le informazioni di un giocatore
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: idUtente
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  x-stoplight:
-                    id: t7i2us74olht7
-                email:
-                  type: string
-                  x-stoplight:
-                    id: a7fh0x6nk3p35
+        - token: [] 
   "/amministratori/{id}":
     parameters:
       - schema:
@@ -1488,6 +1549,207 @@ paths:
                   type: string
                   x-stoplight:
                     id: deg9hr1uqco2u
+    delete:
+      summary: Elimina un profilo amministratore
+      description: Elimina definitivamente il profilo di un amministratore dal database tramite il suo ID univoco.
+      tags:
+        - Amministratori
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: idUtente
+          required: true
+          schema:
+            type: string
+          description: L'ID (ObjectId di MongoDB) dell'amministratore da eliminare.
+          example: "60d5ec49f1b2c8a1b4e5d6a1"
+      responses:
+        '200':
+          description: Operazione completata con successo. Il profilo dell'amministratore è stato eliminato.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Amministratore eliminato con successo"
+        '404':
+          description: L'amministratore specificato non è stato trovato nel database.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Amministratore non trovato"
+        '500':
+          description: Errore interno del server durante l'eliminazione.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Errore interno"
+  /richAssPDI:
+    get:
+      summary: Ottieni la lista delle richieste di associazione
+      tags:
+        - richAssPDI
+      parameters:
+        - in: query
+          name: gestore
+          schema:
+            type: string
+            pattern: "^[a-fA-F0-9]{24}$"
+          description: Filtra le richieste per ID gestore
+      responses:
+        "200":
+          description: Lista recuperata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Lista delle richieste di associazione
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: visualizzaRichiesteAssociazione
+      security:
+        - token: []
+    post:
+      summary: Invia una nuova richiesta di associazione a un PDI
+      tags:
+        - richAssPDI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RichiestaAssociazionePDIInput"
+      responses:
+        "201":
+          description: Richiesta inviata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Richiesta di associazione inviata con successo
+                  data:
+                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "400":
+          description: Campi obbligatori mancanti o richiesta già esistente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Esiste già una richiesta pendente per questo PDI
+        "404":
+          description: PDI non trovato
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: PDI non trovato
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: creaRichiestaAssociazione
+      security:
+        - token: []
+  "/richAssPDI/{id}":
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          pattern: "^[a-fA-F0-9]{24}$"
+        description: L'ID univoco della richiesta di associazione
+    get:
+      summary: Visualizza una richiesta di associazione specifica
+      tags:
+        - richAssPDI
+      responses:
+        "200":
+          description: Richiesta recuperata con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: visualizzaRichiestaAssociazione
+      security:
+        - token: []
+    put:
+      summary: Aggiorna lo stato di una richiesta (approva o rifiuta)
+      tags:
+        - richAssPDI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - stato
+              properties:
+                stato:
+                  type: string
+                  enum:
+                    - approvata
+                    - rifiutata
+                  example: approvata
+      responses:
+        "200":
+          description: Stato aggiornato con successo
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  message:
+                    type: string
+                    example: Richiesta approvata con successo
+                  data:
+                    $ref: "#/components/schemas/RichiestaAssociazionePDI"
+        "400":
+          $ref: "#/components/responses/ErrorResponse"
+        "404":
+          $ref: "#/components/responses/ErrorResponse"
+        "500":
+          $ref: "#/components/responses/ErrorResponse"
+      operationId: aggiornaStatoRichiesta
+      security:
+        - token: []
   /visite/pdi:
     post:
       summary: Registra una visita di un PDI
@@ -1657,7 +1919,7 @@ paths:
           $ref: "#/components/responses/ErrorResponse"
         "500":
           $ref: "#/components/responses/ErrorResponse"
-      operationId: registraVisitaEvento
+      operationId: registraVisitaEvento 
   /visite/giocatore:
     get:
       summary: Ottieni la lista delle visite

@@ -68,47 +68,6 @@ const visualizzaGestori = async (req, res) => {
     }
 }
 
-const loginGestore = async (req, res) => {
-    try {
-        const { email, password } = req.body
-
-        if (!email || !password) {
-            return res.status(400).json({ error: "Email e password sono obbligatorie" })
-        }
-
-        const gestore = await Gestore.findOne({ email: email.toLowerCase() }).select('+password')
-        if (!gestore) {
-            return res.status(401).json({ error: "Credenziali non valide" })
-        }
-
-        const passwordCorretta = await bcrypt.compare(password, gestore.password)
-        if (!passwordCorretta) {
-            return res.status(401).json({ error: "Credenziali non valide" })
-        }
-
-        const token = jwt.sign(
-            { id: gestore._id, ruolo: 'gestore' },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        )
-
-        res.status(200).json({
-            message: "Login effettuato con successo",
-            token,
-            data: {
-                id: gestore._id,
-                nome: gestore.nome,
-                email: gestore.email,
-                ruolo: 'gestore'
-            }
-        })
-
-    } catch (error) {
-        console.error("Errore nel login del gestore", error)
-        res.status(500).json({ error: "Errore interno del server" })
-    }
-}
-
 const abilitaGestore = async (req, res) => {
 
     try {
@@ -167,7 +126,7 @@ const visualizzaGestore = async (req, res) => {
 
 }
 
-const visualizzaMieiPdi = async (req, res) => {
+const visualizzaGestorePDI = async (req, res) => {
     try {
         const gestoreId = req.utente.id;
 
@@ -190,8 +149,8 @@ const visualizzaMieiPdi = async (req, res) => {
 
 const modificaProfilo = async (req, res) => {
     try {
-        const { idUtente } = req.params
-        let utente = await Gestore.findById(idUtente).select('-password -resetToken -scadenzaResetToken')
+        const { id } = req.params
+        let utente = await Gestore.findById(id).select('-password -resetToken -scadenzaResetToken')
         if (!utente) {
             return res.status(404).json({ error: "Utente non trovato" })
         }
@@ -199,7 +158,7 @@ const modificaProfilo = async (req, res) => {
         const { nome, email } = req.body
 
         if (nome) {
-            const u = await Gestore.findOne({ nome: String(nome) })
+            const u = await Gestore.findOne({ nome: String(nome), _id: { $ne: id } })
             if (u) {
                 return res.status(409).json({ error: "Nome già in uso" })
             }
@@ -207,7 +166,7 @@ const modificaProfilo = async (req, res) => {
         }
 
         if (email) {
-            const u = await Giocatore.findOne({ email: String(email).toLocaleLowerCase() }) || await Gestore.findOne({ email: String(email).toLocaleLowerCase() }) || await Amministratore.findOne({ email: String(email).toLocaleLowerCase() })
+            const u = await Giocatore.findOne({ email: String(email).toLocaleLowerCase() }) || await Gestore.findOne({ email: String(email).toLocaleLowerCase(), _id: { $ne: id } }) || await Amministratore.findOne({ email: String(email).toLocaleLowerCase() })
             if (u) {
                 return res.status(409).json({ error: "Email già registrata" })
             }
@@ -225,7 +184,7 @@ const modificaProfilo = async (req, res) => {
 
 const eliminaProfilo = async (req,res) => {
     try {
-        const idDaEliminare = req.params.idUtente; 
+        const idDaEliminare = req.params.id; 
         
         const eliminato = await Gestore.findByIdAndDelete(idDaEliminare);
         
@@ -237,4 +196,4 @@ const eliminaProfilo = async (req,res) => {
     }
 }
 
-module.exports = { registrazioneGestore, visualizzaGestori, loginGestore, abilitaGestore, visualizzaGestore, visualizzaMieiPdi, modificaProfilo, eliminaProfilo }
+module.exports = { registrazioneGestore, visualizzaGestori, abilitaGestore, visualizzaGestore, visualizzaGestorePDI, modificaProfilo, eliminaProfilo }

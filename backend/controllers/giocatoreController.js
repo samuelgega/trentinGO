@@ -77,55 +77,11 @@ const visualizzaGiocatori = async (req, res) => {
     }
 }
 
-const loginGiocatore = async (req, res) => {
-    try {
-        const { credenziale, password } = req.body
-
-        if (!credenziale || !password) {
-            return res.status(400).json({ error: "Credenziale e password sono obbligatorie" })
-        }
-
-        const isEmail = credenziale.includes('@')
-        const giocatore = await Giocatore.findOne(
-            isEmail ? { email: credenziale.toLowerCase() } : { username: credenziale }
-        )
-
-        if (!giocatore) {
-            return res.status(401).json({ error: "Credenziali non valide" })
-        }
-
-        const passwordCorretta = await bcrypt.compare(password, giocatore.password)
-        if (!passwordCorretta) {
-            return res.status(401).json({ error: "Credenziali non valide" })
-        }
-
-        const token = jwt.sign(
-            { id: giocatore._id, ruolo: 'giocatore' },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        )
-
-        res.status(200).json({
-            message: "Login effettuato con successo",
-            token,
-            data: {
-                id: giocatore._id,
-                username: giocatore.username,
-                email: giocatore.email,
-                ruolo: 'giocatore'
-            }
-        })
-
-    } catch (error) {
-        console.error("Errore nel login del giocatore", error)
-        res.status(500).json({ error: "Errore interno del server" })
-    }
-}
 
 const modificaProfilo = async (req, res) => {
     try {
-        const { idUtente } = req.params
-        let utente = await Giocatore.findById(idUtente).select('-password -resetToken -scadenzaResetToken')
+        const { id } = req.params
+        let utente = await Giocatore.findById(id).select('-password -resetToken -scadenzaResetToken')
         if (!utente) {
             return res.status(404).json({ error: "Utente non trovato" })
         }
@@ -205,4 +161,4 @@ const visualizzaGiocatore = async (req,res) => {
 
 }
 
-module.exports = { registrazioneGiocatore, visualizzaGiocatori, loginGiocatore, modificaProfilo, eliminaProfilo, visualizzaGiocatore };
+module.exports = { registrazioneGiocatore, visualizzaGiocatori, modificaProfilo, eliminaProfilo, visualizzaGiocatore };

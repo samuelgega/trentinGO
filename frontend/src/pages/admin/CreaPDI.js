@@ -96,7 +96,6 @@ const CreaPDI = () => {
 
         //chiamata API
         try {
-            const token = localStorage.getItem('token')
             const response = await fetch('/api/v1/pdi', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },

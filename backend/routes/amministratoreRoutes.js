@@ -10,14 +10,11 @@ router.get('/', verificaToken, requireRuolo('amministratore'), Amministratore.vi
 // route per la creazione di un nuovo amministratore
 router.post('/', verificaToken, requireRuolo('amministratore'), Amministratore.creaAmministratore)
 
-// route per il login di un amministratore
-router.post('/login', Amministratore.loginAmministratore)
-
 //modifica utente
-router.put('/:idUtente', verificaToken, autorizzaModifica('amministratore'), Amministratore.modificaProfilo)
+router.put('/:id', verificaToken, autorizzaModifica('amministratore'), Amministratore.modificaProfilo)
 
 //elimina utente
-router.delete('/:idUtente', verificaToken, autorizzaEliminazione('amministratore'), Amministratore.eliminaProfilo)
+router.delete('/:id', verificaToken, autorizzaEliminazione('amministratore'), Amministratore.eliminaProfilo)
 
 
 module.exports = router
