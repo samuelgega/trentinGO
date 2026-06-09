@@ -241,7 +241,7 @@ describe('PUT /api/v1/eventi', () => {
     })
 
     describe("(26) Modifica di un evento da parte di un gestore che non lo ha creato", () => {
-        test("Status 403. L'evento non viene modificato ed il sistema risponde \"Accesso negato: permessi insufficienti\"", async () => {
+        test("Status 403. L'evento non viene modificato ed il sistema risponde \"Non sei autorizzato a modificare questo evento.\"", async () => {
             const token = jwt.sign(
                 { id: '6a10df6f4c977f13fef2dd50', ruolo: 'gestore' },
                 process.env.JWT_SECRET,
@@ -255,7 +255,7 @@ describe('PUT /api/v1/eventi', () => {
                     nome: "Conceto, piazza fiera"
                 })
             expect(risposta.statusCode).toBe(403)
-            expect(risposta.body.error).toBe("Accesso negato: permessi insufficienti")
+            expect(risposta.body.error).toBe("Non sei autorizzato a modificare questo evento.")
         })
     })
 
@@ -315,6 +315,113 @@ describe('PUT /api/v1/eventi', () => {
                 .send({
                     nome: "Concerto",
                 })
+            expect(risposta.statusCode).toBe(401)
+            expect(risposta.body.error).toBe("Accesso negato: token mancante")
+        })
+    })
+})
+
+
+//ELIMINA EVENTO (30-33)
+describe('DELETE /api/v1/eventi', () => {
+    beforeAll(async () => {
+        jest.setTimeout(1000000)
+        app.locals.db = await mongoose.connect(process.env.DB_URL)
+    })
+    afterAll(async () => { await mongoose.connection.close() })
+
+    afterEach(() => {
+        jest.restoreAllMocks()
+    })
+
+    describe("(30) Eliminazione di un evento da parte di un amministratore", () => {
+        test("Status 200. L'evento viene eliminato dal database e il server restituisce un messaggio di conferma.", async () => {
+            const token = jwt.sign(
+                { id: 1234, ruolo: 'amministratore' },
+                process.env.JWT_SECRET,
+                { expiresIn: '1m' }
+            )
+
+            const mockEventoEsistente = {
+                _id: '6a0a288b003936e6360e3320',
+                properties: {
+                    idGestore: '9999', // Indifferente in questo test, l'utente è admin
+                },
+                deleteOne: jest.fn().mockResolvedValue({})
+            }
+            jest.spyOn(Evento, 'findById').mockResolvedValue(mockEventoEsistente)
+
+            const risposta = await request(app)
+                .delete('/api/v1/eventi/6a0a288b003936e6360e3320')
+                .set('Authorization', `Bearer ${token}`)
+
+            expect(risposta.status).toBe(200)
+            expect(risposta.body.message).toBe("Evento eliminato con successo")
+            expect(mockEventoEsistente.deleteOne).toHaveBeenCalledTimes(1)
+        })
+    })
+
+    describe("(31) Eliminazione di un evento da parte del gestore che lo ha creato", () => {
+        test("Status 200. L'evento viene eliminato dal database e il server restituisce un messaggio di conferma.", async () => {
+            const token = jwt.sign(
+                { id: '6a155c29e915de589c6a0d87', ruolo: 'gestore' }, //il suo vero gestore
+                process.env.JWT_SECRET,
+                { expiresIn: '1m' }
+            )
+
+            const mockEventoEsistente = {
+                _id: '6a0a288b003936e6360e3320',
+                properties: {
+                    idGestore: '6a155c29e915de589c6a0d87',
+                },
+                deleteOne: jest.fn().mockResolvedValue({})
+            }
+            jest.spyOn(Evento, 'findById').mockResolvedValue(mockEventoEsistente)
+
+            const risposta = await request(app).delete('/api/v1/eventi/6a0a288b003936e6360e3320') //questo id è vero
+                .set('Authorization', `Bearer ${token}`)
+            expect(risposta.status).toBe(200)
+            expect(risposta.body.message).toBe("Evento eliminato con successo")
+            expect(mockEventoEsistente.deleteOne).toHaveBeenCalledTimes(1)
+        })
+    })
+
+    describe("(32) Eliminazione di un evento da parte di un gestore che NON lo ha creato", () => {
+        test("Status 403. L'evento non viene modificato ed il sistema risponde \"Non sei autorizzato a eliminare questo evento.\"", async () => {
+            const token = jwt.sign(
+                { id: '6a10df6f4c977f13fef2dd50', ruolo: 'gestore' }, //NON il suo gestore
+                process.env.JWT_SECRET,
+                { expiresIn: '1m' }
+            )
+
+            const mockEventoEsistente = {
+                _id: '6a0a288b003936e6360e3320',
+                properties: {
+                    idGestore: '6a155c29e915de589c6a0d87',
+                },
+                deleteOne: jest.fn().mockResolvedValue({})
+            }
+            jest.spyOn(Evento, 'findById').mockResolvedValue(mockEventoEsistente)
+
+            const risposta = await request(app).delete('/api/v1/eventi/6a0a288b003936e6360e3320') //questo id è vero
+                .set('Authorization', `Bearer ${token}`)
+            expect(risposta.statusCode).toBe(403)
+            expect(risposta.body.error).toBe("Non sei autorizzato a eliminare questo evento.")
+        })
+    })
+
+    describe("(33) Tentativo di eliminazione di un evento senza autenticazione", () => {
+        test("Status 401. Il middleware di protezione delle rotte intercetta la richiesta e restituisce l'errore: 'Accesso negato: token mancante'", async () => {
+            const mockEventoEsistente = {
+                _id: '6a0a288b003936e6360e3320',
+                properties: {
+                    idGestore: '6a155c29e915de589c6a0d87',
+                },
+                deleteOne: jest.fn().mockResolvedValue({})
+            }
+            jest.spyOn(Evento, 'findById').mockResolvedValue(mockEventoEsistente)
+
+            const risposta = await request(app).delete('/api/v1/eventi/6a0a288b003936e6360e3320') //questo id è vero
             expect(risposta.statusCode).toBe(401)
             expect(risposta.body.error).toBe("Accesso negato: token mancante")
         })
