@@ -9,7 +9,7 @@ const validaDati = (dati) => {
     //implementare idGestore vando verrà aggiunta la sua collection
     const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, idEvento, idGestore } = dati
     //controllo se il nome è valido
-    if (nome.trim() === "" || nome.trim().length < 2 || nome.trim().length > 100) {
+    if (nome && (nome.trim() === "" || nome.trim().length < 2 || nome.trim().length > 100)) {
         return {
             datiValidi: false,
             errore: 'Il nome dell\'evento è obbligatorio'
@@ -17,10 +17,13 @@ const validaDati = (dati) => {
     }
 
     //controllo se la posizione ha valori validi
-    if (latitudine === undefined || longitudine === undefined ||
-        latitudine < -90 || latitudine > 90 ||
-        longitudine < -180 || longitudine > 180
-    ) {
+    if (latitudine && (latitudine === undefined || latitudine < -90 || latitudine > 90)) {
+        return {
+            datiValidi: false,
+            errore: 'Le coordinate sono obbligatorie e devono essere valide'
+        }
+    }
+    if (longitudine && (longitudine === undefined || longitudine < -180 || longitudine > 180)) {
         return {
             datiValidi: false,
             errore: 'Le coordinate sono obbligatorie e devono essere valide'
@@ -42,22 +45,18 @@ const validaDati = (dati) => {
     }
 
     //controllo se le date hanno senso
-    const dInizio = new Date(dataInizio)
-    const dFine = new Date(dataFine)
-    if (
-        isNaN(dInizio.getTime())
-        || isNaN(dFine.getTime())
-        || dInizio.getTime() > dFine.getTime()
-    ) {
-        return {
-            datiValidi: false,
-            errore: 'La data di fine deve essere successiva alla data di inizio'
-        }
-    }
-    if (dInizio.getTime() < (new Date())) {
+    const dInizio = dataInizio ? new Date(dataInizio) : undefined
+    const dFine = dataFine ? new Date(dataFine) : undefined
+    if (dInizio && dInizio.getTime() < (new Date())) {
         return {
             datiValidi: false,
             errore: 'La data di inizio non può essere nel passato'
+        }
+    }
+    if (dInizio && dFine && dInizio.getTime() > dFine.getTime()) {
+        return {
+            datiValidi: false,
+            errore: 'La data di fine deve essere successiva alla data di inizio'
         }
     }
 
@@ -171,8 +170,8 @@ const modificaEvento = async (req, res) => {
         const { idEvento } = req.params
         const { nome, descrizione, categoria, latitudine, longitudine, prezzo, dataInizio, dataFine, pdiCollegato, idGestore } = req.body
 
-        if (!idEvento || !nome || !dataInizio || !dataFine || !latitudine || !longitudine)
-            return res.status(400).json({ error: "Dati mancanti" })
+        if (!idEvento)
+            return res.status(400).json({ error: "ID mancante" })
 
         const validazione = validaDati(req.body)
         if (!validazione.datiValidi)
@@ -267,7 +266,6 @@ const eliminaEvento = async (req, res) => {
         });
 
     } catch (error) {
-
         console.error("Errore nell'eliminazione dell'evento:", error)
         res.status(500).json({ error: "Errore interno del server" })
 

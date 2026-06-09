@@ -11,7 +11,7 @@ describe('POST /api/v1/eventi', () => {
         jest.setTimeout(10000)
         app.locals.db = await mongoose.connect(process.env.DB_URL)
     })
-    afterAll(() => { mongoose.connection.close(true) })
+    afterAll(async () => { await mongoose.connection.close() })
 
     afterEach(() => {
         jest.restoreAllMocks()
@@ -84,7 +84,7 @@ describe('POST /api/v1/eventi', () => {
     })
 
     describe("(21) Creazione di un evento con campo obbligatorio 'nome' mancante", () => {
-        test("Status 400. La validazione fallisce. Il sistema restituisce l'errore: \"Il nome dell'evento è obbligatorio\"", async () => {
+        test("Status 400. La validazione fallisce. Il sistema restituisce l'errore: \"Dati mancanti\"", async () => {
             const token = jwt.sign(
                 { id: 1234, ruolo: 'amministratore' },
                 process.env.JWT_SECRET,
@@ -112,7 +112,7 @@ describe('POST /api/v1/eventi', () => {
                     longitudine: ev.longitudine
                 })
             expect(risposta.statusCode).toBe(400)
-            expect(risposta.body.error).toBe('Il nome dell\'evento è obbligatorio')
+            expect(risposta.body.error).toBe('Dati mancanti')
         })
     })
 
@@ -207,3 +207,116 @@ describe('POST /api/v1/eventi', () => {
     })
 })
 
+//MODIFICA EVENTO (25-29)
+describe('PUT /api/v1/eventi', () => {
+    beforeAll(async () => {
+        jest.setTimeout(10000)
+        app.locals.db = await mongoose.connect(process.env.DB_URL)
+    })
+    afterAll(async () => { await mongoose.connection.close(true) })
+
+    afterEach(() => {
+        jest.restoreAllMocks()
+    })
+
+    describe("(25) Aggiornamento del nome di un evento esistente", () => {
+        test("Status 200. Il nome dell'evento viene aggiornato l'oggetto modificato viene restituito nella risposta", async () => {
+            const token = jwt.sign(
+                { id: 1234, ruolo: 'amministratore' },
+                process.env.JWT_SECRET,
+                { expiresIn: '1m' }
+            )
+            jest.spyOn(Evento.prototype, 'save').mockResolvedValue({ nome: "Conceto, piazza fiera" })
+
+            const risposta = await request(app).put('/api/v1/eventi/6a0a288b003936e6360e3320') //questo id è vero
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    nome: "Conceto, piazza fiera"
+                })
+            expect(risposta.statusCode).toBe(200)
+            expect(risposta.body.message).toBeDefined()
+            expect(risposta.body.data).toBeDefined()
+            expect(Evento.prototype.save).toHaveBeenCalledTimes(1)
+        })
+    })
+
+    describe("(26) Modifica di un evento da parte di un gestore che non lo ha creato", () => {
+        test("Status 403. L'evento non viene modificato ed il sistema risponde \"Accesso negato: permessi insufficienti\"", async () => {
+            const token = jwt.sign(
+                { id: '6a10df6f4c977f13fef2dd50', ruolo: 'gestore' },
+                process.env.JWT_SECRET,
+                { expiresIn: '1m' }
+            )
+            jest.spyOn(Evento.prototype, 'save').mockResolvedValue({ nome: "Conceto, piazza fiera" })
+
+            const risposta = await request(app).put('/api/v1/eventi/6a0a288b003936e6360e3320') //questo id è vero
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    nome: "Conceto, piazza fiera"
+                })
+            expect(risposta.statusCode).toBe(403)
+            expect(risposta.body.error).toBe("Accesso negato: permessi insufficienti")
+        })
+    })
+
+    describe("(27) Tentativo di modifica della data di fine portandola prima della data di inizio", () => {
+        test("Status 400. La validazione logica fallisce. Il sistema intercetta l'incongruenza temporale e restituisce l'errore: \"La data di fine deve essere successiva alla data di inizio\"", async () => {
+            const token = jwt.sign(
+                { id: 1234, ruolo: 'amministratore' },
+                process.env.JWT_SECRET,
+                { expiresIn: '1m' }
+            )
+            jest.spyOn(Evento.prototype, 'save').mockResolvedValue({
+                nome: "Concerto",
+                dataInizio: "2026-06-10",
+                dataFine: "2026-06-01",
+                latitudine: 46.06,
+                longitudine: 11.11
+            })
+
+            const risposta = await request(app).put('/api/v1/eventi/6a0a288b003936e6360e3320') //questo id è vero
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    nome: "Concerto",
+                    dataInizio: "2026-06-10",
+                    dataFine: "2026-06-01",
+                    latitudine: 46.06,
+                    longitudine: 11.11
+                })
+            expect(risposta.statusCode).toBe(400)
+            expect(risposta.body.error).toBe("La data di fine deve essere successiva alla data di inizio")
+        })
+    })
+
+    describe("(28) Tentativo di modifica di un evento con ID non esistente", () => {
+        test("Status 404. La richiesta fallisce. Il database non trova riscontri e il sistema risponde con l'errore: \"Evento non trovato\"", async () => {
+            const token = jwt.sign(
+                { id: 1234, ruolo: 'amministratore' },
+                process.env.JWT_SECRET,
+                { expiresIn: '1m' }
+            )
+            jest.spyOn(Evento.prototype, 'save').mockResolvedValue({ nome: "Conceto" })
+
+            const risposta = await request(app).put('/api/v1/eventi/6a0a288b003936e6360e3321') //id a caso
+                .set('Authorization', `Bearer ${token}`)
+                .send({
+                    nome: "Concerto",
+                })
+            expect(risposta.statusCode).toBe(404)
+            expect(risposta.body.error).toBe("Evento non trovato")
+        })
+    })
+
+    describe("(29) Tentativo di modifica di un evento senza autenticazione", () => {
+        test("Status 401. Il middleware di protezione delle rotte intercetta la richiesta e restituisce l'errore: 'Accesso negato: token mancante'", async () => {
+            jest.spyOn(Evento.prototype, 'save').mockResolvedValue({ nome: "Conceto, piazza fiera" })
+
+            const risposta = await request(app).put('/api/v1/eventi/6a0a288b003936e6360e3320') //id vero
+                .send({
+                    nome: "Concerto",
+                })
+            expect(risposta.statusCode).toBe(401)
+            expect(risposta.body.error).toBe("Accesso negato: token mancante")
+        })
+    })
+})
