@@ -31,7 +31,7 @@ const HomeProfilo = () =>{
             }
 
             try {
-                const response = await fetch(`http://localhost:3001/api/v1/datiUtente`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/datiUtente`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -64,10 +64,10 @@ const HomeProfilo = () =>{
         const userId = localStorage.getItem('userId')
 
         const endpoint = profilo.ruolo === 'giocatore'
-            ? `http://localhost:3001/api/v1/giocatori/${userId}`
+            ? `${process.env.REACT_APP_API_URL}/api/v1/giocatori/${userId}`
             : profilo.ruolo === 'gestore'
-            ? `http://localhost:3001/api/v1/gestori/${userId}`
-            : `http://localhost:3001/api/v1/amministratori/${userId}`
+            ? `${process.env.REACT_APP_API_URL}/api/v1/gestori/${userId}`
+            : `${process.env.REACT_APP_API_URL}/api/v1/amministratori/${userId}`
 
         const campo = profilo.ruolo === 'gestore' ? { nome: nuovoNome } : { username: nuovoNome }
 
@@ -105,10 +105,10 @@ const HomeProfilo = () =>{
         const userId = localStorage.getItem('userId')
 
         const endpoint = profilo.ruolo === 'giocatore'
-            ? `http://localhost:3001/api/v1/giocatori/${userId}`
+            ? `${process.env.REACT_APP_API_URL}/api/v1/giocatori/${userId}`
             : profilo.ruolo === 'gestore'
-            ? `http://localhost:3001/api/v1/gestori/${userId}`
-            : `http://localhost:3001/api/v1/amministratori/${userId}`
+            ? `${process.env.REACT_APP_API_URL}/api/v1/gestori/${userId}`
+            : `${process.env.REACT_APP_API_URL}/api/v1/amministratori/${userId}`
 
         try {
             const response = await fetch(endpoint, {
@@ -150,7 +150,7 @@ const HomeProfilo = () =>{
 
         const token = localStorage.getItem('token')
         try {
-            const response = await fetch('http://localhost:3001/api/v1/cambiaPassword', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/cambiaPassword`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -178,8 +178,16 @@ const HomeProfilo = () =>{
 
     const handleEliminaAccount = async () => {
         const token = localStorage.getItem('token')
+        const userId = localStorage.getItem('userId')
+
+        const endpoint = profilo.ruolo === 'giocatore'
+            ? `${process.env.REACT_APP_API_URL}/api/v1/giocatori/${userId}`
+            : profilo.ruolo === 'gestore'
+            ? `${process.env.REACT_APP_API_URL}/api/v1/gestori/${userId}`
+            : `${process.env.REACT_APP_API_URL}/api/v1/amministratori/${userId}`
+
         try {
-            const response = await fetch('http://localhost:3001/api/v1/eliminaAccount', {
+            const response = await fetch(endpoint, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             })
@@ -196,30 +204,6 @@ const HomeProfilo = () =>{
         }
     }
 
-    //funzione per il cambio password
-    const handleCambiaPassword = async () => {
-
-        showAlert("Elaborazione in corso...", "Stiamo preparando l'email per te.", "info");
-
-        try {
-            // Chiamata api
-            const response = await fetch('http://localhost:3001/api/v1/resetPassword', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: profilo.email })
-            });
-            
-            if (response.ok) {
-                showAlert("Email Inviata!", `Controlla la casella ${profilo.email} per il link di ripristino.`, "success");
-            } else {
-                const json = await response.json();
-                showAlert("Errore", json.error || "Impossibile inviare l'email", "warning");
-            }
-
-        } catch (error) {
-            showAlert("Errore di connessione", "Impossibile collegarsi al server.", "danger");
-        }
-    };
 
 
     if(!profilo) return null;

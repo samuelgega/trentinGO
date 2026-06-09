@@ -19,7 +19,7 @@ const GestisciPDIAssociati = () => {
     useEffect(() => {
         const recuperaPDI = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/pdi')
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi`)
                 if (!response.ok) return
                 const json = await response.json()
                 setTuttiPDI(json.data)
@@ -30,7 +30,7 @@ const GestisciPDIAssociati = () => {
 
         const recuperaRichieste = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/richAssPDI', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/richAssPDI`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
@@ -43,7 +43,7 @@ const GestisciPDIAssociati = () => {
 
         const recuperaPDIAssociati = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/gestori/pdiGestore', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/gestori/pdiGestore`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
@@ -63,7 +63,7 @@ const GestisciPDIAssociati = () => {
         e.preventDefault()
         if (!pdiSelezionato) return
         try {
-            const response = await fetch('http://localhost:3001/api/v1/richAssPDI', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/richAssPDI`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

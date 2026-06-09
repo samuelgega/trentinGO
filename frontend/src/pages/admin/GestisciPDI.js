@@ -17,7 +17,7 @@ const GestisciPDI = () => {
 
     const recuperaDatiDalDatabase = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/v1/pdi');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi`);
             if (!response.ok) {
                 throw new Error(`Errore HTTP: ${response.status}`);
             }
@@ -66,7 +66,7 @@ const GestisciPDI = () => {
 
         try {
             const token = localStorage.getItem('token')
-            const response = await fetch(`http://localhost:3001/api/v1/pdi/${pdiDaEliminare._id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi/${pdiDaEliminare._id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

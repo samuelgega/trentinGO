@@ -96,7 +96,7 @@ const CreaPDI = () => {
 
         //chiamata API
         try {
-            const response = await fetch('/api/v1/pdi', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: submitData

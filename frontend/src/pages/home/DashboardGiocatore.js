@@ -27,7 +27,7 @@ const DashboardGiocatore = () => {
         const token = localStorage.getItem('token')
 
         // Fetch livello e XP dal profilo
-        fetch('/api/v1/datiUtente', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/v1/datiUtente`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(r => r.json())
@@ -42,7 +42,7 @@ const DashboardGiocatore = () => {
             .catch(() => {})
 
         // Fetch conteggio visite PDI ed eventi
-        fetch('/api/v1/visite/giocatore?soloId=true', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/giocatore?soloId=true`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(r => r.json())
@@ -58,7 +58,7 @@ const DashboardGiocatore = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token')
-        fetch('/api/v1/visite/giocatore', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/giocatore`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(r => r.json())

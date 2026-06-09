@@ -49,7 +49,7 @@ const ReimpostaPassword = () => {
 
         //chiamata api
         try {
-            const response = await fetch(`http://localhost:3001/api/v1/resetPassword/${token}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/resetPassword/${token}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nuovaPassword: formData.password })

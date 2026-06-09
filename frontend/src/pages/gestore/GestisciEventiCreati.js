@@ -18,7 +18,7 @@ const GestisciEventiCreati = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:3001/api/v1/eventi/gestore', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi/gestore`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -76,7 +76,7 @@ const GestisciEventiCreati = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch(`http://localhost:3001/api/v1/eventi/${eventoDaEliminare._id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi/${eventoDaEliminare._id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

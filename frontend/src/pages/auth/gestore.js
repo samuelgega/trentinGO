@@ -69,7 +69,7 @@ const AuthGestore = () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3001/api/v1/gestori/registrazione', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/gestori`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)

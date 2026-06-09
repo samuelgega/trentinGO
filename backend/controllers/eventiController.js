@@ -3,7 +3,7 @@ const Evento = require('../models/Evento')
 const PDI = require('../models/PDI')
 const Gestore = require('../models/Gestore')
 
-const baseUrl = process.env.API_URL || 'http://localhost:3001'
+const baseUrl = 'http://localhost:3001'
 
 const validaDati = (dati) => {
     //implementare idGestore vando verrà aggiunta la sua collection
@@ -17,13 +17,13 @@ const validaDati = (dati) => {
     }
 
     //controllo se la posizione ha valori validi
-    if (latitudine && (latitudine === undefined || latitudine < -90 || latitudine > 90)) {
+    if (latitudine !== undefined && (latitudine < -90 || latitudine > 90)) {
         return {
             datiValidi: false,
             errore: 'Le coordinate sono obbligatorie e devono essere valide'
         }
     }
-    if (longitudine && (longitudine === undefined || longitudine < -180 || longitudine > 180)) {
+    if (longitudine !== undefined && (longitudine < -180 || longitudine > 180)) {
         return {
             datiValidi: false,
             errore: 'Le coordinate sono obbligatorie e devono essere valide'
@@ -181,26 +181,30 @@ const modificaEvento = async (req, res) => {
             return res.status(404).json({ error: "Evento non trovato" })
         }
         if (req.utente.ruolo === 'gestore' && ev.properties.idGestore.toString() !== req.utente.id) {
-            return res.status(403).json({ error: "Non sei autorizzato a modificare questo evento." });
+            return res.status(403).json({ error: "Accesso negato: permessi insufficienti" });
         }
 
-        let arrayImmagini = []
+        let arrayImmaginiAggiornato = ev.properties.immagine;
         if (req.files && req.files.length > 0) {
-            arrayImmagini = req.files.map(file => file.filename)
+            const nuoveImmagini = req.files.map(file => file.filename);
+            arrayImmaginiAggiornato = [...arrayImmaginiAggiornato, ...nuoveImmagini];
         }
 
         ev.set('properties.nome', (nome || ev.properties.nome))
         ev.set('properties.descrizione', (descrizione || ev.properties.descrizione))
         ev.set('properties.categoria', (categoria || ev.properties.categoria))
-        ev.set('properties.prezzo', (prezzo || ev.properties.prezzo))
-        ev.set('properties.immagine', (arrayImmagini || ev.properties.immagine))
+        ev.set('properties.prezzo', (prezzo !== undefined ? prezzo : ev.properties.prezzo))
+        ev.set('properties.immagine', arrayImmaginiAggiornato)
         ev.set('properties.dataInizio', (dataInizio || ev.properties.dataInizio))
         ev.set('properties.dataFine', (dataFine || ev.properties.dataFine))
         ev.set('properties.idGestore', (idGestore || ev.properties.idGestore))
         ev.set('properties.pdiCollegato', (pdiCollegato || ev.properties.pdiCollegato))
 
-        ev.set('geometry.coordinates.0', (longitudine, ev.geometry.coordinates[0]))
-        ev.set('geometry.coordinates.1', (latitudine, ev.geometry.coordinates[1]))
+        const nuovaLongitudine = longitudine !== undefined ? Number(longitudine) : ev.geometry.coordinates[0];
+        const nuovaLatitudine = latitudine !== undefined ? Number(latitudine) : ev.geometry.coordinates[1];
+
+        ev.set('geometry.coordinates.0', nuovaLongitudine)
+        ev.set('geometry.coordinates.1', nuovaLatitudine)
 
         const eventoAggiornato = await ev.save()
 
@@ -236,16 +240,16 @@ const visualizzaEvento = async (req, res) => {
 //elimina evento
 const eliminaEvento = async (req, res) => {
     try {
-        const { id } = req.params
+        const { idEvento } = req.params
 
         //controllo se l'evento esiste
-        const eventoEsistente = await Evento.findById(id)
+        const eventoEsistente = await Evento.findById(idEvento)
         if (!eventoEsistente) {
             return res.status(404).json({ error: "Evento non trovato" })
         }
 
         if (req.utente.ruolo === 'gestore' && eventoEsistente.properties.idGestore.toString() !== req.utente.id) {
-            return res.status(403).json({ error: "Non sei autorizzato a eliminare questo evento." });
+            return res.status(403).json({ error: "Accesso negato: permessi insufficienti" });
         }
 
         //controlle se l'evento ha immagini associate e le elimino

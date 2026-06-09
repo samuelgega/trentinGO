@@ -32,7 +32,7 @@ const autorizzaModifica = (tipoTarget) => {
         try {
             const idRichiedente = req.utente.id
             const ruoloRichiedente = req.utente.ruolo
-            const targetId = req.params.idUtente
+            const targetId = req.params.id
 
             // chiunque può modificare se stesso
             if (idRichiedente === targetId) {
@@ -63,7 +63,7 @@ const autorizzaEliminazione = (tipoTarget) => {
         try {
             const idRichiedente = req.utente.id
             const ruoloRichiedente = req.utente.ruolo
-            const targetId = req.params.idUtente
+            const targetId = req.params.id
 
             // chiunque può eliminare se stesso
             if (idRichiedente === targetId) {
