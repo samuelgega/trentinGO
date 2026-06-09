@@ -19,6 +19,11 @@ const registrazioneGiocatore = async (req, res) => {
             return res.status(400).json({ error: "La password deve essere di almeno 8 caratteri" });
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ error: "Inserisci un'email valida" });
+        }
+
         //controllo se username esiste gia
         const usernameEsistente = await Giocatore.findOne({ username: username })
         if (usernameEsistente) {
