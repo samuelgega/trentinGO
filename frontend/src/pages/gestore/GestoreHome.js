@@ -22,7 +22,7 @@ const GestoreHome = () => {
         const token = localStorage.getItem('token')
         const recuperaGestore = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/datiUtente', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/datiUtente`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return

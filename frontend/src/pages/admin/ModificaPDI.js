@@ -34,7 +34,7 @@ const ModificaPDI = () => {
     useEffect(() => {
         const fetchPDI = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/api/v1/pdi/${id}`)
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi/${id}`)
                 if (response.ok) {
                     const json = await response.json()
                     const pdi = json.data
@@ -118,7 +118,7 @@ const ModificaPDI = () => {
 
         try {
             const token = localStorage.getItem('token')
-            const response = await fetch(`http://localhost:3001/api/v1/pdi/${id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi/${id}`, {
                 method: 'PUT', 
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: submitData

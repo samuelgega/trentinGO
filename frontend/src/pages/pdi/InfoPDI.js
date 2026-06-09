@@ -32,7 +32,7 @@ const InfoPDI = () => {
                 const token = localStorage.getItem('token')
                 const idGiocatore = localStorage.getItem('userId')
                 try {
-                    const response = await fetch('http://localhost:3001/api/v1/visite/pdi', {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/pdi`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -75,7 +75,7 @@ const InfoPDI = () => {
         const fetchPDI = async () => {
             try {
                 console.log("ID del PDI:", id);
-                const response = await fetch(`http://localhost:3001/api/v1/pdi/${id}`)
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi/${id}`)
 
                 if (response.ok) {
                     const json = await response.json()
@@ -96,7 +96,7 @@ const InfoPDI = () => {
     useEffect(() => {
         if (!pdi || ruolo !== 'giocatore') return
         const token = localStorage.getItem('token')
-        fetch('http://localhost:3001/api/v1/visite/giocatore?soloId=true', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/giocatore?soloId=true`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(r => r.json())

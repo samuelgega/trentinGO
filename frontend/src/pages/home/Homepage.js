@@ -19,7 +19,7 @@ const Homepage = () => {
     const ruolo = localStorage.getItem('ruolo')
     if (ruolo !== 'giocatore') return
     const token = localStorage.getItem('token')
-    fetch('http://localhost:3001/api/v1/visite/giocatore?soloId=true', {
+    fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/giocatore?soloId=true`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(r => r.json())
@@ -53,7 +53,7 @@ const Homepage = () => {
   useEffect(() => {
     const recuperoPDI = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/v1/pdi');
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi`);
         if (!response.ok) throw new Error(`Errore HTTP: ${response.status}`);
         const jsonResponse = await response.json();
         setListaPDI(jsonResponse.data);
@@ -63,7 +63,7 @@ const Homepage = () => {
       }
     };
     recuperoPDI();
-  }, []);
+  }, [showAlert]);
 
   // Ricava le categorie uniche dalla lista PDI per popolare i chip filtro
   const categorie = useMemo(() => {

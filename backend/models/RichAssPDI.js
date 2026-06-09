@@ -24,4 +24,4 @@ const schemaRichAssPDI = new mongoose.Schema({
     dataRichiesta: Date
 })
 
-module.exports = mongoose.model('RichAssPDIPDI', schemaRichAssPDI, 'RichAssPDI')
+module.exports = mongoose.model('RichAssPDI', schemaRichAssPDI, 'RichAssPDI')

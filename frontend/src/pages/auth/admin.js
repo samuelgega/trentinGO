@@ -65,9 +65,13 @@ const AuthAdmin = () => {
 
         //chiamata api
         try {
-            const response = await fetch('http://localhost:3001/api/v1/amministratori/', {
+            const token = localStorage.getItem('token')
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/amministratori`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify(body)
             })
 

@@ -8,16 +8,13 @@ const { verificaToken, requireRuolo, autorizzaModifica, autorizzaEliminazione } 
 router.get("/", verificaToken, requireRuolo('amministratore'), Giocatore.visualizzaGiocatori);
 
 //route per la registrazione di un nuovo giocatore
-router.post("/registrazione", Giocatore.registrazioneGiocatore);
-
-//route per il login di un giocatore
-router.post("/login", Giocatore.loginGiocatore);
+router.post("/", Giocatore.registrazioneGiocatore);
 
 //modifica utente
-router.put('/:idUtente', verificaToken, autorizzaModifica('giocatore'), Giocatore.modificaProfilo)
+router.put('/:id', verificaToken, autorizzaModifica('giocatore'), Giocatore.modificaProfilo)
 
 //elimina utente
-router.delete('/:idUtente', verificaToken, autorizzaEliminazione('giocatore'), Giocatore.eliminaProfilo)
+router.delete('/:id', verificaToken, autorizzaEliminazione('giocatore'), Giocatore.eliminaProfilo)
 
 //visualizza giocatore
 router.get("/:id", verificaToken, requireRuolo('giocatore', 'amministratore'), Giocatore.visualizzaGiocatore)

@@ -37,7 +37,7 @@ const ModificaEvento = () => {
     useEffect(() => {
         const fetchPDI = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/pdi');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi`);
                 if (response.ok) {
                     const json = await response.json();
                     setListaPDI(json.data);
@@ -57,9 +57,9 @@ const ModificaEvento = () => {
 
     //recupero i dati dell'evento da modificare
     useEffect(() => {
-        const fetchPDI = async () => {
+        const fetchEventi = async () => {
             try {
-                const response = await fetch(`http://localhost:3001/api/v1/eventi/${id}`)
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi/${id}`)
                 if (response.ok) {
                     const json = await response.json()
                     const evento = json.data
@@ -92,7 +92,7 @@ const ModificaEvento = () => {
                 showAlert("Errore di rete", "Impossibile recuperare i dati", "danger")
             } 
         }
-            fetchPDI()
+            fetchEventi()
     }, [id, navigate, showAlert])
 
     //convalida dei dati
@@ -106,7 +106,6 @@ const ModificaEvento = () => {
         if (dati.prezzo !== '' && (isNaN(dati.prezzo) || dati.prezzo < 0))
             error.prezzo = "Inserisci un prezzo valido (0 o più)"
 
-        const oggi = new Date();
         if (!dati.dataInizio) {
             error.dataInizio = "La data e ora di inizio sono obbligatorie";
         }
@@ -195,7 +194,7 @@ const ModificaEvento = () => {
 
         try {
             const token = localStorage.getItem('token')
-            const response = await fetch(`http://localhost:3001/api/v1/eventi/${id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi/${id}`, {
                 method: 'PUT',
                 body: submitData,
                 headers: { 'Authorization': `Bearer ${token}` }

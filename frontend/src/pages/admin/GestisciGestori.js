@@ -12,7 +12,7 @@ const GestisciGestori = () => {
 
     const toggleAbilitazione = async (id, abilitatoAttuale) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/v1/gestori/abilitato/${id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/gestori/abilitato/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ const GestisciGestori = () => {
     useEffect(() => {
         const recuperaGestori = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/gestori', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/gestori`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
@@ -44,7 +44,7 @@ const GestisciGestori = () => {
 
         const recuperaRichiesteAssociazione = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/richAssPDI', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/richAssPDI`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
@@ -61,7 +61,7 @@ const GestisciGestori = () => {
 
     const gestisciRichiesta = async (id, statoRichiesta) => {
         try {
-            const response = await fetch(`http://localhost:3001/api/v1/richAssPDI/${id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/richAssPDI/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

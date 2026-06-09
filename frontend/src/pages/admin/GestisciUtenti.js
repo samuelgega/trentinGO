@@ -18,7 +18,7 @@ const GestisciUtenti = () => {
     useEffect(() => {
         const recuperoGiocatori = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/giocatori', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/giocatori`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
@@ -31,7 +31,7 @@ const GestisciUtenti = () => {
 
         const recuperoGestori = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/gestori', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/gestori`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
@@ -44,7 +44,7 @@ const GestisciUtenti = () => {
 
         const recuperoAdmin = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/amministratori', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/amministratori`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 })
                 if (!response.ok) return
@@ -65,8 +65,8 @@ const GestisciUtenti = () => {
         if (!utenteSelezionato) return
         const { id, tipo } = utenteSelezionato
         const endpoint = tipo === 'giocatore'
-            ? `http://localhost:3001/api/v1/giocatori/${id}`
-            : `http://localhost:3001/api/v1/gestori/${id}`
+            ? `${process.env.REACT_APP_API_URL}/api/v1/giocatori/${id}`
+            : `${process.env.REACT_APP_API_URL}/api/v1/gestori/${id}`
         try {
             const response = await fetch(endpoint, {
                 method: 'DELETE',

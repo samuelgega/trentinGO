@@ -36,7 +36,7 @@ const ListaPDI = ({ pdiFiltrati, categorie, ricerca, setRicerca, categoriaSelezi
                 const token = localStorage.getItem('token')
                 const idGiocatore = localStorage.getItem('userId')
                 try {
-                    const response = await fetch('http://localhost:3001/api/v1/visite/pdi', {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/pdi`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${token}`,

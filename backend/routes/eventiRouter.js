@@ -21,7 +21,7 @@ router.post('/', verificaToken, requireRuolo('amministratore','gestore'), upload
 router.put('/:idEvento', verificaToken, requireRuolo('amministratore','gestore'), upload.array('immagine', 10), EventiController.modificaEvento)
 
 //route per eliminare un singolo evento
-router.delete('/:id', verificaToken, requireRuolo('amministratore','gestore'), EventiController.eliminaEvento)
+router.delete('/:idEvento', verificaToken, requireRuolo('amministratore','gestore'), EventiController.eliminaEvento)
 
 module.exports = router
 

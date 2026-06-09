@@ -62,55 +62,11 @@ const visualizzaAmministratori = async (req, res) => {
 
 }
 
-const loginAmministratore = async (req, res) => {
-    try {
-        const { credenziale, password } = req.body
-
-        if (!credenziale || !password) {
-            return res.status(400).json({ error: "Credenziale e password sono obbligatorie" })
-        }
-
-        const isEmail = credenziale.includes('@')
-        const amministratore = await Amministratore.findOne(
-            isEmail ? { email: credenziale.toLowerCase() } : { username: credenziale }
-        )
-
-        if (!amministratore) {
-            return res.status(401).json({ error: "Credenziali non valide" })
-        }
-
-        const passwordCorretta = await bcrypt.compare(password, amministratore.password)
-        if (!passwordCorretta) {
-            return res.status(401).json({ error: "Credenziali non valide" })
-        }
-
-        const token = jwt.sign(
-            { id: amministratore._id, ruolo: 'amministratore' },
-            process.env.JWT_SECRET,
-            { expiresIn: '7d' }
-        )
-
-        res.status(200).json({
-            message: "Login effettuato con successo",
-            token,
-            data: {
-                id: amministratore._id,
-                username: amministratore.username,
-                email: amministratore.email,
-                ruolo: 'amministratore'
-            }
-        })
-
-    } catch (error) {
-        console.error("Errore nel login dell'amministratore", error)
-        res.status(500).json({ error: "Errore interno del server" })
-    }
-}
 
 const modificaProfilo = async (req, res) => {
     try {
-        const { idUtente } = req.params
-        let utente = await Amministratore.findById(idUtente).select('-password -resetToken -scadenzaResetToken')
+        const { id } = req.params
+        let utente = await Amministratore.findById(id).select('-password -resetToken -scadenzaResetToken')
         if (!utente) {
             return res.status(404).json({ error: "Utente non trovato" })
         }
@@ -118,7 +74,10 @@ const modificaProfilo = async (req, res) => {
         const { username, email } = req.body
 
         if (username) {
-            const u = await Amministratore.findOne({ username: String(username).toLocaleLowerCase() }) || await Gestore.findOne({ username: String(username).toLocaleLowerCase() }) || await Amministratore.findOne({ username: String(username).toLocaleLowerCase() })
+            const usernameFormattato = String(username).toLowerCase();
+            const u = await Amministratore.findOne({ username: usernameFormattato, _id: { $ne: id } }) || 
+                      await Gestore.findOne({ username: usernameFormattato }) || 
+                      await Giocatore.findOne({ username: usernameFormattato })
             if (u) {
                 return res.status(409).json({ error: "Username già in uso" })
             }
@@ -126,14 +85,17 @@ const modificaProfilo = async (req, res) => {
         }
 
         if (email) {
-            const u = await Giocatore.findOne({ email: String(email).toLocaleLowerCase() }) || await Gestore.findOne({ email: String(email).toLocaleLowerCase() }) || await Amministratore.findOne({ email: String(email).toLocaleLowerCase() })
+            const emailFormattata = String(email).toLowerCase();
+            const u = await Giocatore.findOne({ email: emailFormattata }) || 
+                      await Gestore.findOne({ email: emailFormattata }) || 
+                      await Amministratore.findOne({ email: emailFormattata, _id: { $ne: id } })
             if (u) {
                 return res.status(409).json({ error: "Email già registrata" })
             }
-            utente.email = email
+            utente.email = emailFormattata
         }
 
-        utente.save()
+        await utente.save()
         return res.status(200).json({ message: "Utente aggiornato con successo", data: utente })
     }
     catch (error) {
@@ -144,7 +106,7 @@ const modificaProfilo = async (req, res) => {
 
 const eliminaProfilo = async (req,res) => {
     try {
-        const idDaEliminare = req.params.idUtente; 
+        const idDaEliminare = req.params.id; 
         
         const eliminato = await Amministratore.findByIdAndDelete(idDaEliminare);
         
@@ -156,4 +118,4 @@ const eliminaProfilo = async (req,res) => {
     }
 }
 
-module.exports = { creaAmministratore, visualizzaAmministratori, loginAmministratore, modificaProfilo, eliminaProfilo }
+module.exports = { creaAmministratore, visualizzaAmministratori, modificaProfilo, eliminaProfilo }

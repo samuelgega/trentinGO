@@ -16,7 +16,7 @@ const GestisciEventi = () => {
 
     const recuperaDatiDalDatabase = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/v1/eventi');
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi`);
             if (!response.ok) {
                 throw new Error(`Errore HTTP: ${response.status}`);
             }
@@ -31,7 +31,7 @@ const GestisciEventi = () => {
 
     useEffect(() => {
         recuperaDatiDalDatabase()
-    }, [])
+    }, [recuperaDatiDalDatabase])
 
 
 
@@ -68,7 +68,7 @@ const GestisciEventi = () => {
 
         try {
             const token = localStorage.getItem('token')
-            const response = await fetch(`http://localhost:3001/api/v1/eventi/${eventoDaEliminare._id}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi/${eventoDaEliminare._id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

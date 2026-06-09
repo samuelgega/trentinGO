@@ -42,7 +42,7 @@ const InfoEvento = () => {
             const body = { idGiocatore, idEvento: evento._id }
             if (posizione) body.posizione = posizione
             try {
-                const response = await fetch('/api/v1/visite/evento', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/evento`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
@@ -92,7 +92,7 @@ const InfoEvento = () => {
     useEffect(() => {
         const fetchEvento = async () => {
             try {
-                const response = await fetch(`/api/v1/eventi/${id}`);
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi/${id}`);
                 if (response.ok) {
                     const json = await response.json();
                     setEvento(json.data || json);
@@ -175,7 +175,7 @@ const InfoEvento = () => {
             {/* Immagine di copertina */}
             <div className="position-relative" style={{ height: '40vh', minHeight: '300px' }}>
                 <img
-                    src={immagini.length > 0 ? immagini[fotoGrandeIndex] : 'http://localhost:3001/uploads/eventoGenerico.png'}
+                    src={immagini.length > 0 ? immagini[fotoGrandeIndex] : `${process.env.REACT_APP_API_URL}/uploads/eventoGenerico.png`}
                     alt={evento.properties.nome}
                     className="w-100 h-100"
                     style={{ objectFit: 'cover', transition: 'all 0.3s ease' }}

@@ -13,8 +13,6 @@ const HomeEventi = () => {
 
     const [listaEventi, setListaEventi] = useState([])
     const [filtroStato, setFiltroStato] = useState('attivi')
-    const oggi = new Date()
-
     const ruolo = localStorage.getItem('ruolo')
     const [eventiVisitati, setEventiVisitati] = useState(new Set())
     const [notifica, setNotifica] = useState(null)
@@ -29,7 +27,7 @@ const HomeEventi = () => {
             const body = { idGiocatore, idEvento: card._id }
             if (posizione) body.posizione = posizione
             try {
-                const response = await fetch('/api/v1/visite/evento', {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/evento`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
@@ -78,7 +76,7 @@ const HomeEventi = () => {
 
     const recuperaDatiDalDatabase = async () => {
         try {
-            const response = await fetch('/api/v1/eventi')
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi`)
             if (!response.ok) {
                 showAlert("Errore nel recupero dati", "Riprovare riaggiornando la pagina", 'danger')
                 return
@@ -96,12 +94,12 @@ const HomeEventi = () => {
 
     useEffect(() => {
         recuperaDatiDalDatabase()
-    }, [])
+    }, [recuperaDatiDalDatabase])
 
     useEffect(() => {
         if (ruolo !== 'giocatore') return
         const token = localStorage.getItem('token')
-        fetch('/api/v1/visite/giocatore', {
+        fetch(`${process.env.REACT_APP_API_URL}/api/v1/visite/giocatore`, {
             headers: { 'Authorization': `Bearer ${token}` }
         })
             .then(r => r.json())
@@ -110,7 +108,7 @@ const HomeEventi = () => {
                 setEventiVisitati(ids)
             })
             .catch(() => {})
-    }, [])
+    }, [ruolo])
 
     const handleCardClick = (id) => {
         navigate(`/dettagli-evento/${id}`)
@@ -213,7 +211,7 @@ const HomeEventi = () => {
                                         {/* Immagine con badge sovrapposti */}
                                         <div className="position-relative">
                                             <img
-                                                src={card.properties.immagine[0] ?? 'http://localhost:3001/uploads/eventoGenerico.png'}
+                                                src={card.properties.immagine[0] ?? `${process.env.REACT_APP_API_URL}/uploads/eventoGenerico.png`}
                                                 className="w-100"
                                                 alt={card.properties.nome}
                                                 style={{ height: '200px', objectFit: 'cover' }}

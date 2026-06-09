@@ -38,7 +38,7 @@ const CreaEvento = () => {
     useEffect(() => {
         const fetchPDI = async () => {
             try {
-                const response = await fetch('http://localhost:3001/api/v1/pdi');
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/pdi`);
                 if (response.ok) {
                     const json = await response.json();
                     setListaPDI(json.data);
@@ -169,7 +169,7 @@ const CreaEvento = () => {
 
         try {
             const token = localStorage.getItem('token')
-            const response = await fetch('http://localhost:3001/api/v1/eventi', {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/api/v1/eventi`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: submitData
