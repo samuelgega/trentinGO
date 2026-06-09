@@ -255,7 +255,7 @@ describe('PUT /api/v1/eventi', () => {
                     nome: "Conceto, piazza fiera"
                 })
             expect(risposta.statusCode).toBe(403)
-            expect(risposta.body.error).toBe("Non sei autorizzato a modificare questo evento.")
+            expect(risposta.body.error).toBe("Accesso negato: permessi insufficienti")
         })
     })
 
@@ -406,7 +406,7 @@ describe('DELETE /api/v1/eventi', () => {
             const risposta = await request(app).delete('/api/v1/eventi/6a0a288b003936e6360e3320') //questo id è vero
                 .set('Authorization', `Bearer ${token}`)
             expect(risposta.statusCode).toBe(403)
-            expect(risposta.body.error).toBe("Non sei autorizzato a eliminare questo evento.")
+            expect(risposta.body.error).toBe("Accesso negato: permessi insufficienti")
         })
     })
 
