@@ -268,8 +268,8 @@ describe('PUT /api/v1/eventi', () => {
             )
             jest.spyOn(Evento.prototype, 'save').mockResolvedValue({
                 nome: "Concerto",
-                dataInizio: "2026-06-10",
-                dataFine: "2026-06-01",
+                dataInizio: "2026-07-10",
+                dataFine: "2026-08-01",
                 latitudine: 46.06,
                 longitudine: 11.11
             })
@@ -278,8 +278,8 @@ describe('PUT /api/v1/eventi', () => {
                 .set('Authorization', `Bearer ${token}`)
                 .send({
                     nome: "Concerto",
-                    dataInizio: "2026-06-10",
-                    dataFine: "2026-06-01",
+                    dataInizio: "2026-07-10",
+                    dataFine: "2026-07-09",
                     latitudine: 46.06,
                     longitudine: 11.11
                 })

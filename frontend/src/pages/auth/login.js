@@ -55,7 +55,7 @@ const AuthLogin = () => {
                 localStorage.setItem('userId', resJson.data.id)
                 localStorage.setItem('nome', resJson.data.nome)
                 showAlert("Log-in completato.", "Account creato con successo", "success")
-                navigate(-1)
+                navigate('/home')
             } else if (resJson.status === 400) {
                 showAlert("Login fallito", "Username o password mancanti", "danger")
             } else {

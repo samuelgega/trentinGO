@@ -1,35 +1,27 @@
-const nodemailer = require('nodemailer')
+const { Resend } = require('resend')
 
-const MITTENTE_EMAIL = process.env.MITTENTE_EMAIL || '<noreply@trentingo.it>'
+const resend = new Resend(process.env.RESEND_API_KEY)
 
 const inviaEmail = async (destinatario, oggetto, testo) => {
     try {
-        const testAccount = await nodemailer.createTestAccount()
-
-        const transporter = nodemailer.createTransport({
-            host: process.env.MAIL_HOST,
-            port: process.env.MAIL_PORT,
-            secure: false,
-            auth: {
-                user: process.env.MAIL_USERNAME,
-                pass: process.env.MAIL_PASSWORD
-            }
-        })
-
-        const info = await transporter.sendMail({
-            from: MITTENTE_EMAIL,
+        const { data, error } = await resend.emails.send({
+            from: 'Trentingo <noreply@trentingo.dev>',
             to: destinatario,
             subject: oggetto,
-            text: testo
+            text: testo,
         })
 
-        // console.log("Email inviata: %s", info.messageId)
-        // console.log("Link di visualizzazione: %s", nodemailer.getTestMessageUrl(info)) //anteprima "finta" dell'email su Ethereal
-    }
-    catch (error) {
-        console.error("Errore durante la creazione dell'account di test:", error)
-        throw new Error("Impossibile creare l'account di test per l'invio delle email")
+        if (error) {
+            throw error
+        }
+
+        return data
+    } catch (error) {
+        console.error(error)
+        throw new Error("Errore durante l'invio dell'email")
     }
 }
+
+module.exports = inviaEmail
 
 module.exports = inviaEmail
