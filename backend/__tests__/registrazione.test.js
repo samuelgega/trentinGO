@@ -14,7 +14,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
     // registrazione giocatore
     describe('• POST /api/v1/giocatori/registrazione', () => {
 
-        describe("(1) Registrazione con dati validi", () => {
+        describe("(34) Registrazione con dati validi", () => {
             test("Status 201. Il giocatore viene creato con successo e l'oggetto creato viene restituito nella risposta.", async () => {
                 const nuovoGiocatore = {
                     username: 'mario99',
@@ -33,7 +33,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(2) Registrazione con campo obbligatorio mancante", () => {
+        describe("(35) Registrazione con campo obbligatorio mancante", () => {
             test("Status 400. La validazione fallisce. Il sistema restituisce l'errore: \"username, email e password sono obbligatori\"", async () => {
                 const risposta = await request(app)
                     .post('/api/v1/giocatori')
@@ -44,7 +44,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(3) Registrazione con password inferiore a 8 caratteri", () => {
+        describe("(36) Registrazione con password inferiore a 8 caratteri", () => {
             test("Status 400. La validazione fallisce. Il sistema restituisce l'errore: \"La password deve essere di almeno 8 caratteri\"", async () => {
                 const risposta = await request(app)
                     .post('/api/v1/giocatori')
@@ -55,7 +55,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(4) Registrazione con formato email non valido", () => {
+        describe("(37) Registrazione con formato email non valido", () => {
             test("Status 400. La validazione fallisce. Il sistema restituisce l'errore: \"Inserisci un'email valida\"", async () => {
                 const risposta = await request(app)
                     .post('/api/v1/giocatori')
@@ -66,7 +66,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(5) Registrazione con username già esistente", () => {
+        describe("(38) Registrazione con username già esistente", () => {
             test("Status 409. La creazione fallisce. Il sistema restituisce l'errore: \"Username gia esistente\"", async () => {
                 await Giocatore.create({
                     username: 'mario99',
@@ -83,7 +83,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(6) Registrazione con email già esistente", () => {
+        describe("(39) Registrazione con email già esistente", () => {
             test("Status 409. La creazione fallisce. Il sistema restituisce l'errore: \"Email gia esistente\"", async () => {
                 await Giocatore.create({
                     username: 'altrouser',
@@ -104,7 +104,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
     // registrazione gestore
     describe('• POST /api/v1/gestori/registrazione', () => {
 
-        describe("(7) Registrazione con dati validi", () => {
+        describe("(40) Registrazione con dati validi", () => {
             test("Status 201. Il gestore viene creato con successo e l'oggetto creato viene restituito nella risposta.", async () => {
                 const nuovoGestore = {
                     nome: 'MART Rovereto',
@@ -124,7 +124,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(8) Registrazione con campo obbligatorio mancante", () => {
+        describe("(41) Registrazione con campo obbligatorio mancante", () => {
             test("Status 400. La validazione fallisce. Il sistema restituisce l'errore: \"nome, email, password e partitaIva sono obbligatori\"", async () => {
                 const risposta = await request(app)
                     .post('/api/v1/gestori')
@@ -135,7 +135,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(9) Registrazione con password inferiore a 8 caratteri", () => {
+        describe("(42) Registrazione con password inferiore a 8 caratteri", () => {
             test("Status 400. La validazione fallisce. Il sistema restituisce l'errore: \"La password deve essere di almeno 8 caratteri\"", async () => {
                 const risposta = await request(app)
                     .post('/api/v1/gestori')
@@ -146,7 +146,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(10) Registrazione con nome già esistente", () => {
+        describe("(43) Registrazione con nome già esistente", () => {
             test("Status 409. La creazione fallisce. Il sistema restituisce l'errore: \"Nome o email già in uso\"", async () => {
                 await Gestore.create({
                     nome: 'MART Rovereto',
@@ -164,7 +164,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(11) Registrazione con email già esistente", () => {
+        describe("(44) Registrazione con email già esistente", () => {
             test("Status 409. La creazione fallisce. Il sistema restituisce l'errore: \"Nome o email già in uso\"", async () => {
                 await Gestore.create({
                     nome: 'Altro Nome',
@@ -182,7 +182,7 @@ describe('=== TEST PER LA REGISTRAZIONE ===', () => {
             })
         })
 
-        describe("(12) Registrazione con partita IVA già esistente", () => {
+        describe("(45) Registrazione con partita IVA già esistente", () => {
             test("Status 409. La creazione fallisce. Il sistema restituisce l'errore: \"Partita IVA già esistente\"", async () => {
                 await Gestore.create({
                     nome: 'Altro Nome',

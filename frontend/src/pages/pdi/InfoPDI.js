@@ -135,7 +135,7 @@ const InfoPDI = () => {
             {/*Mostra la prima foto*/}
             <div className="position-relative" style={{ height: '40vh', minHeight: '300px' }}>
                 <img
-                    src={immagini.length > 0 ? immagini[fotoGrandeIndex] : 'http://localhost:3001/uploads/eventoGenerico.png'}
+                    src={immagini.length > 0 ? immagini[fotoGrandeIndex] : `${process.env.FRONTEND_URL}/uploads/eventoGenerico.png`}
                     alt={pdi.properties.nome}
                     className="w-100 h-100"
                     style={{ objectFit: 'cover', transition: 'all 0.3s ease' }}

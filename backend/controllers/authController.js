@@ -94,7 +94,7 @@ const richiestaResetPassword = async (req, res) => {
         utente.scadenzaResetToken = scadenzaResetToken
         await utente.save()
 
-        inviaEmail(utente.email, "Istruzioni per il reset della password", `Ciao ${utente.username ?? utente.nome},\n\nHai richiesto di resettare la tua password. Clicca sul link qui sotto per impostare una nuova password:\n\nhttp://localhost:3000/auth/reimposta-password/${tk}\n\nSe non hai richiesto questo reset, ignora questa email.\n`)
+        inviaEmail(utente.email, "Istruzioni per il reset della password", `Ciao ${utente.username ?? utente.nome},\n\nHai richiesto di resettare la tua password. Clicca sul link qui sotto per impostare una nuova password:\n\n${process.env.FRONTEND_URL}/auth/reimposta-password/${tk}\n\nSe non hai richiesto questo reset, ignora questa email.\n`)
         return res.status(200).json({ message: "E' stata mandata una mail con le istruzioni per il recupero password" })
     } catch (error) {
         console.error("Errore nel reset password", error)

@@ -9,7 +9,7 @@ const app = express();
 
 //impostazioni cors
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: process.env.FRONTEND_URL,
     optionsSuccessStatus: 200
 };
 
