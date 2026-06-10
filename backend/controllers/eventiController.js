@@ -3,7 +3,7 @@ const Evento = require('../models/Evento')
 const PDI = require('../models/PDI')
 const Gestore = require('../models/Gestore')
 
-const baseUrl = 'http://localhost:3001'
+const baseUrl = process.env.BASE_URL
 
 const validaDati = (dati) => {
     //implementare idGestore vando verrà aggiunta la sua collection

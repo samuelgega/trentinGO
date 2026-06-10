@@ -7,12 +7,12 @@ const inviaEmail = async (destinatario, oggetto, testo) => {
         const testAccount = await nodemailer.createTestAccount()
 
         const transporter = nodemailer.createTransport({
-            host: 'smtp.ethereal.email',
-            port: 587,
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
             secure: false,
             auth: {
-                user: testAccount.user,
-                pass: testAccount.pass
+                user: process.env.MAIL_USERNAME,
+                pass: process.env.MAIL_PASSWORD
             }
         })
 
@@ -23,8 +23,8 @@ const inviaEmail = async (destinatario, oggetto, testo) => {
             text: testo
         })
 
-        console.log("Email inviata: %s", info.messageId)
-        console.log("Link di visualizzazione: %s", nodemailer.getTestMessageUrl(info)) //anteprima "finta" dell'email su Ethereal
+        // console.log("Email inviata: %s", info.messageId)
+        // console.log("Link di visualizzazione: %s", nodemailer.getTestMessageUrl(info)) //anteprima "finta" dell'email su Ethereal
     }
     catch (error) {
         console.error("Errore durante la creazione dell'account di test:", error)
